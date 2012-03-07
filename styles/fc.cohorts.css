@@ -1,0 +1,15 @@
+.fc-cohorts { position: relative; }
+	.fc-cohorts-header { margin: 20px 0 15px 0; font-size: 18px; }
+	.fc-cohorts-body { border-collapse: collapse; }
+		.fc-cohorts-body td, .fc-cohorts-body th { height: 34px; font-weight: normal; color: #6F6F6F; background: #F0F0F0; border: 1px solid #FFFFFF; }
+		.fc-cohorts-body td { color: #89672B; background-color: #EB9603; }
+		.fc-cohorts-header-1 { font-size: 14px; color: #6F6F6F; }
+		.fc-cohorts-header-2 { font-size: 11px; color: #6F6F6F; }
+		.fc-cohorts-title { min-width: 120px; padding: 0 8px; text-align: left; }
+		.fc-cohorts-total { min-width: 50px; padding: 0 8px; text-align: left; }
+		.fc-cohorts-value div { min-width: 52px; height: 34px; line-height: 34px; text-align: center; font-size: 11px; cursor: default; }
+		
+		.fc-cohorts-header-2.selected { font-weight: bolder; }
+		.fc-cohorts-value.selected { background-color: #EBEA55; }
+		.fc-cohorts-value.selected div { font-weight: bolder; }
+	.fc-cohorts-toolbar { padding-top: 15px; }

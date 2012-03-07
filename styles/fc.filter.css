@@ -1,0 +1,16 @@
+.fc-filter { margin-bottom: 20px; padding: 10px 15px 15px 15px; border: 1px solid #DDDDDD; }
+	.fc-filter-header { position: relative; }
+		.fc-filter-title { display: inline-block; font-size: 16px; color: #EC8800; border-bottom: 1px dotted #EC8800; cursor: pointer; }
+		.fc-filter-toggle { display: block; width: 22px; height: 22px; position: absolute; left: -39px; top: 0px; border: 1px solid #DDDDDD; border-right-color: #FFFFFF; border-top-left-radius: 10px; -moz-border-radius-topleft: 11px; -webkit-border-top-left-radius: 11px; border-bottom-left-radius: 11px; -moz-border-radius-bottomleft: 11px; -webkit-border-bottom-left-radius: 10px; }
+			.fc-filter-toggle .ui-icon { display: inline-block; margin: 4px 0 0 4px; }
+	.fc-filter-body { margin-top: 10px; position: relative; }
+		.fc-filter-buttonset { float: right; }
+			.fc-filter-buttonset button { margin-left: 10px; }
+
+		.fc-filter-remove { display: none !important; float: right; width: 20px; height: 20px; margin: 1px !important; line-height: 17px; text-align: center; }
+		.fc-filter-remove:hover { margin: 0px !important; }
+			.fc-filter-remove .ui-icon { display: inline-block; vertical-align: middle; }
+
+	.fc-filter-editable-fields {  }
+		.fc-filter-editable-fields>.fc-filter-fieldset:hover { background-color: #F7F7F7; outline: 4px solid #F7F7F7; }
+		.fc-filter-editable-fields>.fc-filter-fieldset:hover .fc-filter-remove { display: inline-block !important; }
