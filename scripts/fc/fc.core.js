@@ -87,7 +87,8 @@
 			namespace: namespace,
 			widgetName: fullName,
 			widgetEventPrefix: namespace[name].prototype.widgetEventPrefix || fullName,
-			widgetBaseClass: className,
+			widgetFullName: className,
+			widgetBaseClass: (basePrototype.widgetBaseClass || "ui-widget") + " " + className,
 			_callMethod: function (methodName) {
 				if (typeof (this[methodName]) === "undefined") {
 					return;

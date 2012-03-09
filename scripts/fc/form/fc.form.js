@@ -25,6 +25,8 @@
 		},
 
 		_init: function () {
+			$.fc.base.hidable.prototype._init.call(this);
+
 			var self = this;
 
 			$.fc.data.store.current.get(this.options.fields, function (data) {

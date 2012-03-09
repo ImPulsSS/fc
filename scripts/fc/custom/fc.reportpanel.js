@@ -6,19 +6,12 @@
 				saveReport: "/SaveReport?reportType=?",
 				removeReport: "/RemoveReport?reportType=?"
 			},
-			//filters: [],
-			customFilters: []
+
+			reportTemplateName: "new report template"
 		},
 
 		_create: function () {
-			if (typeof (this.options.filters) === "undefined") {
-				this.options.filters = [];
-			}
-
-			this.element.addClass([
-					"ui-widget",
-					this.widgetBaseClass
-				].join(' '));
+			this.element.addClass(this.widgetBaseClass);
 
 			this.overlay = new $.fc.overlay({ parent: this.element });
 			
@@ -45,8 +38,6 @@
 			this._addTemplatesBlock();
 
 			this._addFilterBlock();
-
-			this.overlay.resize().show();
 		},
 
 		_addFilterBlock: function () {
@@ -56,7 +47,7 @@
 
 			var self = this;
 
-			this.filter = new $.fc.filter({
+			this.filter = new $.fc.filter($.extend(true, {
 					title: "Settings",
 					collapsed: false,
 					action: self.options.api.getData,
@@ -69,8 +60,6 @@
 							$(this).slideUp(200);
 						}
 					},
-					fields: self.options.filters,
-					editableFilters: self.options.customFilters,
 					buttons: {
 						"Run report": function() {
 							this.submit();
@@ -85,12 +74,7 @@
 							$.fc.dialog.prompt(
 								"Save report template",
 								"Please enter report name:",
-								$.fc.stringBuilder.format("{0}/{1} since {2}{3}",
-									self.options.actions[filters.activity1],
-									self.options.actions[filters.activity2],
-									filters.fromDate,
-									filters.toDate ? " till " + filters.toDate : ""
-								),
+								$.fc.tmpl(self.options.reportTemplateName, { widget: self, filters: filters }),
 								function (reportName) {
 									if (!reportName) {
 										return;
@@ -116,14 +100,11 @@
 							return;
 						}
 
-						self.options.filter = params.filters || {};
-						self.options.data = params.data.data || [];
-
 						self._trigger("applyfilter", e, params);
 
 						self._callMethod("_render");
 					}
-				});
+				}, this.options));
 
 			self.filter
 				.widget()
@@ -259,7 +240,36 @@
 		},
 
 		_render: function () {
+			this._addHeader();
 
+			this._addBody();
+
+			if (typeof (this.options.data) === "undefined" || !this.options.data) {
+				this.header.text("No results found.");
+				return false;
+			}
+		},
+
+		_addHeader: function () {
+			if (!this.header) {
+				this.header = $('<div></div>', { "class": this.widgetFullName + "-header" })
+					.appendTo(this.element);
+			}
+		},
+
+		_addBody: function () {
+			if (!this.body) {
+				this.body = $('<div></div>', { "class": this.widgetFullName + "-body" })
+					.appendTo(this.element);
+			}
+		},
+
+		_destroy: function () {
+			this.element.removeClass(this.widgetBaseClass);
+		},
+
+		widget: function () {
+			return this.panel;
 		}
 	});
 })(jQuery);

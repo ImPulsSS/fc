@@ -17,14 +17,13 @@
 			this.element
 				.html(this.options.html);
 
-			this.options.widgetBaseClass = [
-					"ui-widget",
+			this.widgetBaseClass = [
 					"ui-corner-all",
 					this.widgetBaseClass,
 					this.options.state
 				].join(' ');
 
-			this.element.addClass(this.options.widgetBaseClass);
+			this.element.addClass(this.widgetBaseClass);
 
 			if (this.options.showTime > 0) {
 				setTimeout(function () {
@@ -56,7 +55,7 @@
 
 		_destroy: function() {
 			this.element
-				.removeClass(this.options.widgetBaseClass);
+				.removeClass(this.widgetBaseClass);
 
 			this.element
 				.find("fc-alert-close")

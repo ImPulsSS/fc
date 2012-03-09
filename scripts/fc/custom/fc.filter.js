@@ -81,7 +81,7 @@
 			var self = this;
 
 			this.container
-				.addClass('ui-widget fc-filter')
+				.addClass(this.widgetBaseClass)
 				.wrapInner('<div class="fc-filter-body"></div>');
 
 			this.body = this.container.children('.fc-filter-body');

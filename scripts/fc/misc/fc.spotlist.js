@@ -16,7 +16,6 @@
 			var self = this;
 
 			this.element
-				.addClass("ui-widget")
 				.addClass(this.widgetBaseClass);
 
 			this.items = this.element
@@ -33,7 +32,6 @@
 
 		_destroy: function() {
 			this.element
-				.removeClass("ui-widget")
 				.removeClass(this.widgetBaseClass);
 
 			this.items

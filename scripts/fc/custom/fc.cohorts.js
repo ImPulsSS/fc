@@ -10,7 +10,7 @@
 				
 				getActions: "/Actions.rest/GetActions"
 			},
-			customFilters: [],
+			reportTemplateName: "<%=widget.options.actions[filters.activity1]%>/<%=widget.options.actions[filters.activity2]%> since <%=filters.fromDate%><%=filters.toDate ? ' till ' + filters.toDate : ''%>",
 			maxDifference: 12,
 			reportType: 1,
 			template: 
@@ -40,16 +40,19 @@
 					</tr>\
 					<% } %>\
 				</tbody>',
-			applyfilter: function () {
+			applyfilter: function (e, params) {
 				var self = $(this).data("fc-cohorts");
+
+				self.options.filter = params.filters || {};
+				self.options.data = params.data.data || [];
 
 				self._getMaxValue();
 			}
 		},
 
 		_create: function () {
-			if (typeof (this.options.filters) === "undefined") {
-				this.options.filters = [
+			if (typeof (this.options.fields) === "undefined") {
+				this.options.fields = [
 					[{
 							label: "Activity 1",
 							name: "activity1",
@@ -113,7 +116,6 @@
 								"min-width": 14
 							},
 							type: "date",
-							dataType: "date",
 							name: "toDate",
 							dateRangeFrom: "fromDate"
 						}
@@ -122,6 +124,8 @@
 			}
 
 			$.fc.reportpanel.prototype._create.apply(this, arguments);
+
+			this.overlay.resize().show();
 
 			var self = this;
 
@@ -140,28 +144,17 @@
 		},
 
 		_render: function () {
-			if (typeof (this.options.data) === "undefined" || !this.options.data) {
-				this.body.html("No results found.");
+			if ($.fc.reportpanel.prototype._render.call(this) === false) {
 				return;
 			}
 			
 			var self = this;
-			
-			if (!this.header) {
-				this.header = $('<div></div>', { "class": "fc-cohorts-header" })
-					.appendTo(this.element);
-			}
-			
+
 			this.header.text((this.options.actions[this.options.filter.activity1] || this.options.filter.activity1) + 
 				(this.options.filter.toDate ?
 					" between " + this.options.filter.fromDate + " and " + this.options.filter.toDate :
 					" after " + this.options.filter.fromDate));
-			
-			if (!this.body) {
-				this.body = $('<table></table>', { "cellspacing": 0, "cellpadding": 0, "class": "fc-cohorts-body" })
-					.appendTo(this.element);
-			}
-			
+
 			if (!this.toolbar) {
 				this.toolbar = $('<div></div>', { "class": "fc-cohorts-toolbar" })
 					.appendTo(this.element);
@@ -197,6 +190,13 @@
 			this._bindActions();
 		},
 
+		_addBody: function () {
+			if (!this.body) {
+				this.body = $('<table></table>', { "cellspacing": 1, "cellpadding": 0, "class": this.widgetFullName + "-body" })
+					.appendTo(this.element);
+			}
+		},
+
 		_bindActions: function () {
 			var self = this;
 			this.body.find('.fc-cohorts-value')
@@ -220,7 +220,7 @@
 
 		_getMaxValue: function () {
 			this.options.maxValue = 0;
-			var i, j, diffs, max;
+			var i, j, diffs;
 			
 			for (i = 0; i < this.options.data.length; i++) {
 				diffs = this.options.data[i].diffs;
