@@ -4,3 +4,6 @@ styles/fc.filter.css
 styles/fc.alert.css
 styles/fc.reportpanel.css
 styles/fc.spotlist.css
+
+styles/fc.cohorts.css
+styles/fc.charts.css

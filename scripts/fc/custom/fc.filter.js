@@ -148,15 +148,11 @@
 						field: {
 							type: "hidden",
 							name: "field",
-							required: true
-						}
-					},
-					template,
-					{
-						field: {
+							required: true,
 							value: rawValue.value
 						}
-					}
+					},
+					template
 				);
 			}
 

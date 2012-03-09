@@ -4,13 +4,46 @@
 			api: {
 				getData: "/Analytics.rest/GetReportData",
 
-				getCharts: "/Analytics.rest/GetAvailableReports",
+				getAvailableReports: "/Analytics.rest/GetAvailableReports",
 
 				getReports: "/Misc.rest/GetReports?reportType=charts",
 				saveReport: "/Misc.rest/SaveReport?reportType=charts",
 				removeReport: "/Misc.rest/RemoveReport?reportType=charts"
 			},
 			reportTemplateName: "<%=widget.options.charts[filters.reportname]%>",
+			preloadfilters: function (e, widget) {
+				if (typeof (widget.options.fields) === "undefined") {
+					widget.options.fields = [{
+							label: "Report",
+							name: "reportname",
+							type: "select",
+							placeholder: "Select report",
+							options: {
+								url: widget.options.api.getAvailableReports,
+								root: "reports",
+								map: [
+									{ name: "value", mapping: "name" },
+									{ name: "text", mapping: "title" }
+								]
+							},
+							required: true
+						}
+					];
+				}
+
+				$.fc.data.store.current.get({
+					url: widget.options.api.getAvailableReports,
+					root: "reports"
+				}, function (data) {
+					var result = {};
+					$.each(data, function () {
+						result[this.name] = this.title;
+					});
+					widget.options.charts = result;
+
+					widget.overlay.hide();
+				});
+			},
 			applyfilter: function (e, params) {
 				var self = $(this).data("fc-charts");
 
@@ -20,43 +53,11 @@
 		},
 
 		_create: function () {
-			if (typeof (this.options.fields) === "undefined") {
-				this.options.fields = [{
-						label: "Report",
-						name: "reportname",
-						type: "select",
-						placeholder: "Select report",
-						options: {
-							url: this.options.api.getCharts,
-							root: "reports",
-							map: [
-								{ name: "value", mapping: "name" },
-								{ name: "text", mapping: "title" }
-							]
-						},
-						required: true
-					}
-				];
-			}
+			this._trigger("preloadfilters", null, this);
 
 			$.fc.reportpanel.prototype._create.apply(this, arguments);
 
 			this.overlay.resize().show();
-
-			var self = this;
-
-			$.fc.data.store.current.get({
-				url: this.options.api.getCharts,
-				root: "reports"
-			}, function (data) {
-				var result = {};
-				$.each(data, function () {
-					result[this.name] = this.title;
-				});
-				self.options.charts = result;
-
-				self.overlay.hide();
-			});
 		},
 
 		_render: function () {
@@ -72,23 +73,19 @@
 				return;
 			}
 
-			this.header.text((this.options.charts[this.options.filter.reportname] || this.options.filter.reportname) +
-				(this.options.filter.startdate && this.options.filter.enddate ?
-					" between " + this.options.filter.startdate + " and " + this.options.filter.enddate :
-					this.options.filter.startdate ?
-						" after " + this.options.filter.startdate :
-						this.options.filter.enddate ?
-							" before " + this.options.filter.enddate :
-							""));
+			this.header.text($.fc.tmpl(self.options.reportTemplateName, { widget: self, filters: this.options.filter }));
 
 			var tooltipFormat = (series[0].type === "pie") ?
 				function () { return '<b>' + this.point.name + ':</b> ' + this.y + ' (' + Math.round(this.percentage * 10) / 10 +'%)' } :
 				function () { return '<b>'+ this.series.name +'</b>: '+ this.y };
 
+			var i, j,
+				currentSeries,
+				currentSeriesData,
+				dataType = "categories";
+
 			if (series.length > 1 && series[0].type === "pie") {
-				var i, j, k, n = 0,
-					currentSeries,
-					currentSeriesData,
+				var k, n = 0,
 					newSeries = [{
 						type: 'pie',
 						size: '60%',
@@ -132,7 +129,23 @@
 				}
 
 				series = newSeries;
+			} else {
+				for (i = 0; i < series.length; i++) {
+					currentSeries = series[i];
+
+					for (j = 0; j < currentSeries.data.length; j++) {
+						currentSeriesData = currentSeries.data[j];
+						if (!currentSeriesData[0].match(/\/Date\((.*?)\)\//)) {
+							break;
+						}
+
+						dataType = "datetime";
+						currentSeriesData[0] = Number(currentSeriesData[0].substring(6, 19));
+					}
+				}
 			}
+
+			this.body.empty();
 
 			new Highcharts.Chart({
 				chart: {
@@ -149,7 +162,7 @@
 						shadow: false
 					}
 				},
-				xAxis: { type: 'datetime' },
+				xAxis: { type: dataType },
 				yAxis: { title: { text: '' } },
 				series: series
 			});
