@@ -86,7 +86,7 @@
 		namespace[name].prototype = $.extend(true, basePrototype, {
 			namespace: namespace,
 			widgetName: fullName,
-			widgetEventPrefix: namespace[name].prototype.widgetEventPrefix || fullName,
+			widgetEventPrefix: fullName,
 			widgetFullName: className,
 			widgetBaseClass: (basePrototype.widgetBaseClass || "ui-widget") + " " + className,
 			_callMethod: function (methodName) {

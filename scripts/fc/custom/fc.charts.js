@@ -10,7 +10,9 @@
 				saveReport: "/Misc.rest/SaveReport?reportType=charts",
 				removeReport: "/Misc.rest/RemoveReport?reportType=charts"
 			},
+
 			reportTemplateName: "<%=widget.options.charts[filters.reportname]%>",
+
 			preloadfilters: function (e, widget) {
 				if (typeof (widget.options.fields) === "undefined") {
 					widget.options.fields = [{
@@ -44,11 +46,14 @@
 					widget.overlay.hide();
 				});
 			},
+
 			applyfilter: function (e, params) {
 				var self = $(this).data("fc-charts");
 
 				self.options.filter = params.filters || {};
 				self.options.data = params.data || [];
+
+				$.fc.history.current.pushState('filter', self.options.filter);
 			}
 		},
 
@@ -58,6 +63,14 @@
 			$.fc.reportpanel.prototype._create.apply(this, arguments);
 
 			this.overlay.resize().show();
+
+			var self = this;
+
+			$.fc.history.current.addHandler('filter', function (filters) {
+				self.filter.load(filters);
+
+				self.filter.submit();
+			});
 		},
 
 		_render: function () {

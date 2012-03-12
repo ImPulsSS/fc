@@ -28,7 +28,6 @@
 
 		options: {
 			decorate: true,
-			fieldWrapperClass: 'ui-widget fc-form-field',
 			dataType: "string",
 			placeholder: "",
 			labelStyle: {
@@ -73,7 +72,7 @@
 			if (this.options.decorate) {
 				this.element.wrap("<div></div>");
 
-				this.wrapper = this.element.parent().addClass(this.options.fieldWrapperClass);
+				this.wrapper = this.element.parent().addClass(this.widgetBaseClass);
 
 				if (this.options.label) {
 					$("<label></label>", { "text": this.options.label})
