@@ -2,13 +2,13 @@
 	$.fc.widget("fc.charts", $.fc.reportpanel, {
 		options: {
 			api: {
-				getData: "/Analytics.rest/GetReportData",
+				getData: "",
 
-				getAvailableReports: "/Analytics.rest/GetAvailableReports",
+				getAvailableReports: "",
 
-				getReports: "/Misc.rest/GetReports?reportType=charts",
-				saveReport: "/Misc.rest/SaveReport?reportType=charts",
-				removeReport: "/Misc.rest/RemoveReport?reportType=charts"
+				getReports: "",
+				saveReport: "",
+				removeReport: ""
 			},
 
 			reportTemplateName: "<%=widget.filter.getField('reportname').rawValue().text%>",

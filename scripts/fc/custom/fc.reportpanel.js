@@ -2,9 +2,9 @@
 	$.fc.widget("fc.reportpanel", {
 		options: {
 			api: {
-				getReports: "/GetReports?reportType=?",
-				saveReport: "/SaveReport?reportType=?",
-				removeReport: "/RemoveReport?reportType=?"
+				getReports: "",
+				saveReport: "",
+				removeReport: ""
 			},
 
 			reportTemplateName: "new report template"
@@ -34,15 +34,23 @@
 					}
 				});
 
-			this.header = $('<div></div>', { "class": this.widgetFullName + "-header" })
-				.appendTo(this.element);
+			this._addHeader();
 
-			this.body = $('<div></div>', { "class": this.widgetFullName + "-body" })
-				.appendTo(this.element);
+			this._addBody();
 
 			this._addTemplatesBlock();
 
 			this._addFilterBlock();
+		},
+
+		_addBody: function () {
+			this.body = $('<div></div>', { "class": this.widgetFullName + "-body" })
+				.appendTo(this.element);
+		},
+
+		_addHeader: function () {
+			this.header = $('<div></div>', { "class": this.widgetFullName + "-header" })
+				.appendTo(this.element);
 		},
 
 		_addFilterBlock: function () {
