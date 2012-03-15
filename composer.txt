@@ -1,0 +1,67 @@
+# scripts
+
+# framework
+fc.ui.all.min.js
+	scripts\fc\utils\json.js
+	scripts\fc\utils\fc.utils.js
+	scripts\fc\utils\fc.stringbuilder.js
+	scripts\fc\utils\fc.format.js
+	scripts\fc\fc.core.js
+
+	scripts\fc\data\fc.data.cache.js
+	scripts\fc\data\fc.data.store.js
+
+	scripts\fc\base\fc.base.hidable.js
+	scripts\fc\misc\fc.dialog.js
+	scripts\fc\misc\fc.overlay.js
+	scripts\fc\misc\fc.plain.js
+	scripts\fc\misc\fc.alert.js
+
+	scripts\fc\form\field\fc.form.field.js
+	scripts\fc\form\field\fc.form.field.checkbox.js
+	scripts\fc\form\field\fc.form.field.radio.js
+	scripts\fc\form\field\fc.form.field.date.js
+	scripts\fc\form\field\fc.form.field.textarea.js
+	scripts\fc\form\field\fc.form.field.selectbox.js
+	scripts\fc\form\field\fc.form.field.hidden.js
+
+	scripts\fc\form\fc.form.js
+	scripts\fc\form\fc.form.wrapped.js
+
+	scripts\fc\custom\fc.filter.js
+	scripts\fc\custom\fc.reportpanel.js
+	scripts\fc\misc\fc.spotlist.js
+
+	scripts\jquery\jquery.ba-hashchange.min.js
+	scripts\fc\utils\fc.history.js
+
+# cohorts
+fc.cohorts.min.js
+	scripts\fc\custom\fc.cohorts.js
+	
+# charts
+fc.charts.min.js
+	scripts\fc\custom\fc.charts.js
+	
+# rails
+#fc.rails.min.js
+#	scripts\fc\custom\fc.rails.js
+	
+# styles
+
+fc.ui.all.min.css
+	styles\fc.overlay.css
+	styles\fc.form.css
+	styles\fc.filter.css
+	styles\fc.alert.css
+	styles\fc.reportpanel.css
+	styles\fc.spotlist.css
+
+	styles\fc.cohorts.css
+	styles\fc.charts.css
+	
+fc.ui.ie.all.min.css
+	styles\fc.form.ie.css
+	styles\fc.filter.ie.css
+
+	styles\fc.cohorts.ie.css
