@@ -45,12 +45,14 @@
 
 		_addBody: function () {
 			this.body = $('<div></div>', { "class": this.widgetFullName + "-body" })
-				.appendTo(this.element);
+				.appendTo(this.element)
+				.hide();
 		},
 
 		_addHeader: function () {
 			this.header = $('<div></div>', { "class": this.widgetFullName + "-header" })
-				.appendTo(this.element);
+				.appendTo(this.element)
+				.hide();
 		},
 
 		_addFilterBlock: function () {
@@ -216,6 +218,9 @@
 			if (typeof (this.options.data) === "undefined" || !this.options.data) {
 				return false;
 			}
+
+			this.header.show();
+			this.body.show();
 		},
 
 		_destroy: function () {

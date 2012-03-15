@@ -132,12 +132,15 @@
 				self.options.actions = result;
 
 				self.overlay.hide();
+
+				self._callMethod("_render");
 			});
 		},
 
 		_addBody: function () {
 			this.body = $('<table></table>', { "cellspacing": 1, "cellpadding": 0, "class": this.widgetFullName + "-body" })
-				.appendTo(this.element);
+				.appendTo(this.element)
+				.hide();
 		},
 
 		_bindActions: function () {
@@ -251,6 +254,8 @@
 						self._callMethod("_render");
 					}
 				}, $("<select></select>").appendTo(this.toolbar));
+			} else {
+				this.toolbar.show();
 			}
 
 			this.cumulativeValues = {};
