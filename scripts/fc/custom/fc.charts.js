@@ -11,7 +11,7 @@
 				removeReport: "/Misc.rest/RemoveReport?reportType=charts"
 			},
 
-			reportTemplateName: "<%=widget.options.charts[filters.reportname]%>",
+			reportTemplateName: "<%=widget.filter.getField('reportname').rawValue().text%>",
 
 			preloadfilters: function (e, widget) {
 				return false;
@@ -24,35 +24,27 @@
 			if (!this._trigger("preloadfilters", null, this)) {
 				if (typeof (this.options.fields) === "undefined") {
 					this.options.fields = [{
-						label: "Report",
-						name: "reportname",
-						type: "select",
-						placeholder: "Select report",
-						options: {
-							url: this.options.api.getAvailableReports,
-							root: "reports",
-							map: [
-								{ name: "value", mapping: "name" },
-								{ name: "text", mapping: "title" }
-							]
-						},
-						required: true
-					}
+							label: "Report",
+							name: "reportname",
+							type: "select",
+							placeholder: "Select report",
+							options: {
+								url: this.options.api.getAvailableReports,
+								root: "reports",
+								map: [
+									{ name: "value", mapping: "name" },
+									{ name: "text", mapping: "title" }
+								]
+							},
+							required: true,
+							renderOptions: function () {
+								self.overlay.hide();
+
+								self._callMethod("_render");
+							}
+						}
 					];
 				}
-
-				$.fc.data.store.current.get({
-					url: this.options.api.getAvailableReports,
-					root: "reports"
-				}, function (data) {
-					var result = {};
-					$.each(data, function () {
-						result[this.name] = this.title;
-					});
-					self.options.charts = result;
-
-					self.overlay.hide();
-				});
 			}
 
 			$.fc.reportpanel.prototype._create.apply(this, arguments);

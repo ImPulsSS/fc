@@ -206,7 +206,6 @@
 
 		_render: function () {
 			if (typeof (this.options.data) === "undefined" || !this.options.data) {
-				this.header.text("No results found.");
 				return false;
 			}
 		},
