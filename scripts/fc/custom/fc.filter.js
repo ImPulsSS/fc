@@ -318,10 +318,19 @@
 
 		load: function (values) {
 			if (typeof (values) === "undefined" || !values) {
-				return;
+				values = {};
 			}
 
 			var field, fieldName, fieldValue;
+
+			this.element.find(':input').each(function () {
+				field = $(this).data('fcFieldWidget');
+				if (!field) {
+					return;
+				}
+
+				field.reset();
+			});
 
 			if (this.editableFields) {
 				this.editableFields.empty();

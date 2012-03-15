@@ -136,7 +136,7 @@
 			if (!this.valid()) {
 				return;
 			}
-		
+
 			var postData = this._serialize();
 
 			this._trigger("beforesubmit", null, postData);

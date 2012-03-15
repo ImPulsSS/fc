@@ -12,17 +12,17 @@
 			var self = this;
 
 			$(window).bind('hashchange', function (e) {
-				var key, state = self.getState();
+				var state = self.getState();
 
-				for (key in state) {
-					if (state[key] === self.options.state[key]) {
-						continue;
+				$.each(self.options.handlers, function (key, handlers) {
+					if ($.fc.dump(state[key]) === $.fc.dump(self.options.state[key])) {
+						return;
 					}
 
-					$.each(self.options.handlers[key], function (index, handler) {
+					$.each(handlers, function (index, handler) {
 						handler(state[key]);
 					});
-				}
+				});
 
 				self.options.state = state;
 			});
@@ -61,7 +61,11 @@
 			this.update();
 		},
 
-		pushState: function (key, params) {
+		pushState: function (key, params, refresh) {
+			if (!!refresh) {
+				this.options.state = {};
+			}
+
 			this.options.state[key] = params;
 
 			this.update();

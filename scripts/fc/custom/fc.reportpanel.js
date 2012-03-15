@@ -34,6 +34,11 @@
 					}
 				});
 
+			this.header = $('<div></div>', { "class": this.widgetFullName + "-header" })
+				.appendTo(this.element);
+
+			this.body = $('<div></div>', { "class": this.widgetFullName + "-body" })
+				.appendTo(this.element);
 
 			this._addTemplatesBlock();
 
@@ -62,43 +67,20 @@
 					},
 					buttons: {
 						"Run report": function() {
-							this.submit();
+							self.applyFilter();
 						},
 						"Save setting as template": function() {
-							if (!this.valid()) {
-								return;
-							}
-
-							var filters = this._serialize();
-
-							$.fc.dialog.prompt(
-								"Save report template",
-								"Please enter report name:",
-								$.fc.tmpl(self.options.reportTemplateName, { widget: self, filters: filters }),
-								function (reportName) {
-									if (!reportName) {
-										return;
-									}
-
-									self.options.reportTemplates.set({ reportName: reportName, filters: JSON.stringify(filters) }, function (response) {
-										if (!response.success) {
-											return;
-										}
-
-										var field = self.templates.getField("reportTemplate");
-										field.addOption({ text: reportName, value: response.id, filters: filters });
-										if (field.optionsCount() === 1) {
-											self.templates.show();
-										}
-									});
-								}
-							);
+							self.saveFilter();
 						}
 					},
+
 					apply: function (e, params) {
 						if (!params.data.success) {
 							return;
 						}
+
+						self.options.filter = params.filters || {};
+						self.options.data = params.data || [];
 
 						self._trigger("applyfilter", e, params);
 
@@ -196,34 +178,17 @@
 							"Run report": function() {
 								var filters = this.getField("reportTemplate").rawValue().filters;
 
-								self.filter.load(filters);
-
-								self.filter.submit();
+								self.applyFilter(filters);
 							},
 							"Remove template": function() {
 								var field = this.getField("reportTemplate"),
 									reportId = field.value();
 
-								if (!reportId) {
-									$.fc.dialog.alert("Template removing", "Unable to find selected template");
-									return;
-								}
-
-								$.fc.dialog.confirm("Template removing", "Are you sure you want to delete this template?", function (ok) {
-									if (!ok) {
-										return;
+								self.removeFilter(reportId, function (reportId) {
+									field.removeOption(reportId);
+									if (field.optionsCount() === 0) {
+										self.templates.hide();
 									}
-
-									self.options.reportTemplates.remove(reportId, function (response) {
-										if (!response.success) {
-											return;
-										}
-
-										field.removeOption(reportId);
-										if (field.optionsCount() === 0) {
-											self.templates.hide();
-										}
-									});
 								});
 							}
 						}
@@ -240,32 +205,86 @@
 		},
 
 		_render: function () {
-			this._addHeader();
-
-			this._addBody();
-
 			if (typeof (this.options.data) === "undefined" || !this.options.data) {
 				this.header.text("No results found.");
 				return false;
 			}
 		},
 
-		_addHeader: function () {
-			if (!this.header) {
-				this.header = $('<div></div>', { "class": this.widgetFullName + "-header" })
-					.appendTo(this.element);
-			}
-		},
-
-		_addBody: function () {
-			if (!this.body) {
-				this.body = $('<div></div>', { "class": this.widgetFullName + "-body" })
-					.appendTo(this.element);
-			}
-		},
-
 		_destroy: function () {
 			this.element.removeClass(this.widgetBaseClass);
+		},
+
+		applyFilter: function (filters, preventEventTrigger) {
+			if (arguments.length) {
+				this.filter.load(filters);
+			}
+
+			if (!preventEventTrigger) {
+				this._trigger("beforefilter", null, filters || this.filter._serialize());
+			}
+
+			this.filter.submit();
+		},
+
+		removeFilter: function (reportId, callback) {
+			if (!reportId) {
+				$.fc.dialog.alert("Template removing", "Unable to find selected template");
+				return;
+			}
+
+			var self = this;
+
+			$.fc.dialog.confirm("Template removing", "Are you sure you want to delete this template?", function (ok) {
+				if (!ok) {
+					return;
+				}
+
+				self.options.reportTemplates.remove(reportId, function (response) {
+					if (!response.success) {
+						return;
+					}
+
+					if ($.isFunction(callback)) {
+						callback(reportId);
+					}
+				});
+			});
+		},
+
+		saveFilter: function (filters) {
+			if (!arguments.length) {
+				if (!this.filter.valid()) {
+					return;
+				}
+
+				filters = this.filter._serialize();
+			}
+
+			var self = this;
+
+			$.fc.dialog.prompt(
+				"Save report template",
+				"Please enter report name:",
+				$.fc.tmpl(this.options.reportTemplateName, { widget: this, filters: filters }),
+				function (reportName) {
+					if (!reportName) {
+						return;
+					}
+
+					self.options.reportTemplates.set({ reportName: reportName, filters: JSON.stringify(filters) }, function (response) {
+						if (!response.success) {
+							return;
+						}
+
+						var field = self.templates.getField("reportTemplate");
+						field.addOption({ text: reportName, value: response.id, filters: filters });
+						if (field.optionsCount() === 1) {
+							self.templates.show();
+						}
+					});
+				}
+			);
 		},
 
 		widget: function () {

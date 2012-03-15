@@ -14,63 +14,50 @@
 			reportTemplateName: "<%=widget.options.charts[filters.reportname]%>",
 
 			preloadfilters: function (e, widget) {
-				if (typeof (widget.options.fields) === "undefined") {
-					widget.options.fields = [{
-							label: "Report",
-							name: "reportname",
-							type: "select",
-							placeholder: "Select report",
-							options: {
-								url: widget.options.api.getAvailableReports,
-								root: "reports",
-								map: [
-									{ name: "value", mapping: "name" },
-									{ name: "text", mapping: "title" }
-								]
-							},
-							required: true
-						}
+				return false;
+			}
+		},
+
+		_create: function () {
+			var self = this;
+
+			if (!this._trigger("preloadfilters", null, this)) {
+				if (typeof (this.options.fields) === "undefined") {
+					this.options.fields = [{
+						label: "Report",
+						name: "reportname",
+						type: "select",
+						placeholder: "Select report",
+						options: {
+							url: this.options.api.getAvailableReports,
+							root: "reports",
+							map: [
+								{ name: "value", mapping: "name" },
+								{ name: "text", mapping: "title" }
+							]
+						},
+						required: true
+					}
 					];
 				}
 
 				$.fc.data.store.current.get({
-					url: widget.options.api.getAvailableReports,
+					url: this.options.api.getAvailableReports,
 					root: "reports"
 				}, function (data) {
 					var result = {};
 					$.each(data, function () {
 						result[this.name] = this.title;
 					});
-					widget.options.charts = result;
+					self.options.charts = result;
 
-					widget.overlay.hide();
+					self.overlay.hide();
 				});
-			},
-
-			applyfilter: function (e, params) {
-				var self = $(this).data("fc-charts");
-
-				self.options.filter = params.filters || {};
-				self.options.data = params.data || [];
-
-				$.fc.history.current.pushState('filter', self.options.filter);
 			}
-		},
-
-		_create: function () {
-			this._trigger("preloadfilters", null, this);
 
 			$.fc.reportpanel.prototype._create.apply(this, arguments);
 
 			this.overlay.resize().show();
-
-			var self = this;
-
-			$.fc.history.current.addHandler('filter', function (filters) {
-				self.filter.load(filters);
-
-				self.filter.submit();
-			});
 		},
 
 		_render: function () {
@@ -157,8 +144,6 @@
 					}
 				}
 			}
-
-			this.body.empty();
 
 			new Highcharts.Chart({
 				chart: {

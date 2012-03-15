@@ -67,5 +67,22 @@
 
 	$.fc.isJSON = function (str) {
 		return !!str.match(/["\[\],:]/);
-	}
+	};
+
+	$.fc.dump = function (object) {
+		var level = arguments[1] || 0;
+		if (level > 5)
+			return;
+
+		var dump = new $.fc.stringBuilder();
+		for (var field in object)
+		{
+			dump.append(field, ':', object[field], ';');
+
+			if (typeof object[field] === 'object') {
+				dump.append($.fc.dump(object[field], level + 1));
+			}
+		}
+		return dump.toString("");
+	};
 })(jQuery);

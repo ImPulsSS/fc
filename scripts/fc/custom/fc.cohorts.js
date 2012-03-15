@@ -39,15 +39,7 @@
 						<% } %>\
 					</tr>\
 					<% } %>\
-				</tbody>',
-			applyfilter: function (e, params) {
-				var self = $(this).data("fc-cohorts");
-
-				self.options.filter = params.filters || {};
-				self.options.data = params.data.data || [];
-
-				self._getMaxValue();
-			}
+				</tbody>'
 		},
 
 		_create: function () {
@@ -149,6 +141,8 @@
 			}
 			
 			var self = this;
+
+			this._getMaxValue();
 
 			this.header.text((this.options.actions[this.options.filter.activity1] || this.options.filter.activity1) + 
 				(this.options.filter.toDate ?

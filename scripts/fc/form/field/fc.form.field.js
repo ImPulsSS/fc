@@ -98,6 +98,11 @@
 			});
 		},
 
+		reset: function () {
+			this.value(this.options.value || null);
+			this._resetValidation();
+		},
+
 		valid: function () {
 			var value = this.value();
 
