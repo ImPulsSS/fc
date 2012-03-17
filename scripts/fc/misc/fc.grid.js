@@ -10,6 +10,9 @@
 
 			this.container = this.element.parent()
 				.addClass(this.widgetBaseClass);
+
+			this.element
+				.find('td')
 		},
 
 		_destroy: function() {

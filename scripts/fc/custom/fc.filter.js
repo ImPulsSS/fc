@@ -117,7 +117,7 @@
 			this.header.prependTo(this.container);
 
 			if (this.options.collapsed) {
-				this.toggleView();
+				this.toggleView(true);
 			}
 
 			this.overlay = this.options.overlay || new $.fc.overlay({ parent: this.container });
@@ -360,16 +360,24 @@
 						.data('fcFieldWidget');
 		},
 
-		toggleView: function () {
+		toggleView: function (preventAnimation) {
 			var tool = this.toggle.find('.ui-icon');
 
 			if (!!this.options.collapsed) {
 				this.options.collapsed = false;
-				this.options.animations.expand.call(this.body[0]);
+				if (!preventAnimation) {
+					this.options.animations.collapse.call(this.body[0]);
+				} else {
+					this.body.hide();
+				}
 				tool.removeClass('ui-icon-triangle-1-s').addClass('ui-icon-triangle-1-n');
 			} else {
 				this.options.collapsed = true;
-				this.options.animations.collapse.call(this.body[0]);
+				if (!preventAnimation) {
+					this.options.animations.expand.call(this.body[0]);
+				} else {
+					this.body.show();
+				}
 				tool.removeClass('ui-icon-triangle-1-n').addClass('ui-icon-triangle-1-s');
 			}
 		},

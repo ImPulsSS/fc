@@ -39,6 +39,10 @@ fc.ui.all.min.js
 fc.cohorts.min.js
 	scripts\fc\custom\fc.cohorts.js
 	
+# liveview
+fc.liveview.min.js
+	scripts\fc\custom\fc.liveview.js
+	
 # charts
 fc.charts.min.js
 	scripts\fc\custom\fc.charts.js

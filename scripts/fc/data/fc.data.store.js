@@ -53,13 +53,16 @@
 
 		return $.map(arr, function (item, key) {
 			if (isFunction) {
-				return map(item, key);
+				return map.call(item, item, key);
 			}
 
 			result = {};
 
 			$.each(map, function (index, mapping) {
-				result[mapping.name] = item[mapping.mapping || mapping.name] || mapping.defaultValue || null;
+				result[mapping.name] = $.isFunction(mapping.mapping) ?
+					mapping.mapping.call(item, item) :
+					item[mapping.mapping || mapping.name] || mapping.defaultValue || null;
+
 				if ($.isFunction(mapping.format)) {
 					result[mapping.name] = mapping.format(result[mapping.name]);
 				}
