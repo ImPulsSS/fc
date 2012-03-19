@@ -117,6 +117,7 @@
 			this.header.prependTo(this.container);
 
 			if (this.options.collapsed) {
+				this.options.collapsed = false;
 				this.toggleView(true);
 			}
 
@@ -366,19 +367,19 @@
 			if (!!this.options.collapsed) {
 				this.options.collapsed = false;
 				if (!preventAnimation) {
-					this.options.animations.collapse.call(this.body[0]);
-				} else {
-					this.body.hide();
-				}
-				tool.removeClass('ui-icon-triangle-1-s').addClass('ui-icon-triangle-1-n');
-			} else {
-				this.options.collapsed = true;
-				if (!preventAnimation) {
 					this.options.animations.expand.call(this.body[0]);
 				} else {
 					this.body.show();
 				}
 				tool.removeClass('ui-icon-triangle-1-n').addClass('ui-icon-triangle-1-s');
+			} else {
+				this.options.collapsed = true;
+				if (!preventAnimation) {
+					this.options.animations.collapse.call(this.body[0]);
+				} else {
+					this.body.hide();
+				}
+				tool.removeClass('ui-icon-triangle-1-s').addClass('ui-icon-triangle-1-n');
 			}
 		},
 

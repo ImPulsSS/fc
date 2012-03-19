@@ -9,6 +9,9 @@
 
 			channel: "",
 
+			maxZoom: 10,
+			gridSize: 20,
+
 			template: '<h3><a href="#section2"><%=index%>. User <%=row.leadid%> did <%=row.action%> at <%=new Date()%></a></h3>\
 					   <div><p>\
 					        <%=formatedParams%>\
@@ -29,8 +32,6 @@
 
 			this.overlay = new $.fc.overlay({ parent: this.container });
 
-			this._addMap();
-
 			this._addFilterBlock();
 
 			this.overlay.resize().show();
@@ -47,13 +48,15 @@
 					}
 				})
 				.insertBefore(this.element);
-			}
 
-			this.map = new google.maps.Map(this.mapWrapper[0], {
-				zoom: 4,
-				center: new google.maps.LatLng(40, -90),
-				mapTypeId: google.maps.MapTypeId.ROADMAP
-			});
+				this.map = new google.maps.Map(this.mapWrapper[0], {
+					zoom: 4,
+					center: new google.maps.LatLng(40, -90),
+					mapTypeId: google.maps.MapTypeId.ROADMAP
+				});
+
+				this.mapCluster = new MarkerClusterer(this.map, [], { maxZoom: this.options.maxZoom, gridSize: this.options.gridSize });
+			}
 		},
 
 		_addFilterBlock: function () {
@@ -131,9 +134,11 @@
 						}
 					}
 				]],
+
 				buttons: {
 					"Apply": function() {
 						self.reset();
+						self.filter.toggleView();
 						self.applyFilters();
 					}
 				}
@@ -156,6 +161,7 @@
 
 			delete this.container;
 			delete this.filter;
+			delete this.mapCluster;
 			delete this.map;
 			delete this.mapWrapper;
 		},
@@ -187,11 +193,11 @@
 				});
 
 			if (typeof (data.latitude) !== "undefined" && typeof (data.longitude) !== "undefined") {
-				new google.maps.Marker({
-					position: new google.maps.LatLng(data.latitude, data.longitude),
-					map: this.map,
-					title: data.leadid
-				});
+				this.mapCluster.addMarker(
+					new google.maps.Marker({
+						position: new google.maps.LatLng(data.latitude, data.longitude),
+						title: data.leadid
+					}));
 			}
 		},
 
@@ -213,6 +219,7 @@
 			this.index = 1;
 
 			this._addMap();
+			this.mapCluster.clearMarkers();
 
 			this.element.html('Waiting for actions...');
 		}
