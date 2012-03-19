@@ -113,6 +113,14 @@
 								$(this)
 									.removeClass('ui-state-hover')
 									.addClass('ui-state-default');
+							})
+							.click(function () {
+								self.headersWrappers
+									.filter('.ui-state-active')
+									.removeClass('ui-state-active');
+
+								$(this)
+									.addClass('ui-state-active');
 							});
 					}
 				});
