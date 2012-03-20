@@ -3,38 +3,84 @@
 
 	$.fc.basePrefix = 'fc_';
 
+	var __fc_lastId = 0,
+		__fc_scrollbarWidth = 0,
+		__fc_primitiveTypes = { 'undefined': true, 'boolean': true, 'number': true, 'string': true };
+
 	$.fc.getTextDimensions = function (text) {
 		var $ruler = $('#__get_dimensions_dummy_span');
 		if ($ruler.length === 0) {
 			$ruler = $('<span></span>', {
-				"id": "__get_dimensions_dummy_span",
-				"css": {
-					display: "inline-block",
-					position: "absolute",
-					left: -9999,
-					top: -9999,
-					zoom: 1
-				}
-			})
+					"id": "__get_dimensions_dummy_span",
+					"css": {
+						display: "inline-block",
+						position: "absolute",
+						left: -9999,
+						top: -9999,
+						zoom: 1
+					}
+				})
 				.appendTo(document.body);
 		}
 
 		$ruler.removeClass()
 			.addClass(arguments[2] || "")
 				.css($.extend({
-				"width": "",
-				"min-width": "",
-				"max-width": "",
-				"height": "",
-				"min-height": "",
-				"max-height": ""
-			}, arguments[1]))
+						"width": "",
+						"min-width": "",
+						"max-width": "",
+						"height": "",
+						"min-height": "",
+						"max-height": ""
+					}, arguments[1]))
 			.html(text);
 
 		return { width: $ruler.outerWidth(), height: $ruler.outerHeight() };
 	};
 
-	var __fc_lastId = 0;
+	$.fc.scrollbarWidth = function () {
+		if (!__fc_scrollbarWidth) {
+			if ($.browser.msie) {
+				var $textarea1 = $('<textarea></textarea>', {
+							cols: 10,
+							rows: 2,
+							css: {
+								position: "absolute",
+								top: -1000,
+								left: -1000
+							}
+						})
+						.appendTo('body'),
+					$textarea2 = $('<textarea></textarea>', {
+							cols: 10,
+							rows: 2,
+							css: {
+								overflow: "hidden",
+								position: "absolute",
+								top: -1000,
+								left: -1000
+							}
+						})
+						.appendTo('body');
+
+				__fc_scrollbarWidth = $textarea1.width() - $textarea2.width();
+
+				$textarea1.add($textarea2).remove();
+			} else {
+				var $div = $('<div />', { css: { width: 100, height: 100, overflow: 'auto', position: 'absolute', top: -1000, left: -1000 } })
+					.prependTo('body')
+					.append('<div />')
+					.find('div')
+					.css({ width: '100%', height: 200 });
+
+				__fc_scrollbarWidth = 100 - $div.width();
+
+				$div.parent().remove();
+			}
+		}
+
+		return __fc_scrollbarWidth;
+	};
 
 	$.fc.getId = function () {
 		return $.fc.basePrefix + (__fc_lastId++);
@@ -70,6 +116,10 @@
 	};
 
 	$.fc.dump = function (object) {
+		if (object === null || typeof(object) in __fc_primitiveTypes) {
+			return object;
+		}
+
 		var level = arguments[1] || 0;
 		if (level > 5)
 			return;

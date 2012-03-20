@@ -239,14 +239,14 @@
 					type: "select",
 					css: { width: 225 },
 					options: [{
-						text: "Number of people", value: 0
-					}, {
-						text: "Percentage of people", value: 1
-					}, {
-						text: "Cumulative number of people", value: 2
-					}, {
-						text: "Cumulative percentage of people", value: 3
-					}
+							text: "Number of people", value: 0
+						}, {
+							text: "Percentage of people", value: 1
+						}, {
+							text: "Cumulative number of people", value: 2
+						}, {
+							text: "Cumulative percentage of people", value: 3
+						}
 					],
 					value: this.options.reportType,
 					change: function () {

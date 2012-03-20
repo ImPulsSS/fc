@@ -89,6 +89,12 @@
 			widgetEventPrefix: fullName,
 			widgetFullName: className,
 			widgetBaseClass: (basePrototype.widgetBaseClass || "ui-widget") + " " + className,
+			_bind : function (type, handler) {
+				this.element
+					.bind((this.widgetEventPrefix + type).toLowerCase(), function () {
+						return handler.apply(this, Array.prototype.slice.apply(arguments, 1));
+					});
+			},
 			_callMethod: function (methodName) {
 				if (typeof (this[methodName]) === "undefined") {
 					return;
@@ -124,6 +130,9 @@
 			}
 
 			return callback.apply(this, Array.prototype.slice.apply(arguments, 1)) !== false;
+		},
+		bind: function () {
+
 		},
 		destroy: function() {}
 	}

@@ -2,8 +2,8 @@
 	.fc-grid-table { border-collapse: collapse; border: 0; }
 	.fc-grid-table td, .fc-grid-table th { padding: 0; }
 
-		.fc-grid-header { padding: 0.5em 1em; overflow: hidden;  }
-		.fc-grid-sortable { padding-right: 2em; position: relative; }
-			.fc-grid-sortable .ui-icon { position: absolute; top: 0.5em; right: 0.5em; }
+		.fc-grid-header { padding: 0.5em 1em; overflow: hidden; }
+		.fc-grid-sortable { padding-right: 2em; position: relative; cursor: pointer; }
+			.fc-grid-sortable .ui-icon { margin-top: -1px; position: absolute; top: 0.5em; right: 0.4em; }
 
 	.ui-resizable-helper { border-right: 1px dotted gray; }

@@ -1,4 +1,6 @@
+#########################################################
 # scripts
+#########################################################
 
 # framework
 fc.ui.all.min.js
@@ -28,9 +30,11 @@ fc.ui.all.min.js
 	scripts\fc\form\fc.form.js
 	scripts\fc\form\fc.form.wrapped.js
 
-	scripts\fc\custom\fc.filter.js
-	scripts\fc\custom\fc.reportpanel.js
+	scripts\fc\misc\fc.grid.js
 	scripts\fc\misc\fc.spotlist.js
+
+	scripts\fc\custom\fc.reportpanel.js
+	scripts\fc\custom\fc.filter.js
 
 	scripts\jquery\jquery.ba-hashchange.min.js
 	scripts\fc\utils\fc.history.js
@@ -38,32 +42,36 @@ fc.ui.all.min.js
 # cohorts
 fc.cohorts.min.js
 	scripts\fc\custom\fc.cohorts.js
-	
-# liveview
-fc.liveview.min.js
-	scripts\fc\custom\fc.liveview.js
-	
+
 # charts
 fc.charts.min.js
 	scripts\fc\custom\fc.charts.js
-	
+
+# liveview
+fc.liveview.min.js
+	scripts\fc\custom\fc.liveview.js
+
 # rails
 #fc.rails.min.js
 #	scripts\fc\custom\fc.rails.js
-	
+
+#########################################################
 # styles
+#########################################################
 
 fc.ui.all.min.css
 	styles\fc.overlay.css
 	styles\fc.form.css
-	styles\fc.filter.css
 	styles\fc.alert.css
-	styles\fc.reportpanel.css
+	styles\fc.grid.css
 	styles\fc.spotlist.css
+
+	styles\fc.reportpanel.css
+	styles\fc.filter.css
 
 	styles\fc.cohorts.css
 	styles\fc.charts.css
-	
+
 fc.ui.ie.all.min.css
 	styles\fc.form.ie.css
 	styles\fc.filter.ie.css
