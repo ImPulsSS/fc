@@ -6,4 +6,12 @@
 		.fc-grid-sortable { padding-right: 2em; position: relative; cursor: pointer; }
 			.fc-grid-sortable .ui-icon { margin-top: -1px; position: absolute; top: 0.5em; right: 0.4em; }
 
+		.fc-grid-row { border: 1px solid #EDEDED; border-width: 0 0 1px 0 ; }
+	        .fc-grid-cell { }
+	            .fc-grid-cell-inner { padding: 0.5em 1em; overflow: hidden; }
+
+			.fc-grid-row-even { background-color: #FAFAFA; }
+
+			.fc-grid-row-over { background-color: #EEEEEE; }
+
 	.ui-resizable-helper { border-right: 1px dotted gray; }

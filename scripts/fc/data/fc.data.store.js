@@ -76,7 +76,6 @@
 	$.fc.define("fc.data.store", {
 		options: {
 			type: $.fc.data.store.types.json,
-			useLocalStorage: false,
 			read: {
 				type: "GET",
 				dataType: "json",
@@ -105,6 +104,7 @@
 
 		get: function () {
 			var self = this,
+				data = null,
 				options  = $.extend({}, this.options.read);
 
 			if (arguments.length === 0) {
@@ -115,7 +115,7 @@
 				if (typeof (arguments[0]) === "string") {
 					options.url = arguments[0];
 				} else if ($.isArray(arguments[0])) {
-					options.data = arguments[0];
+					data = arguments[0];
 				} else if ($.isFunction(arguments[0])) {
 					options.done = arguments[0];
 				} else {
@@ -144,24 +144,29 @@
 			}
 
 			// memory
-			if ($.isArray(options.data)) {
-				options.done(this._prepareData(options.data, options));
+			if ($.isArray(data)) {
+				options.done(this._prepareData(data, options));
 
 				return true;
 			}
 
 			//cached ajax
 			if (options.cached) {
-				if (this.cache.contains(options.url)) {
-					options.done(this._prepareData(this.cache.get(options.url), options));
+				var hash = $.fc.dump({
+						url: options.url,
+						data: options.data
+					});
+
+				if (this.cache.contains(hash)) {
+					options.done(this._prepareData(this.cache.get(hash), options));
 
 					return true;
 				}
 
-				var cache = this.cache.get(options.url);
+				var cache = this.cache.get(hash);
 
 				if (!cache) {
-					cache = this.cache.set(options.url, $.ajax(options));
+					cache = this.cache.set(hash, $.ajax(options));
 				}
 
 				if ($.isFunction(options.startLoading)) {

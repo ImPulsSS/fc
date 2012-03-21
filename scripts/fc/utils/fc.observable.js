@@ -17,26 +17,36 @@
 				}
 
 				return observable;
-			};
+			},
+			_eventTarget = $([ observable ]);
 
 		return $.extend(true, observable, {
+				"set": function (newValue) {
+					_lastValue = newValue;
+				},
+
+				"get": function () {
+					return _lastValue;
+				},
+
 				equal: function (oldValue, newValue) {
 					return $.fc.dump(oldValue) === $.fc.dump(newValue);
 				},
+
 				bind: function () {
-					var wrapper = $([ this ]);
-					wrapper.bind.apply(wrapper, arguments);
+					_eventTarget.bind.apply(_eventTarget, arguments);
 				},
+
 				unbind: function () {
-					var wrapper = $([ this ]);
-					wrapper.unbind.apply(wrapper, arguments);
+					_eventTarget.unbind.apply(_eventTarget, arguments);
 				},
+
 				trigger: function (eventName) {
 					this._trigger(eventName || "change", [ _lastValue ]);
 				},
+
 				_trigger: function () {
-					var wrapper = $([ this ]);
-					wrapper.triggerHandler.apply(wrapper, arguments);
+					_eventTarget.triggerHandler.apply(_eventTarget, arguments);
 				}
 			});
 	};
@@ -63,6 +73,7 @@
 
 				return $.inArray(item, items);
 			},
+
 			remove: function (value) {
 				var i, item,
 					items = this(),
@@ -82,10 +93,12 @@
 
 				if (removedValues.length) {
 					this.trigger();
+					this.trigger("remove", removedValues);
 				}
 
 				return removedValues;
 			},
+
 			removeAll: function () {
 				if (!arguments.length) {
 					var items = this(),
@@ -96,8 +109,7 @@
 					items.splice(0, items.length);
 
 					this.trigger();
-
-					this.trigger("removeAll");
+					this._trigger("removeAll", allValues);
 
 					return allValues;
 				}
@@ -113,22 +125,28 @@
 						}
 					});
 			},
+
 			replace: function (index, newItem) {
 				if (index >= 0) {
 					this.trigger('beforechange');
 
-					this()[index] = newItem;
+					var items = this(),
+						oldValue = items.slice(0)[index];
+
+					items[index] = newItem;
 
 					this.trigger();
+					this._trigger("replace", oldValue, newItem);
 				}
 			},
+
 			replaceAll: function () {
 				var items = this(),
 					allValues = items.slice(0);
 
 				this($.map(arguments, function (value) { return value; }));
 
-				this.trigger("replaceAll");
+				this.trigger("replaceAll", allValues, this());
 
 				return allValues;
 			}

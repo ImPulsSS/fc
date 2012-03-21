@@ -18,6 +18,11 @@
 				headersWrappers
 					.last()
 					.addClass('ui-corner-tr');
+			},
+
+			render: function () {
+				$(this).find('.fc-grid-row:last .fc-grid-cell:first div')
+					.addClass('ui-corner-bl');
 			}
 		},
 
@@ -32,11 +37,9 @@
 
 			this.overlay = new $.fc.overlay({ parent: this.container });
 
-			if (!this.options.store) {
-				this.options.store = new $.fc.data.store();
-			}
-
 			this._callMethod("_renderHeaders");
+
+			this._callMethod("_initData");
 
 			this._callMethod("_render");
 		},
@@ -50,54 +53,132 @@
 			this.headers
 				.children('div')
 				.each(function () {
-					$(this).parent().text(this.innerText);
+					$(this).parent().text($(this).text());
 				});
 
 			this.cells
 				.removeClass(this.widgetFullName + "-cell");
 
 			delete this.headers;
-			delete this.cells;
+			delete this.header;
+			delete this.body;
 			delete this.container;
 		},
 
-		_render: function () {
-			var data = [];
+		_initData: function () {
+			var self = this,
+				columns = self.columns(),
+				data = [];
 
-			this.cells = this.element
+			this.element
 				.find('tbody tr')
 				.each(function (index) {
 					data[index] = data[index] || [];
 
 					$(this)
 						.find('td')
-						.each(function () {
-							data[index].push(this.innerText);
+						.each(function (column) {
+							data[index][columns[column].property] = $(this).text();
 						});
 				});
 
+			if (this.options.source !== null && this.options.source.widgetName === "fcDataView") {
+				this.source = this.options.source;
+			} else {
+				var sourceOptions = {
+						data: $.isArray(this.options.source) ? data.push.apply(this.options.source) : data,
+						change: function () {
+							self._callMethod("_render");
+						}
+					};
 
+				this.source = new $.fc.data.view(
+						$.isPlainObject(this.options.source) ?
+							$.extend(true, sourceOptions, this.options.source) :
+							sourceOptions
+					);
+			}
+		},
 
-			/*this.element
-				.find('tbody tr:odd').addClass(this.widgetFullName + "-row-odd").end()
-				.find('tbody tr:even').addClass(this.widgetFullName + "-row-even").end();*/
+		_render: function () {
+			var tableRows = [],
+				self = this,
+				data = this.source.data();
+
+	        this.element
+				.find('tbody').remove();
+
+			this.body = $('<tbody></tbody>')
+				.insertAfter(this.header);
+
+			if (!data.length) {
+				this.source.refresh();
+				return;
+			}
+
+			$.each(data, function (index, row) {
+				tableRows.push(self._renderRow({ index: index, evenness: index % 2 ? "even" : "odd", row: row }));
+			});
+
+			this.body.html(tableRows.join(''));
+
+			this.body
+				.find('tr')
+				.hover(function () {
+					$(this).addClass(self.widgetFullName + "-row-over");
+				}, function () {
+					$(this).removeClass(self.widgetFullName + "-row-over");
+				})
+				.click(function () {
+					self.body.find(".ui-state-highlight")
+						.removeClass("ui-state-highlight");
+
+					$(this).addClass("ui-state-highlight");
+				})
+				.disableSelection();
+		},
+
+		_renderRow: function (data) {
+			return $.fc.tmpl(this.rowTemplate, data);
 		},
 
 		_renderHeaders: function () {
 			var $this,
 				self = this,
-				head = this.element.find('thead tr'),
 				columns = [];
 
-			this.element
-				.find('thead td, thead th')
+			this.columns = new $.fc.observableArray([]);
+			this.columns.bind('change', function (e, value) {
+				self.rowTemplate = $.map(value, function (column, index) {
+						return $.fc.stringBuilder.format('<td class="{0}-cell {0}-column-{1}"><div class="{0}-cell-inner"><%=row[{2}] || " "%></div></td>',
+								self.widgetFullName,
+								~~index + 1,
+								$.isNumeric(column.property) ?
+									column.property :
+									"'" + column.property + "'");
+					})
+					.join('');
+
+				self.rowTemplate = $.fc.stringBuilder.format('<tr class="{0}-row {0}-row-<%=evenness%>" data-index="<%=index%>">{1}</tr>', self.widgetFullName, self.rowTemplate);
+			});
+
+			this.header = this.element
+				.find('thead');
+
+			if (!this.header.length) {
+				this.header = $('<thead></thead>')
+					.prependTo(this.element);
+			}
+
+			this.header
+				.find('td, th')
 				.each(function (index) {
 					$this = $(this)
 						.wrapInner('<div></div>');
 
 					columns.push({
-						text: this.innerText,
-						property: typeof ($this.data('resizable')) !== "undefined" ?
+						text: $this.text(),
+						property: typeof ($this.data('property')) !== "undefined" ?
 							$this.data('property') :
 							index,
 						resizable: typeof ($this.data('resizable')) !== "undefined" ?
@@ -124,13 +205,13 @@
 						"data-resizable": column.resizable
 					})
 					.wrapInner('<div></div>')
-					.appendTo(head);
+					.appendTo(self.header);
 			});
 
-			this.options.columns = columns;
+			this.columns(columns);
 
-			this.headers = this.element
-				.find('thead td, thead th');
+			this.headers = this.header
+				.find('td, th');
 
 			this.headersWrappers = this.headers
 				.children('div')
@@ -138,6 +219,7 @@
 				.disableSelection()
 				.each(function (index) {
 					$this = $(this)
+						.css(columns[index].css || {})
 						.addClass(self.widgetFullName + "-column-" + (index + 1) + " ui-state-default");
 
 					if (columns[index].sortable) {
@@ -174,7 +256,7 @@
 										.removeClass('ui-icon-triangle-2-n-s ui-icon-triangle-1-n ui-icon-triangle-1-s')
 										.addClass(directionAsc ? 'ui-icon-triangle-1-s' : 'ui-icon-triangle-1-n');
 
-								self.sort.call(self, columns[index].dataIndex, directionAsc ? "desc" : "asc");
+								self.sort.call(self, columns[index].property, directionAsc ? "desc" : "asc");
 							});
 					}
 
@@ -184,7 +266,7 @@
 								helper: "ui-resizable-helper",
 								handles: "e",
 								boundWidth: $this.width(),
-								minWidth: columns[index].minWidth || $.fc.getTextDimensions($this.text(), {}, $this.attr('class') + " ui-widget").width
+								minWidth: $.fc.getTextDimensions($this.text(), { }, $this.attr('class') + " ui-widget").width
 							})
 							.find('.ui-resizable-e')
 								.dblclick(function (e) {
@@ -197,8 +279,8 @@
 				});
 		},
 
-		sort: function () {
-			//this.options.store.sort();
+		sort: function (property, direction) {
+			this.source.sort([{ property: property, direction: direction }]);
 		},
 
 		widget: function () {

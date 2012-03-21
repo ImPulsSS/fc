@@ -6,6 +6,7 @@
 fc.ui.all.min.js
 	scripts\fc\utils\json.js
 	scripts\fc\utils\fc.utils.js
+	scripts\fc\utils\fc.observable.js
 	scripts\fc\utils\fc.stringbuilder.js
 	scripts\fc\utils\fc.format.js
 	scripts\fc\fc.core.js
