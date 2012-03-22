@@ -61,7 +61,11 @@
 			$.each(map, function (index, mapping) {
 				result[mapping.name] = $.isFunction(mapping.mapping) ?
 					mapping.mapping.call(item, item) :
-					item[mapping.mapping || mapping.name] || mapping.defaultValue || null;
+					item[mapping.mapping || mapping.name] || mapping.defaultValue;
+
+				if (typeof (result[mapping.name]) === "undefined") {
+					result[mapping.name] = null;
+				}
 
 				if ($.isFunction(mapping.format)) {
 					result[mapping.name] = mapping.format(result[mapping.name]);
@@ -77,6 +81,7 @@
 		options: {
 			type: $.fc.data.store.types.json,
 			read: {
+				predefinedData: null,
 				type: "GET",
 				dataType: "json",
 				cached: true
@@ -115,7 +120,7 @@
 				if (typeof (arguments[0]) === "string") {
 					options.url = arguments[0];
 				} else if ($.isArray(arguments[0])) {
-					data = arguments[0];
+					options.predefinedData = arguments[0];
 				} else if ($.isFunction(arguments[0])) {
 					options.done = arguments[0];
 				} else {
@@ -144,8 +149,8 @@
 			}
 
 			// memory
-			if ($.isArray(data)) {
-				options.done(this._prepareData(data, options));
+			if ($.isArray(options.predefinedData)) {
+				options.done(this._prepareData(options.predefinedData, options));
 
 				return true;
 			}

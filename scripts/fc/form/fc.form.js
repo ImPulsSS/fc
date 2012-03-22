@@ -5,7 +5,9 @@
 		options: {
 			type: "ajax",
 			method: "POST",
-			fieldSetClass: "fc-form-fieldset"
+			fieldSetClass: "fc-form-fieldset",
+
+			fields: []
 		},
 
 		_create: function () {

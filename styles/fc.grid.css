@@ -1,17 +1,19 @@
-.fc-grid {  }
-	.fc-grid-table { border-collapse: collapse; border: 0; }
+.fc-grid { display: inline-block; position: relative; }
+	.fc-grid-table { border-collapse: collapse; table-layout: fixed; border: 0;  }
 	.fc-grid-table td, .fc-grid-table th { padding: 0; }
 
-		.fc-grid-header { padding: 0.5em 1em; overflow: hidden; }
+		.fc-grid-header { padding: 0.5em 1em; overflow: hidden; white-space: nowrap; }
 		.fc-grid-sortable { padding-right: 2em; position: relative; cursor: pointer; }
 			.fc-grid-sortable .ui-icon { margin-top: -1px; position: absolute; top: 0.5em; right: 0.4em; }
 
 		.fc-grid-row { border: 1px solid #EDEDED; border-width: 0 0 1px 0 ; }
-	        .fc-grid-cell { }
-	            .fc-grid-cell-inner { padding: 0.5em 1em; overflow: hidden; }
+	        .fc-grid-cell { overflow: hidden;  }
+	            .fc-grid-cell-inner { padding: 0.5em 1em; text-overflow: ellipsis; text-align: left; overflow: hidden; white-space: nowrap; }
 
 			.fc-grid-row-even { background-color: #FAFAFA; }
 
 			.fc-grid-row-over { background-color: #EEEEEE; }
+
+		.fc-grid-footer { border: 0; }
 
 	.ui-resizable-helper { border-right: 1px dotted gray; }

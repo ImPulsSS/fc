@@ -8,6 +8,12 @@
 
 			showScrollBar: true,
 
+			headerTemplate: '<tr>\
+			                    <% for (var i = 0; i < columns.length; i++) { %>\
+			    	                <th data-property="<%=columns[i].property%>" data-sortable="<%=columns[i].sortable%>" data-resizable="<%=columns[i].resizable%>"><div><%=columns[i].text%></div></th>\
+								<% } %>\
+				             </tr>',
+
 			renderHeaders: function () {
 				var headersWrappers = $(this).find('.fc-grid-header');
 
@@ -30,9 +36,11 @@
 			this.element.wrap('<div></div>');
 
 			this.container = this.element.parent()
+				.css(this.options.css)
 				.addClass(this.widgetBaseClass);
 
 			this.element
+				.css(this.options.css)
 				.addClass(this.widgetFullName + "-table");
 
 			this.overlay = new $.fc.overlay({ parent: this.container });
@@ -40,6 +48,8 @@
 			this._callMethod("_renderHeaders");
 
 			this._callMethod("_initData");
+
+			this._callMethod("_renderFooter");
 
 			this._callMethod("_render");
 		},
@@ -56,12 +66,11 @@
 					$(this).parent().text($(this).text());
 				});
 
-			this.cells
-				.removeClass(this.widgetFullName + "-cell");
-
 			delete this.headers;
 			delete this.header;
 			delete this.body;
+			delete this.pager;
+			delete this.footer;
 			delete this.container;
 		},
 
@@ -86,10 +95,7 @@
 				this.source = this.options.source;
 			} else {
 				var sourceOptions = {
-						data: $.isArray(this.options.source) ? data.push.apply(this.options.source) : data,
-						change: function () {
-							self._callMethod("_render");
-						}
+						data: $.isArray(this.options.source) ? data.push.apply(this.options.source) : data
 					};
 
 				this.source = new $.fc.data.view(
@@ -98,12 +104,24 @@
 							sourceOptions
 					);
 			}
+
+			this.source._bind({
+				change: function () {
+					self._callMethod("_render");
+				},
+				beforerefresh: function () {
+					self.overlay.resize().show();
+				},
+				refresh: function () {
+					self.overlay.hide();
+				}
+			});
 		},
 
 		_render: function () {
 			var tableRows = [],
 				self = this,
-				data = this.source.data();
+				data = this.source.data() || [];
 
 	        this.element
 				.find('tbody').remove();
@@ -134,12 +152,28 @@
 						.removeClass("ui-state-highlight");
 
 					$(this).addClass("ui-state-highlight");
-				})
-				.disableSelection();
+				});
 		},
 
-		_renderRow: function (data) {
-			return $.fc.tmpl(this.rowTemplate, data);
+		_renderFooter: function () {
+			this.footer = this.element
+				.find('tfoot tr td');
+
+			if (!this.footer.length) {
+				this.footer = $('<tfoot><tr><td></td></tr></tfoot>')
+					.appendTo(this.element)
+					.find('td')
+					.attr("colspan", this.columns().length)
+					.addClass(this.widgetFullName + "-footer ui-state-default");
+			}
+
+			this.pager = new $.fc.pager({
+				source: this.source
+			});
+
+			this.pager
+				.widget()
+				.appendTo(this.footer);
 		},
 
 		_renderHeaders: function () {
@@ -170,6 +204,14 @@
 					.prependTo(this.element);
 			}
 
+			this.colgroup = this.element
+				.find('colgroup');
+
+			if (!this.colgroup.length) {
+				this.colgroup = $('<colgroup></colgroup>')
+					.prependTo(this.element);
+			}
+
 			this.header
 				.find('td, th')
 				.each(function (index) {
@@ -197,16 +239,9 @@
 						resizable: true,
 						sortable: true
 					}, column));
-
-				$('<th></th>', {
-						"text": column.text,
-						"data-property": column.property,
-						"data-sortable": column.sortable,
-						"data-resizable": column.resizable
-					})
-					.wrapInner('<div></div>')
-					.appendTo(self.header);
 			});
+
+			self.header.html($.fc.tmpl(self.options.headerTemplate, { columns: columns }));
 
 			this.columns(columns);
 
@@ -219,8 +254,15 @@
 				.disableSelection()
 				.each(function (index) {
 					$this = $(this)
-						.css(columns[index].css || {})
 						.addClass(self.widgetFullName + "-column-" + (index + 1) + " ui-state-default");
+
+					var col = $('<col>', {
+							width: columns[index].css && columns[index].css.width ?
+								columns[index].css.width :
+								$this.parent().width(),
+							"data-flex": !columns[index].css || !columns[index].css.width
+						})
+						.appendTo(self.colgroup);
 
 					if (columns[index].sortable) {
 						$this
@@ -240,7 +282,7 @@
 								$(this)
 									.addClass('ui-state-active');
 							})
-							.mouseup(function () {
+							.click(function () {
 								var $this = $(this).removeClass('ui-state-active'),
 									directionAsc = $this.hasClass(self.widgetFullName + "-sortable-asc");
 
@@ -256,7 +298,7 @@
 										.removeClass('ui-icon-triangle-2-n-s ui-icon-triangle-1-n ui-icon-triangle-1-s')
 										.addClass(directionAsc ? 'ui-icon-triangle-1-s' : 'ui-icon-triangle-1-n');
 
-								self.sort.call(self, columns[index].property, directionAsc ? "desc" : "asc");
+								self.sort.call(self, columns[index].property, directionAsc ? "DESC" : "ASC");
 							});
 					}
 
@@ -266,6 +308,20 @@
 								helper: "ui-resizable-helper",
 								handles: "e",
 								boundWidth: $this.width(),
+								stop: function (e, ui) {
+									col.width(ui.size.width);
+									$(this).css({ width: "auto", height: "auto" });
+
+									var flexCol,
+										flexCols = self.colgroup
+											.find('[data-flex="true"]'),
+										decrease = (ui.size.width - ui.originalSize.width - $(this).width() + col.width()) / flexCols.length;
+
+									flexCols.each(function () {
+										flexCol = $(this);
+										flexCol.width(flexCol.width() - decrease);
+									});
+								},
 								minWidth: $.fc.getTextDimensions($this.text(), { }, $this.attr('class') + " ui-widget").width
 							})
 							.find('.ui-resizable-e')
@@ -278,6 +334,11 @@
 					}
 				});
 		},
+
+		_renderRow: function (data) {
+			return $.fc.tmpl(this.rowTemplate, data);
+		},
+
 
 		sort: function (property, direction) {
 			this.source.sort([{ property: property, direction: direction }]);

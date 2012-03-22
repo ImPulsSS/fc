@@ -236,7 +236,7 @@
 								}
 							},
 							$.isArray(this.options.editableFilters) ?
-								{ data: this.options.editableFilters } :
+								{ predefinedData: this.options.editableFilters } :
 								this.options.editableFilters
 						),
 						change: function () {

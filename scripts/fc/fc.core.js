@@ -26,6 +26,7 @@
 			fullName = $.camelCase(namespace.join("-")),
 			constructor = function () {
 				this.options = $.extend(true, {}, this.options, arguments[0] || {});
+				this._eventTarget = $([ this ]);
 				this._create();
 			};
 
@@ -92,7 +93,7 @@
 			_bind : function (type, handler) {
 				this.element
 					.bind((this.widgetEventPrefix + type).toLowerCase(), function () {
-						return handler.apply(this, Array.prototype.slice.apply(arguments, 1));
+						return handler.apply(this, Array.prototype.slice.apply(arguments).slice(1));
 					});
 			},
 			_callMethod: function (methodName) {
@@ -122,18 +123,43 @@
 	$.fc.base.prototype = {
 		options: {},
 		_create: function () {},
-		_trigger: function(type) {
-			var callback = this.options[type];
+		_trigger: function (type) {
+			var data = Array.prototype.slice.apply(arguments).slice(1) || [],
+				callback = this.options[type];
 
-			if (!$.isFunction(callback)) {
-				return true;
+			if ($.isFunction(callback)) {
+				return callback.apply(this, data) !== false;
+			} else if (callback) {
+				this.options[type].fireWith(this, data);
+			}
+		},
+		_bind: function (type) {
+			if ($.isPlainObject(type)) {
+				var self = this;
+				$.each(type, function (key, callback) {
+					self.bind(key, callback);
+				});
+			} else {
+				this.bind(type, arguments[1]);
+			}
+		},
+		bind: function (type, callback) {
+			if (typeof (this.options[type]) === "undefined") {
+				this.options[type] = $.Callbacks("stopOnFalse");
+			}
+			if ($.isFunction(this.options[type])) {
+				callback = [ this.options[type], callback ];
+
+				this.options[type] = $.Callbacks("stopOnFalse");
 			}
 
-			return callback.apply(this, Array.prototype.slice.apply(arguments, 1)) !== false;
+			this.options[type].add(callback);
 		},
-		bind: function () {
-
+		unbind: function (type, fn) {
+			if (typeof (this.options[type]) !== "undefined" && !$.isFunction(this.options[type])) {
+				this.options[type].remove(fn);
+			}
 		},
 		destroy: function() {}
-	}
+	};
 })(jQuery);
