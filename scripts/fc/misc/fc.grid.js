@@ -7,6 +7,9 @@
 			source: null,
 
 			showScrollBar: true,
+			showFooter: true,
+
+			statTemplate: '<div class="<%=widgetFullName%>-stat">Displaying <span class="<%=widgetFullName%>-offset"><%=source.offset() + 1%></span> - <span class="<%=widgetFullName%>-limit"><%=source.offset() + source.limit()%></span> of <span class="<%=widgetFullName%>-total"><%=source.total()%></div>',
 
 			headerTemplate: '<tr>\
 			                    <% for (var i = 0; i < columns.length; i++) { %>\
@@ -66,10 +69,15 @@
 					$(this).parent().text($(this).text());
 				});
 
+			if (this.stat) {
+				this.stat.remove();
+			}
+
 			delete this.headers;
 			delete this.header;
 			delete this.body;
 			delete this.pager;
+			delete this.stat;
 			delete this.footer;
 			delete this.container;
 		},
@@ -156,6 +164,10 @@
 		},
 
 		_renderFooter: function () {
+			if (!this.options.showFooter) {
+				return;
+			}
+
 			this.footer = this.element
 				.find('tfoot tr td');
 
@@ -166,6 +178,8 @@
 					.attr("colspan", this.columns().length)
 					.addClass(this.widgetFullName + "-footer ui-state-default");
 			}
+
+			this._renderStat();
 
 			this.pager = new $.fc.pager({
 				source: this.source
@@ -339,6 +353,34 @@
 			return $.fc.tmpl(this.rowTemplate, data);
 		},
 
+		_renderStat: function () {
+			if (!this.footer || !this.footer.length || !this.options.statTemplate) {
+				return;
+			}
+
+			var self = this,
+				classPrefix = "." + self.widgetFullName + "-",
+				statRefresh = function () {
+					self.stat
+						.show()
+						.find(classPrefix + "offset")
+						.text(self.source.offset() + 1)
+						.end()
+						.find(classPrefix + "limit")
+						.text(Math.min(self.source.offset() + self.source.limit(), self.source.total()))
+						.end()
+						.find(classPrefix + "total")
+						.text(self.source.total());
+				};
+
+			this.stat = $($.fc.tmpl(this.options.statTemplate, this))
+				.hide()
+				.appendTo(this.footer);
+
+			this.source.offset.bind("change", function () { statRefresh(); });
+			this.source.limit.bind("change", function () { statRefresh(); });
+			this.source.total.bind("change", function () { statRefresh(); });
+		},
 
 		sort: function (property, direction) {
 			this.source.sort([{ property: property, direction: direction }]);

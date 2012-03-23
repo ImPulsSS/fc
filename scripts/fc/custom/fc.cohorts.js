@@ -198,7 +198,7 @@
 			}
 			return this.options.reportType === 1 || this.options.reportType === 3 ? 
 				(value * 100 / total).toFixed(1) + '%' : 
-				$.fc.format(value);
+				$.fc.format.usNumber(value);
 		},
 		
 		_getCellValue: function (hash, value) {		

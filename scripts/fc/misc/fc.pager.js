@@ -6,7 +6,7 @@
 			source: null,
 			template: '<button data-action="start">First</button>\
 					   <button data-action="prev">Prev</button>\
-					   <span class="fc-pager-custom-page">Page: <input type="text" class="fc-pager-current"> of <span class="fc-pager-total">0</span></span>\
+					   <span class="fc-pager-custom-page">Page: <input type="text" class="fc-pager-current"> of <span class="fc-pager-total">1</span></span>\
 					   <button data-action="next">Next</button>\
 					   <button data-action="end">Last</button>'
 		},
@@ -22,7 +22,24 @@
 				.buttonset()
 				.find("button")
 				.click(function () {
-					self.options.source.page();
+					var page;
+
+					switch ($(this).data("action")) {
+						case "start":
+							page = 1;
+							break;
+						case "prev":
+							page = self.options.source.page() - 1;
+							break;
+						case "next":
+							page = self.options.source.page() + 1;
+							break;
+						case "end":
+							page = self.options.source.totalPages();
+							break;
+					}
+
+					self.options.source.page(page);
 				})
 				.each(function () {
 					var button = $(this),
@@ -47,15 +64,9 @@
 				.find('.fc-pager-total')
 				.text(this.options.source.total());
 
-			this.options.source.offset.bind("change", function () {
-				self.refresh();
-			});
-			this.options.source.limit.bind("change", function () {
-				self.refresh();
-			});
-			this.options.source.total.bind("change", function () {
-				self.refresh();
-			});
+			this.options.source.offset.bind("change", function () { self.refresh(); });
+			this.options.source.limit.bind("change", function () { self.refresh(); });
+			this.options.source.total.bind("change", function () { self.refresh(); });
 
 			this.refresh();
 		},
@@ -78,7 +89,7 @@
 			}
 
 			this.current.val(this.options.source.page());
-			this.total.text(this.options.source.totalPages());
+			this.total.text(Math.max(1, this.options.source.totalPages()));
 		}
 	});
 })(jQuery);

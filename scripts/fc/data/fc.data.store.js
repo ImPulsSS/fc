@@ -31,6 +31,20 @@
 		return result;
 	};
 
+	$.fc.data.getField = function (obj, field) {
+		if (typeof (field) === "string" && field.match(/\./)) {
+			var root = field.split("."),
+				field = root.pop(),
+				root = $.fc.data.getRoot(root);
+
+			return typeof (root) !== "undefined" && typeof (root) !== "null" ?
+					root[field] :
+					null;
+		} else {
+			return obj[field];
+		}
+	}
+
 	$.fc.data.map = function (arr, map) {
 		if (typeof (arr) === "undefined" || !arr) {
 			return [];
@@ -61,7 +75,7 @@
 			$.each(map, function (index, mapping) {
 				result[mapping.name] = $.isFunction(mapping.mapping) ?
 					mapping.mapping.call(item, item) :
-					item[mapping.mapping || mapping.name] || mapping.defaultValue;
+					$.fc.data.getField(item, mapping.mapping || mapping.name) || mapping.defaultValue;
 
 				if (typeof (result[mapping.name]) === "undefined") {
 					result[mapping.name] = null;
@@ -150,7 +164,7 @@
 
 			// memory
 			if ($.isArray(options.predefinedData)) {
-				options.done(this._prepareData(options.predefinedData, options));
+				options.done(this._prepareData(options.predefinedData, options), options.predefinedData);
 
 				return true;
 			}
@@ -163,7 +177,8 @@
 					});
 
 				if (this.cache.contains(hash)) {
-					options.done(this._prepareData(this.cache.get(hash), options));
+					data = this.cache.get(hash);
+					options.done(this._prepareData(data, options), data);
 
 					return true;
 				}
@@ -180,7 +195,7 @@
 
 				cache
 					.done(function (data) {
-						options.done(self._prepareData(data, options));
+						options.done(self._prepareData(data, options), data);
 					})
 					.fail(function () {
 						options.done(null);

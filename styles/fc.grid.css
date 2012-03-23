@@ -15,5 +15,6 @@
 			.fc-grid-row-over { background-color: #EEEEEE; }
 
 		.fc-grid-footer { border: 0; }
+			.fc-grid-stat { float: right; margin-right: 5px; line-height: 34px; }
 
 	.ui-resizable-helper { border-right: 1px dotted gray; }

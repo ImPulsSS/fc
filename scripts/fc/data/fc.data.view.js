@@ -10,6 +10,7 @@
 			limit: 25,
 			total: 0,
 			remotePaging: true,
+			totalProperty: "total",
 
 			sort: [],
 			remoteSort: false,
@@ -29,7 +30,7 @@
 			},
 
 			encodeFilters: function (filter) {
-				return { filter: JSON.stringify(filter) };
+				return filter;
 			},
 
 			localFilter: function (data) {
@@ -71,8 +72,7 @@
 
 			this.page = new $.fc.observable(this.options.page);
 			this.page.bind('change', function (e, value) {
-				self.offset.set((value - 1) * self.limit());
-				self.refresh();
+				self.offset((value - 1) * self.limit());
 			});
 
 			this.limit = new $.fc.observable(this.options.limit);
@@ -126,8 +126,8 @@
 						this.options.remotePaging ? this.options.encodePaging(this.page(), this.offset(), this.limit()) : {},
 						this.options.remoteSort ? this.options.encodeSorting(this.sort()) : {},
 						this.options.remoteFilter ? this.options.encodeFilters(this.filter()) : {}),
-				done: function (data) {
-					self.total(data.length);
+				done: function (data, rawData) {
+					self.total($.fc.data.getField(rawData, self.options.totalProperty) || data.length);
 
 					if (!self.options.remoteFilter) {
 						data = self.options.localFilter(data, self.filter());
