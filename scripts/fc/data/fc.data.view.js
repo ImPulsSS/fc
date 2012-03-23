@@ -56,9 +56,11 @@
 			},
 
 			localPaging: function (data, page, offset, limit) {
-				var result = data;
+				if (offset > data.length) {
+					return [];
+				}
 
-				return result;
+				return data.slice(offset, Math.min(offset + limit, data.length));
 			}
 		},
 
@@ -123,6 +125,7 @@
 
 			this.store.get({
 				data: $.extend(true,
+						this.options.request || {},
 						this.options.remotePaging ? this.options.encodePaging(this.page(), this.offset(), this.limit()) : {},
 						this.options.remoteSort ? this.options.encodeSorting(this.sort()) : {},
 						this.options.remoteFilter ? this.options.encodeFilters(this.filter()) : {}),
