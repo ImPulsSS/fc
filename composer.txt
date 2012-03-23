@@ -54,6 +54,10 @@ fc.charts.min.js
 fc.liveview.min.js
 	scripts\fc\custom\fc.liveview.js
 
+# workflow
+fc.workflow.min.js
+	scripts\fc\custom\fc.workflow.js
+
 # rails
 #fc.rails.min.js
 #	scripts\fc\custom\fc.rails.js
