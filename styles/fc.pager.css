@@ -1,3 +1,5 @@
 .fc-pager { margin: 5px;  }
-	.fc-pager-custom-page { margin: 0 10px; }
+	.fc-pager button { vertical-align: middle; }
+	.fc-pager-custom-page { margin: 0 10px; line-height: 22px; vertical-align: middle; }
+		.fc-pager-custom-page input { vertical-align: middle; }
 	.fc-pager-current { width: 25px; }

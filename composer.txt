@@ -13,6 +13,7 @@ fc.ui.all.min.js
 
 	scripts\fc\data\fc.data.cache.js
 	scripts\fc\data\fc.data.store.js
+	scripts\fc\data\fc.data.view.js
 
 	scripts\fc\base\fc.base.hidable.js
 	scripts\fc\misc\fc.dialog.js
@@ -31,6 +32,7 @@ fc.ui.all.min.js
 	scripts\fc\form\fc.form.js
 	scripts\fc\form\fc.form.wrapped.js
 
+	scripts\fc\misc\fc.pager.js
 	scripts\fc\misc\fc.grid.js
 	scripts\fc\misc\fc.spotlist.js
 
@@ -64,6 +66,8 @@ fc.ui.all.min.css
 	styles\fc.overlay.css
 	styles\fc.form.css
 	styles\fc.alert.css
+
+	styles\fc.pager.css
 	styles\fc.grid.css
 	styles\fc.spotlist.css
 

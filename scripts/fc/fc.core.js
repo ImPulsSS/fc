@@ -96,6 +96,30 @@
 						return handler.apply(this, Array.prototype.slice.apply(arguments).slice(1));
 					});
 			},
+			_trigger: function(type, event, data) {
+				var callback = this.options[type];
+
+				event = $.Event(event);
+				event.type = (type === this.widgetEventPrefix ?
+					type :
+					this.widgetEventPrefix + type).toLowerCase();
+				data = arguments.length > 3 ?
+						Array.prototype.slice.apply(arguments).slice(2) :
+						data || {};
+
+				if ( event.originalEvent ) {
+					for ( var i = $.event.props.length, prop; i; ) {
+						prop = $.event.props[ --i ];
+						event[prop] = event.originalEvent[prop];
+					}
+				}
+
+				this.element.trigger(event, data);
+
+				return !($.isFunction(callback) &&
+					callback.apply(this.element[0], $.merge([ event ], data)) === false ||
+					event.isDefaultPrevented());
+			},
 			_callMethod: function (methodName) {
 				if (typeof (this[methodName]) === "undefined") {
 					return;

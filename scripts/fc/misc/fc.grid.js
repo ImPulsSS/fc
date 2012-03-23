@@ -9,11 +9,11 @@
 			showScrollBar: true,
 			showFooter: true,
 
-			statTemplate: '<div class="<%=widgetFullName%>-stat">Displaying <span class="<%=widgetFullName%>-offset"><%=source.offset() + 1%></span> - <span class="<%=widgetFullName%>-limit"><%=source.offset() + source.limit()%></span> of <span class="<%=widgetFullName%>-total"><%=source.total()%></div>',
+			statTemplate: '<div class="<%=widgetFullName%>-stat">Displaying <span class="<%=widgetFullName%>-offset"><%=source.offset() + 1%></span> - <span class="<%=widgetFullName%>-limit"><%=source.offset() + source.limit()%></span> of <span class="<%=widgetFullName%>-total"><%=source.total()%></span></div>',
 
 			headerTemplate: '<tr>\
 			                    <% for (var i = 0; i < columns.length; i++) { %>\
-			    	                <th data-property="<%=columns[i].property%>" data-sortable="<%=columns[i].sortable%>" data-resizable="<%=columns[i].resizable%>"><div><%=columns[i].text%></div></th>\
+			    	                <th data-column="<%=i%>" data-property="<%=columns[i].property%>" data-sortable="<%=columns[i].sortable%>" data-resizable="<%=columns[i].resizable%>"><div><%=columns[i].text%></div></th>\
 								<% } %>\
 				             </tr>',
 
@@ -155,11 +155,23 @@
 				}, function () {
 					$(this).removeClass(self.widgetFullName + "-row-over");
 				})
-				.click(function () {
+				.click(function (e) {
 					self.body.find(".ui-state-highlight")
 						.removeClass("ui-state-highlight");
 
 					$(this).addClass("ui-state-highlight");
+
+					self._trigger("rowclick", e, self.source.data()[$(this).data('index')]);
+				})
+				.dblclick(function (e) {
+					self._trigger("rowdblclick", e, self.source.data()[$(this).data('index')]);
+				})
+				.find('td')
+				.click(function (e) {
+					self._trigger("cellclick", e, self.source.data()[$(this).closest('tr').data('index')], self.columns()[$(this).data('column') - 1]);
+				})
+				.dblclick(function (e) {
+					self._trigger("celldblclick", e, self.source.data()[$(this).closest('tr').data('index')], self.columns()[$(this).data('column') - 1]);
 				});
 		},
 
@@ -198,7 +210,7 @@
 			this.columns = new $.fc.observableArray([]);
 			this.columns.bind('change', function (e, value) {
 				self.rowTemplate = $.map(value, function (column, index) {
-						return $.fc.stringBuilder.format('<td class="{0}-cell {0}-column-{1}"><div class="{0}-cell-inner"><%=row[{2}] || " "%></div></td>',
+						return $.fc.stringBuilder.format('<td class="{0}-cell {0}-column-{1}" data-column="{1}"><div class="{0}-cell-inner"><%=row[{2}] || " "%></div></td>',
 								self.widgetFullName,
 								~~index + 1,
 								$.isNumeric(column.property) ?
