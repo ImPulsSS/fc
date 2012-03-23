@@ -55,7 +55,7 @@
 				return result;
 			},
 
-			localPaging: function () {
+			localPaging: function (data, page, offset, limit) {
 				var result = data;
 
 				return result;
@@ -138,7 +138,7 @@
 					}
 
 					if (!self.options.remotePaging) {
-						data = self.options.localPaging(data, self.page(), this.offset(), this.limit());
+						data = self.options.localPaging(data, self.page(), self.offset(), self.limit());
 					}
 
 					self.data((data || []).slice(0));
