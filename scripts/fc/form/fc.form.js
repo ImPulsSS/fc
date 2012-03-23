@@ -153,10 +153,10 @@
 					context: this,
 					data: postData,
 					success: function (data) {
-						this._trigger("aftersubmit", null, { success: true, request: postData, response: data });
+						this._trigger("submit", null, { success: true, request: postData, response: data });
 					},
 					error: function () {
-						this._trigger("aftersubmit", null, { success: false, request: postData });
+						this._trigger("submit", null, { success: false, request: postData });
 					}
 				});
 				

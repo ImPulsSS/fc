@@ -6,10 +6,11 @@
 fc.ui.all.min.js
 	scripts\fc\utils\json.js
 	scripts\fc\utils\fc.utils.js
-	scripts\fc\utils\fc.observable.js
+	scripts\fc\fc.core.js
+
 	scripts\fc\utils\fc.stringbuilder.js
 	scripts\fc\utils\fc.format.js
-	scripts\fc\fc.core.js
+	scripts\fc\utils\fc.observable.js
 
 	scripts\fc\data\fc.data.cache.js
 	scripts\fc\data\fc.data.store.js
@@ -80,6 +81,8 @@ fc.ui.all.min.css
 
 	styles\fc.cohorts.css
 	styles\fc.charts.css
+
+	styles\fc.workflow.css
 
 fc.ui.ie.all.min.css
 	styles\fc.form.ie.css

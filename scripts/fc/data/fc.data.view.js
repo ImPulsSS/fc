@@ -141,7 +141,7 @@
 						data = self.options.localPaging(data, self.page(), this.offset(), this.limit());
 					}
 
-					self.data(data.slice(0));
+					self.data((data || []).slice(0));
 					self._trigger("refresh");
 				},
 				fail: function () {

@@ -2,6 +2,11 @@
 	$.fc = $.fc || {};
 
 	$.fc.format = {
+		"boolean": function (value) {
+			return typeof (value) !== "undefined" && value ?
+				"true" :
+				"false";
+		},
 		usNumber: function (source) {
 			source += '';
 			x = source.split('.');

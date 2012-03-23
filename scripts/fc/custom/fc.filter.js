@@ -2,10 +2,10 @@
 	$.fc.widget("fc.filter", $.fc.form.wrapped, {
 		options: {
 			title: "Filters",
-			
+
 			method: "GET",
 			dataType: "json",
-			
+
 			editable: true,
 			editableFilters: [],
 			editableTemplate: {
@@ -61,16 +61,16 @@
 			beforesubmit: function () {
 				$(this).data("fc-filter").overlay.resize().show();
 			},
-					
-			aftersubmit: function (e, data) {
+
+			submit: function (e, data) {
 				var self = $(this).data("fc-filter");
-				
+
 				self.overlay.hide();
-				
+
 				if (!data.success) {
 					return;
 				}
-				
+
 				self._trigger("apply", null, { filters: data.request, data: data.response });
 			}
 		},

@@ -10,7 +10,7 @@
 	$.fc.data.getRoot = function (obj, root) {
 		var type = typeof (root);
 
-		if (type === "undefined") {
+		if (typeof (obj) === "undefined" || type === "undefined") {
 			return obj || {};
 		}
 
@@ -32,10 +32,17 @@
 	};
 
 	$.fc.data.getField = function (obj, field) {
-		if (typeof (field) === "string" && field.match(/\./)) {
-			var root = field.split("."),
-				field = root.pop(),
-				root = $.fc.data.getRoot(root);
+		var type = typeof (field);
+
+		if (typeof (obj) === "undefined" || type === "undefined") {
+			return obj || {};
+		}
+
+		if (type === "string" && field.match(/\./)) {
+			var root = field.split(".");
+
+			field = root.pop();
+			root = $.fc.data.getRoot(root);
 
 			return typeof (root) !== "undefined" && typeof (root) !== "null" ?
 					root[field] :
@@ -43,7 +50,7 @@
 		} else {
 			return obj[field];
 		}
-	}
+	};
 
 	$.fc.data.map = function (arr, map) {
 		if (typeof (arr) === "undefined" || !arr) {
@@ -90,7 +97,6 @@
 		});
 	};
 
-	//TODO: data.store refactoring(records in collections, auto sync, format providers)
 	$.fc.define("fc.data.store", {
 		options: {
 			type: $.fc.data.store.types.json,

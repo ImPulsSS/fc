@@ -210,7 +210,7 @@
 			this.columns = new $.fc.observableArray([]);
 			this.columns.bind('change', function (e, value) {
 				self.rowTemplate = $.map(value, function (column, index) {
-						return $.fc.stringBuilder.format('<td class="{0}-cell {0}-column-{1}" data-column="{1}"><div class="{0}-cell-inner"><%=row[{2}] || " "%></div></td>',
+						return $.fc.stringBuilder.format('<td class="{0}-cell {0}-column-{1}" data-column="{1}"><div class="{0}-cell-inner"><%=typeof (row[{2}]) !== "undefined" ? row[{2}] : ""%></div></td>',
 								self.widgetFullName,
 								~~index + 1,
 								$.isNumeric(column.property) ?

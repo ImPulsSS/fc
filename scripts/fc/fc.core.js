@@ -105,7 +105,7 @@
 					this.widgetEventPrefix + type).toLowerCase();
 				data = arguments.length > 3 ?
 						Array.prototype.slice.apply(arguments).slice(2) :
-						data || {};
+						[ data || {} ];
 
 				if ( event.originalEvent ) {
 					for ( var i = $.event.props.length, prop; i; ) {
