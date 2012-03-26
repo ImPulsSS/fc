@@ -23,12 +23,7 @@
 
 	$.fc.define = function (name, base, prototype) {
 		var namespace = name.split("."),
-			fullName = $.camelCase(namespace.join("-")),
-			constructor = function () {
-				this.options = $.extend(true, {}, this.options, arguments[0] || {});
-				this._eventTarget = $([ this ]);
-				this._create();
-			};
+			fullName = $.camelCase(namespace.join("-"));
 
 		name = namespace.pop();
 		namespace = $.fc.namespace(namespace);
@@ -38,9 +33,13 @@
 			base = $.fc.base;
 		}
 
-		namespace[name] = $.extend(true, constructor, namespace[name]);
+		var basePrototype = new base(),
+			constructor = prototype._constructor || function () {
+				this.options = $.extend(true, {}, this.options, arguments[0] || {});
+				this._create();
+			};
 
-		var basePrototype = new base();
+		namespace[name] = $.extend(true, constructor, namespace[name]);
 
 		basePrototype.options = $.extend(true, {}, basePrototype.options);
 
@@ -53,18 +52,7 @@
 	$.fc.widget = function (name, base, prototype) {
 		var namespace = name.split("."),
 			className = namespace.join("-"),
-			fullName = $.camelCase(className),
-			constructor = function (options, element) {
-				if (!arguments.length) {
-					return;
-				}
-
-				element = $(element || this.defaultElement);
-
-				if (element.length > 0) {
-					this._createWidget(options, element[0]);
-				}
-			};
+			fullName = $.camelCase(className);
 
 		name = namespace.pop();
 		namespace = $.fc.namespace(namespace);
@@ -78,9 +66,30 @@
 			return !!$.data(elem, fullName);
 		};
 
-		namespace[name] = $.extend(true, constructor, namespace[name]);
+		var basePrototype = new base(),
+			constructor = prototype._constructor || function (options, element) {
+				if (!arguments.length) {
+					return;
+				}
 
-		var basePrototype = new base();
+				element = $(element || this.defaultElement);
+
+				if (element.length > 0) {
+					$.each(["appendTo", "prependTo", "insertAfter", "insertBefore"], function (index, manipulation) {
+						if (!options[manipulation]) {
+							return;
+						}
+
+						element[manipulation].call(element, options[manipulation]);
+
+						return false;
+					});
+
+					this._createWidget(options, element[0]);
+				}
+			};
+
+		namespace[name] = $.extend(true, constructor, namespace[name]);
 
 		basePrototype.options = $.extend(true, {}, basePrototype.options);
 

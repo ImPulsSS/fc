@@ -1,14 +1,26 @@
 .fc-workflow { position: relative; }
-	.fc-workflow-block { height: 40px; padding: 10px; position: absolute; left: auto; top: auto; text-align: center; }
-	.fc-workflow-block-icon-top { margin-top: 41px; }
-	.fc-workflow-block-icon-right { margin-right: 41px; }
-	.fc-workflow-block-icon-bottom { margin-bottom: 41px; }
-	.fc-workflow-block-icon-left { margin-left: 41px; }
+	.fc-workflow-block { height: 60px; line-height: 60px; position: absolute; left: auto; top: auto; text-align: center; }
+		.fc-workflow-block .fc-workflow-block-content { display: inline-block; line-height: normal; font-size: 12px; font-weight: normal; color: #555555; vertical-align: middle; }
+		.fc-workflow-block .fc-workflow-block-content a { color: #EB8502; text-decoration: underline; }
+	.fc-workflow-connection { position: absolute; border: 1px solid #9E9E9E; }
 
-		.fc-workflow-block-icon { width: 31px; height: 31px; padding: 5px; position: absolute; }
-		.fc-workflow-block-icon-top .fc-workflow-block-icon { margin-left: -22px; left: 50%; top: -42px; border-bottom-width: 0px; -moz-border-radius-topleft: 30px; -webkit-border-top-left-radius: 30px; -khtml-border-top-left-radius: 30px; border-top-left-radius: 30px; -moz-border-radius-topright: 30px; -webkit-border-top-right-radius: 30px; -khtml-border-top-right-radius: 30px; border-top-right-radius: 30px; }
-		.fc-workflow-block-icon-right .fc-workflow-block-icon { margin-top: -22px; right: -42px; top: 50%; border-left-width: 0px; -moz-border-radius-topright: 30px; -webkit-border-top-right-radius: 30px; -khtml-border-top-right-radius: 30px; border-top-right-radius: 30px; -moz-border-radius-bottomright: 30px; -webkit-border-bottom-right-radius: 30px; -khtml-border-bottom-right-radius: 30px; border-bottom-right-radius: 30px; }
-		.fc-workflow-block-icon-bottom .fc-workflow-block-icon { margin-left: -22px; left: 50%; bottom: -42px; border-top-width: 0px; -moz-border-radius-bottomleft: 30px; -webkit-border-bottom-left-radius: 30px; -khtml-border-bottom-left-radius: 30px; border-bottom-left-radius: 30px; -moz-border-radius-bottomright: 30px; -webkit-border-bottom-right-radius: 30px; -khtml-border-bottom-right-radius: 30px; border-bottom-right-radius: 30px; }
-		.fc-workflow-block-icon-left .fc-workflow-block-icon { margin-top: -22px; left:-42px; top: 50%; border-right-width: 0px; -moz-border-radius-topleft: 30px; -webkit-border-top-left-radius: 30px; -khtml-border-top-left-radius: 30px; border-top-left-radius: 30px; -moz-border-radius-bottomleft: 30px; -webkit-border-bottom-left-radius: 30px; -khtml-border-bottom-left-radius: 30px; border-bottom-left-radius: 30px; }
+	.fc-workflow-add { width: 16px; height: 16px; line-height: normal; background: #9CD144; }
+		.fc-workflow-add .fc-workflow-block-content { width: 16px; height: 16px; line-height: 14px; font-size: 18px; color: #FFFFFF; cursor: pointer; }
 
-	.fc-workflow-block-connection { position: absolute; border: 1px solid #CCCCCC; }
+	.fc-workflow-splitter { }
+
+
+	.fc-workflow-iconblock { position: absolute; }
+		.fc-workflow-iconblock  .fc-workflow-block { position: relative; }
+
+		.fc-workflow-iconblock-top .fc-workflow-block { margin-top: 41px; }
+		.fc-workflow-iconblock-right .fc-workflow-block { margin-right: 41px; }
+		.fc-workflow-iconblock-bottom .fc-workflow-block { margin-bottom: 41px; }
+		.fc-workflow-iconblock-left .fc-workflow-block { margin-left: 41px; }
+
+			.fc-workflow-iconblock-icon { width: 31px; height: 31px; padding: 5px; position: absolute; }
+
+			.fc-workflow-iconblock-top .fc-workflow-iconblock-icon { margin-left: -21px; left: 50%; top: -42px; border-bottom-width: 0; -moz-border-radius-topleft: 30px; -webkit-border-top-left-radius: 30px; -khtml-border-top-left-radius: 30px; border-top-left-radius: 30px; -moz-border-radius-topright: 30px; -webkit-border-top-right-radius: 30px; -khtml-border-top-right-radius: 30px; border-top-right-radius: 30px; }
+			.fc-workflow-iconblock-right .fc-workflow-iconblock-icon { margin-top: -21px; right: -42px; top: 50%; border-left-width: 0; -moz-border-radius-topright: 30px; -webkit-border-top-right-radius: 30px; -khtml-border-top-right-radius: 30px; border-top-right-radius: 30px; -moz-border-radius-bottomright: 30px; -webkit-border-bottom-right-radius: 30px; -khtml-border-bottom-right-radius: 30px; border-bottom-right-radius: 30px; }
+			.fc-workflow-iconblock-bottom .fc-workflow-iconblock-icon { margin-left: -21px; left: 50%; bottom: -42px; border-top-width: 0; -moz-border-radius-bottomleft: 30px; -webkit-border-bottom-left-radius: 30px; -khtml-border-bottom-left-radius: 30px; border-bottom-left-radius: 30px; -moz-border-radius-bottomright: 30px; -webkit-border-bottom-right-radius: 30px; -khtml-border-bottom-right-radius: 30px; border-bottom-right-radius: 30px; }
+			.fc-workflow-iconblock-left .fc-workflow-iconblock-icon { margin-top: -21px; left: -42px; top: 50%; border-right-width: 0; -moz-border-radius-topleft: 30px; -webkit-border-top-left-radius: 30px; -khtml-border-top-left-radius: 30px; border-top-left-radius: 30px; -moz-border-radius-bottomleft: 30px; -webkit-border-bottom-left-radius: 30px; -khtml-border-bottom-left-radius: 30px; border-bottom-left-radius: 30px; }

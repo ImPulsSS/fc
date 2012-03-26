@@ -6,83 +6,61 @@
 			css: {
 				width: 250
 			},
-			icon: "",
-			iconDirection: "left",
 			text: ""
 		},
 
 		_create: function () {
-			if ((this.options.iconDirection === "left" || this.options.iconDirection === "top") && this.options.css.width) {
-				this.options.css.width -= 41;
-			}
-
 			this.element
-				.text(this.options.text)
-				.css(this.options.css)
-				.addClass([ this.widgetBaseClass, "ui-state-default ui-corner-all", this.widgetFullName + "-icon-" + this.options.iconDirection ].join(" "));
+				.html(this.options.text)
+				.addClass(this.widgetBaseClass + " ui-state-default ui-corner-all")
+				.disableSelection();
 
-			this.element.append('<div class="ui-state-default fc-workflow-block-icon"></div>');
+			this.element.wrapInner('<span class="fc-workflow-block-content"></span>');
+
+			this.connections = [];
+		},
+
+		_init: function () {
+			var self = this;
+
+			this.widget().css(this.options.css);
+
+			this.connectors = new $.fc.observable(this.getConnectors());
+
+			if (this.options.connectWith && $.isArray(this.options.connectWith)) {
+				if ($.isArray(this.options.connectWith[0])) {
+					$.each(this.options.connectWith, function (index, connectWith) {
+						self.connectWith.apply(self, connectWith);
+					});
+				} else {
+					this.connectWith.apply(this, this.options.connectWith);
+				}
+			}
 		},
 
 		_destroy: function () {
 			this.element
-				.removeClass([ this.widgetBaseClass, "ui-state-default ui-corner-all", this.widgetFullName + "-icon-" + this.options.iconDirection ].join(" "));
+				.removeClass(this.widgetBaseClass + " ui-state-default ui-corner-all");
+
+			delete this.connectors;
 		},
 
-		connectWith: function (block, points) {
-			var fromOffset = this.element.offset(),
-				toOffset = block.element.offset(),
-				parentOffset = this.element.parent().offset(),
-				from = {}, to = {};
+		getConnectors: function (position) {
+			var width = this.widget().outerWidth(),
+				height = this.widget().outerHeight();
 
-			switch (points.from) {
-				case "top":
-					from.x = fromOffset.left + this.element.width() / 2 - parentOffset.left;
-					from.y = fromOffset.top + this.element.height() / 2 - parentOffset.top;
-					break;
-				case "bottom":
-					from.x = fromOffset.left + this.element.width() / 2 - parentOffset.left;
-					from.y = fromOffset.top + this.element.height() / 2 - parentOffset.top;
-					break;
-				case "left":
-					from.x = fromOffset.left + this.element.width() / 2 - parentOffset.left;
-					from.y = fromOffset.top + this.element.height() / 2 - parentOffset.top;
-					break;
-				case "right":
-					from.x = fromOffset.left + this.element.width() / 2 - parentOffset.left;
-					from.y = fromOffset.top + this.element.height() / 2 - parentOffset.top;
-					break;
-			}
+			position = position || this.widget().position();
 
-			switch (points.to) {
-				case "top":
-					to.x = toOffset.left + block.element.width() / 2 - parentOffset.left;
-					to.y = toOffset.top + block.element.height() / 2 - parentOffset.top;
-					break;
-				case "bottom":
-					to.x = toOffset.left + block.element.width() / 2 - parentOffset.left;
-					to.y = toOffset.top + block.element.height() / 2 - parentOffset.top;
-					break;
-				case "left":
-					to.x = toOffset.left + block.element.width() / 2 - parentOffset.left;
-					to.y = toOffset.top + block.element.height() / 2 - parentOffset.top;
-					break;
-				case "right":
-					to.x = toOffset.left + block.element.width() / 2 - parentOffset.left;
-					to.y = toOffset.top + block.element.height() / 2 - parentOffset.top;
-					break;
-			}
+			return {
+				top: { x: position.left + width / 2, y: position.top },
+				bottom: { x: position.left + width / 2, y: position.top + height },
+				left: { x: position.left, y: position.top + height / 2 },
+				right: { x: position.left + width, y: position.top + height / 2 }
+			};
+		},
 
-			$('<div></div>', {
-					"class": this.widgetFullName + "-connection",
-					css: {
-						width: Math.abs(to.x - from.x) + 1,
-						height: Math.abs(to.y - from.y) + 1,
-						left: from.x,
-						top: from.y
-					}
-				})
-				.appendTo(this.element.parent());
+		connectWith: function (block, fromConnector, toConnector) {
+			this.connections.push(new $.fc.workflow.connection(this, block, fromConnector, toConnector));
 		}
 	});
 })(jQuery);
