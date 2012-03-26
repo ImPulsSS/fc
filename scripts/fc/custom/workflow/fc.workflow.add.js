@@ -10,6 +10,9 @@
 		_init: function () {
 			$.fc.workflow.block.prototype._init.call(this);
 
+			this.element.find('.fc-workflow-block-content')
+				.addClass('ui-corner-all');
+
 			this.element.click(function () {
 				$.fc.dialog.alert("New condition block", "Condition block creation will be here");
 			});

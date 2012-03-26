@@ -1,11 +1,11 @@
 .fc-workflow { position: relative; }
 	.fc-workflow-block { height: 60px; line-height: 60px; position: absolute; left: auto; top: auto; text-align: center; }
-		.fc-workflow-block .fc-workflow-block-content { display: inline-block; line-height: normal; font-size: 12px; font-weight: normal; color: #555555; vertical-align: middle; }
+		.fc-workflow-block .fc-workflow-block-content { display: inline-block; line-height: normal; font-size: 12px; font-weight: normal; color: #555555; vertical-align: middle; zoom: 1; }
 		.fc-workflow-block .fc-workflow-block-content a { color: #EB8502; text-decoration: underline; }
 	.fc-workflow-connection { position: absolute; border: 1px solid #9E9E9E; }
 
-	.fc-workflow-add { width: 16px; height: 16px; line-height: normal; background: #9CD144; }
-		.fc-workflow-add .fc-workflow-block-content { width: 16px; height: 16px; line-height: 14px; font-size: 18px; color: #FFFFFF; cursor: pointer; }
+	.fc-workflow-add { display: block; width: 16px; height: 16px; line-height: 1px; background: #9CD144; border-color: #75AB21; }
+		.fc-workflow-add .fc-workflow-block-content { width: 14px; height: 14px; line-height: 12px; font-size: 18px; color: #FFFFFF; cursor: pointer; border: 1px solid #D0EDA6; }
 
 	.fc-workflow-splitter { }
 

@@ -42,6 +42,8 @@
 			this.element
 				.removeClass(this.widgetBaseClass + " ui-state-default ui-corner-all");
 
+			this.element.empty();
+
 			delete this.connectors;
 		},
 

@@ -60,6 +60,8 @@ fc.workflow.min.js
 	scripts\fc\custom\workflow\fc.workflow.js
 	scripts\fc\custom\workflow\fc.workflow.connection.js
 	scripts\fc\custom\workflow\fc.workflow.block.js
+	scripts\fc\custom\workflow\fc.workflow.add.js
+	scripts\fc\custom\workflow\fc.workflow.splitter.js
 	scripts\fc\custom\workflow\fc.workflow.iconblock.js
 
 # rails
