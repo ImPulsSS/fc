@@ -36,8 +36,16 @@
 			position = position || this.widget().position();
 
 			return $.extend(true, $.fc.workflow.block.prototype.getConnectors.call(this, position), {
-					iconTop: { x: position.left + iconWidth / 2, y: position.top + iconPosition.top },
-					iconBottom: { x: position.left + iconWidth / 2, y: position.top + iconPosition.top + iconHeight }
+					iconTop: {
+						name: "iconTop",
+						x: position.left + iconWidth / 2,
+						y: position.top + iconPosition.top
+					},
+					iconBottom: {
+						name: "iconBottom",
+						x: position.left + iconWidth / 2,
+						y: position.top + iconPosition.top + iconHeight
+					}
 				});
 		},
 

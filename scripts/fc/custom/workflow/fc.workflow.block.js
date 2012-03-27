@@ -10,6 +10,8 @@
 		},
 
 		_create: function () {
+			var self = this;
+
 			this.element
 				.html(this.options.text)
 				.addClass(this.widgetBaseClass + " ui-state-default ui-corner-all")
@@ -17,7 +19,10 @@
 
 			this.element.wrapInner('<span class="fc-workflow-block-content"></span>');
 
-			this.connections = [];
+			this.connections = new $.fc.observableArray([]);
+			this.connections.bind("change", function (e, connection) {
+				self.position();
+			});
 		},
 
 		_init: function () {
@@ -36,6 +41,13 @@
 					this.connectWith.apply(this, this.options.connectWith);
 				}
 			}
+
+			this.widget()
+				.draggable({
+					drag: function (e, ui) {
+						self.connectors(self.getConnectors(ui.position));
+					}
+				});
 		},
 
 		_destroy: function () {
@@ -54,15 +66,67 @@
 			position = position || this.widget().position();
 
 			return {
-				top: { x: position.left + width / 2, y: position.top },
-				bottom: { x: position.left + width / 2, y: position.top + height },
-				left: { x: position.left, y: position.top + height / 2 },
-				right: { x: position.left + width, y: position.top + height / 2 }
+				top: {
+					name: "top",
+					x: position.left + width / 2,
+					y: position.top,
+					offset: "0 -100"
+				},
+				right: {
+					name: "right",
+					x: position.left + width,
+					y: position.top + height / 2,
+					offset: "400 100"
+				},
+				bottom: {
+					name: "bottom",
+					x: position.left + width / 2,
+					y: position.top + height,
+					offset: "0 100"
+				},
+				left: {
+					name: "left",
+					x: position.left,
+					y: position.top + height / 2,
+					offset: "-400 100"
+				}
 			};
 		},
 
-		connectWith: function (block, fromConnector, toConnector) {
-			this.connections.push(new $.fc.workflow.connection(this, block, fromConnector, toConnector));
+		connectWith: function (block, fromConnector, toConnector, formChild) {
+			var connection = new $.fc.workflow.connection(this, block, fromConnector, toConnector, !!formChild);
+			this.connections.push(connection);
+			block.connections.push(connection);
+		},
+
+		position: function () {
+			var self = this;
+			$.each(this.connections(), function (index, connection) {
+				 var direction = self === connection.options.from ?
+						 "from" :
+						 "to",
+					 connector = connection.getConnector(direction);
+
+				 if ((direction === "from" && !connection.options.formChild) || (direction === "to" && connection.options.formChild)) {
+				    return;
+				 }
+
+				self.widget().position({
+					of: connection.options[direction === "from" ? "to" : "from"].widget(),
+					my: "center center",
+					at: "center center",
+					offset: connection.getConnector(direction === "from" ? "to" : "from").offset
+				});
+
+				if (typeof (self.options.css.left) !== "undefined" || typeof (self.options.css.top) !== "undefined") {
+					self.widget().css({
+						left: self.options.css.left,
+						top: self.options.css.top
+					});
+				}
+
+				 self.connectors(self.getConnectors());
+			});
 		}
 	});
 })(jQuery);

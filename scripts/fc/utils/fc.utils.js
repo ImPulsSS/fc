@@ -83,7 +83,7 @@
 	};
 
 	$.fc.getId = function () {
-		return $.fc.basePrefix + (__fc_lastId++);
+		return $.fc.basePrefix + (++__fc_lastId);
 	};
 
 	$.fc.toObject = function(arr) {

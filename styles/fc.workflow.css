@@ -4,10 +4,10 @@
 		.fc-workflow-block .fc-workflow-block-content a { color: #EB8502; text-decoration: underline; }
 	.fc-workflow-connection { position: absolute; border: 1px solid #9E9E9E; }
 
-	.fc-workflow-add { display: block; width: 16px; height: 16px; line-height: 1px; background: #9CD144; border-color: #75AB21; }
-		.fc-workflow-add .fc-workflow-block-content { width: 14px; height: 14px; line-height: 12px; font-size: 18px; color: #FFFFFF; cursor: pointer; border: 1px solid #D0EDA6; }
+	.fc-workflow-add { width: 16px; height: 16px; line-height: 1px; background: #9CD144; border-color: #75AB21; }
+		.fc-workflow-add .fc-workflow-block-content { width: 14px; height: 14px; line-height: 12px; text-indent: -1px; font-size: 18px; color: #FFFFFF; cursor: pointer; border: 1px solid #D0EDA6; }
 
-	.fc-workflow-splitter { }
+	.fc-workflow-splitter { width: 1px; height: 1px; line-height: 1px; }
 
 
 	.fc-workflow-iconblock { position: absolute; }

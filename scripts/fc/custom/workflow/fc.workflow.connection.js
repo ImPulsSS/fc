@@ -9,12 +9,13 @@
 			toConnector: "bottom"
 		},
 
-		_constructor: function (from, to, fromConnector, toConnector) {
+		_constructor: function (from, to, fromConnector, toConnector, formChild) {
 			var options = {
 						from: from,
 						to: to,
 						fromConnector: fromConnector,
-						toConnector: toConnector
+						toConnector: toConnector,
+						formChild: formChild
 					},
 				element = $(this.defaultElement).appendTo(from.widget().parent());
 
@@ -27,30 +28,39 @@
 			this.element
 				.addClass(this.widgetBaseClass);
 
-			this.from = this.options.from.connectors;
-			this.from.bind("change", function () {
+			this.id = $.fc.getId();
+
+			this.from = this.options.from;
+			this.from.connectors.bind("change." + this.id, function () {
 				self.refresh();
 			});
 
-			this.to = this.options.to.connectors;
-			this.to.bind("change", function () {
+			this.to = this.options.to;
+			this.to.connectors.bind("change." + this.id, function () {
 				self.refresh();
 			});
 
-			self.refresh();
+			this.refresh();
 		},
 
 		_destroy: function () {
 			this.element
 				.removeClass(this.widgetBaseClass);
 
+			this.from.connectors.unbind("change." + this.id);
+
 			delete this.from;
 			delete this.to;
+			delete this.id;
+		},
+
+		getConnector: function (direction) {
+			return this[direction].connectors()[this.options[direction + "Connector"]];
 		},
 
 		refresh: function () {
-			var from = this.from()[this.options.fromConnector],
-				to = this.to()[this.options.toConnector],
+			var from = this.getConnector("from"),
+				to = this.getConnector("to"),
 				borderWidth = "1px 0 0 1px";
 
 			if (from.x > to.x && from.y > to.y) {

@@ -62,6 +62,7 @@
 					result = items[methodName].apply(items, arguments);
 
 				observable.trigger();
+				observable._trigger(methodName, result);
 
 				return result;
 			};
@@ -93,7 +94,7 @@
 
 				if (removedValues.length) {
 					this.trigger();
-					this.trigger("remove", removedValues);
+					this._trigger("remove", removedValues);
 				}
 
 				return removedValues;
@@ -146,7 +147,7 @@
 
 				this($.map(arguments, function (value) { return value; }));
 
-				this.trigger("replaceAll", allValues, this());
+				this._trigger("replaceAll", allValues, this());
 
 				return allValues;
 			}
