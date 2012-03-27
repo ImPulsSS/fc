@@ -23,6 +23,8 @@
 			this.connections.bind("change", function (e, connection) {
 				self.position();
 			});
+
+			this.level = 0;
 		},
 
 		_init: function () {
@@ -31,6 +33,9 @@
 			this.widget().css(this.options.css);
 
 			this.connectors = new $.fc.observable(this.getConnectors());
+
+			this.offsetX = new $.fc.observable(0);
+			this.offsetY = new $.fc.observable(0);
 
 			if (this.options.connectWith && $.isArray(this.options.connectWith)) {
 				if ($.isArray(this.options.connectWith[0])) {
@@ -56,7 +61,13 @@
 
 			this.element.empty();
 
+			delete this.level;
+
 			delete this.connectors;
+			delete this.connections;
+
+			delete this.offsetX;
+			delete this.offsetY;
 		},
 
 		getConnectors: function (position) {
@@ -70,25 +81,25 @@
 					name: "top",
 					x: position.left + width / 2,
 					y: position.top,
-					offset: "0 -100"
+					offset: [0, -100]
 				},
 				right: {
 					name: "right",
 					x: position.left + width,
 					y: position.top + height / 2,
-					offset: "400 100"
+					offset: [400, 100]
 				},
 				bottom: {
 					name: "bottom",
 					x: position.left + width / 2,
 					y: position.top + height,
-					offset: "0 100"
+					offset: [0, 100]
 				},
 				left: {
 					name: "left",
 					x: position.left,
 					y: position.top + height / 2,
-					offset: "-400 100"
+					offset: [-400, 100]
 				}
 			};
 		},
@@ -97,25 +108,32 @@
 			var connection = new $.fc.workflow.connection(this, block, fromConnector, toConnector, !!formChild);
 			this.connections.push(connection);
 			block.connections.push(connection);
+
+			if (formChild) {
+				this.level = Math.max(this.level, block.level + 1);
+			} else {
+				block.level = Math.max(block.level, this.level + 1);
+			}
 		},
 
 		position: function () {
 			var self = this;
 			$.each(this.connections(), function (index, connection) {
-				 var direction = self === connection.options.from ?
-						 "from" :
-						 "to",
-					 connector = connection.getConnector(direction);
+				var direction = self === connection.options.from ?
+					"from" :
+					"to";
 
-				 if ((direction === "from" && !connection.options.formChild) || (direction === "to" && connection.options.formChild)) {
-				    return;
-				 }
+				if ((direction === "from" && !connection.options.formChild) || (direction === "to" && connection.options.formChild)) {
+				   return;
+				}
+
+				var offset = connection.getConnector(direction === "from" ? "to" : "from").offset;
 
 				self.widget().position({
 					of: connection.options[direction === "from" ? "to" : "from"].widget(),
 					my: "center center",
 					at: "center center",
-					offset: connection.getConnector(direction === "from" ? "to" : "from").offset
+					offset: offset.join(" ")
 				});
 
 				if (typeof (self.options.css.left) !== "undefined" || typeof (self.options.css.top) !== "undefined") {
