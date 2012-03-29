@@ -1,149 +1,55 @@
 (function ($) {
-	$.fc.widget("fc.workflow.block", {
-		defaultElement: '<div>',
-
+	$.fc.define("fc.workflow.block", {
 		options: {
-			css: {
-				width: 250
-			},
-			text: ""
+			template:  '<div id="<%=id%>" class="ui-state-default ui-corner-all fc-workflow-block fc-workflow-connectible <%=options.class%>">\
+							<span class="fc-workflow-block-content"><%=options.text%></span>\
+						</div>\
+						<div id="<%=id%>_branch_left" class="fc-workflow-branch fc-workflow-branch-left">\
+							<%=branches.left ? branches.left.render() : "" %>\
+						</div>\
+						<div id="<%=id%>_branch_right" class="fc-workflow-branch fc-workflow-branch-right">\
+							<%=branches.right ? branches.right.render() : "" %>\
+						</div>\
+						<div class="ui-helper-clearfix"></div>'
 		},
 
 		_create: function () {
-			var self = this;
-
-			this.element
-				.html(this.options.text)
-				.addClass(this.widgetBaseClass + " ui-state-default ui-corner-all")
-				.disableSelection();
-
-			this.element.wrapInner('<span class="fc-workflow-block-content"></span>');
-
-			this.connections = new $.fc.observableArray([]);
-			this.connections.bind("change", function (e, connection) {
-				self.position();
-			});
-
-			this.level = 0;
+			this.id = $.fc.getId();
+			this.branches = {};
 		},
 
-		_init: function () {
-			var self = this;
-
-			this.widget().css(this.options.css);
-
-			this.connectors = new $.fc.observable(this.getConnectors());
-
-			this.offsetX = new $.fc.observable(0);
-			this.offsetY = new $.fc.observable(0);
-
-			if (this.options.connectWith && $.isArray(this.options.connectWith)) {
-				if ($.isArray(this.options.connectWith[0])) {
-					$.each(this.options.connectWith, function (index, connectWith) {
-						self.connectWith.apply(self, connectWith);
-					});
-				} else {
-					this.connectWith.apply(this, this.options.connectWith);
-				}
-			}
-
-			this.widget()
-				.draggable({
-					drag: function (e, ui) {
-						self.connectors(self.getConnectors(ui.position));
-					}
+		addChild: function (branch, child) {
+			if ($.isPlainObject(branch)) {
+				var self = this;
+				$.each(branch, function (branch, child) {
+					self.addChild(branch, child);
 				});
-		},
-
-		_destroy: function () {
-			this.element
-				.removeClass(this.widgetBaseClass + " ui-state-default ui-corner-all");
-
-			this.element.empty();
-
-			delete this.level;
-
-			delete this.connectors;
-			delete this.connections;
-
-			delete this.offsetX;
-			delete this.offsetY;
-		},
-
-		getConnectors: function (position) {
-			var width = this.widget().outerWidth(),
-				height = this.widget().outerHeight();
-
-			position = position || this.widget().position();
-
-			return {
-				top: {
-					name: "top",
-					x: position.left + width / 2,
-					y: position.top,
-					offset: [0, -100]
-				},
-				right: {
-					name: "right",
-					x: position.left + width,
-					y: position.top + height / 2,
-					offset: [400, 100]
-				},
-				bottom: {
-					name: "bottom",
-					x: position.left + width / 2,
-					y: position.top + height,
-					offset: [0, 100]
-				},
-				left: {
-					name: "left",
-					x: position.left,
-					y: position.top + height / 2,
-					offset: [-400, 100]
-				}
-			};
-		},
-
-		connectWith: function (block, fromConnector, toConnector, formChild) {
-			var connection = new $.fc.workflow.connection(this, block, fromConnector, toConnector, !!formChild);
-			this.connections.push(connection);
-			block.connections.push(connection);
-
-			if (formChild) {
-				this.level = Math.max(this.level, block.level + 1);
 			} else {
-				block.level = Math.max(block.level, this.level + 1);
+				this.branches[branch] = child;
+				child.parent = this;
+				child.parentBranch = branch;
+			}
+
+			return this;
+		},
+
+		render: function (branch) {
+			var self = this;
+			if (typeof (branch) !== "undefined" && branch && this.branches[branch]) {
+				$('#' + this.id + '_branch_' + branch)
+					.html('<div class="fc-workflow-connection fc-workflow-connection-' + branch + '"></div>' + this.branches[branch].render());
+
+				this.branches[branch].afterRender();
+
+				this.options.workflow.refreshConnections();
+			} else {
+				return $.fc.tmpl(this.options.template, this);
 			}
 		},
 
-		position: function () {
-			var self = this;
-			$.each(this.connections(), function (index, connection) {
-				var direction = self === connection.options.from ?
-					"from" :
-					"to";
-
-				if ((direction === "from" && !connection.options.formChild) || (direction === "to" && connection.options.formChild)) {
-				   return;
-				}
-
-				var offset = connection.getConnector(direction === "from" ? "to" : "from").offset;
-
-				self.widget().position({
-					of: connection.options[direction === "from" ? "to" : "from"].widget(),
-					my: "center center",
-					at: "center center",
-					offset: offset.join(" ")
-				});
-
-				if (typeof (self.options.css.left) !== "undefined" || typeof (self.options.css.top) !== "undefined") {
-					self.widget().css({
-						left: self.options.css.left,
-						top: self.options.css.top
-					});
-				}
-
-				 self.connectors(self.getConnectors());
+		afterRender: function () {
+			$.each(this.branches, function (index, branch) {
+				branch.afterRender();
 			});
 		}
 	});

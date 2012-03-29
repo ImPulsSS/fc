@@ -138,7 +138,6 @@
 				.insertAfter(this.header);
 
 			if (!data.length) {
-				this.source.refresh();
 				return;
 			}
 

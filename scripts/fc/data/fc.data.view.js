@@ -102,7 +102,7 @@
 				self.refresh();
 			});
 
-			this.filter = new $.fc.observableArray(this.options.filter);
+			this.filter = new $.fc.observable(this.options.filter);
 			this.filter.bind('change', function (e, value) {
 				self.refresh();
 			});

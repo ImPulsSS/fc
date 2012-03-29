@@ -1,20 +1,51 @@
 (function ($) {
-	$.fc.widget("fc.workflow.add", $.fc.workflow.block, {
+	$.fc.define("fc.workflow.add", $.fc.workflow.block, {
 		options: {
-			text: "+",
-			css: {
-				width: null
-			}
+			template:  '<div id="<%=id%>" class="fc-workflow-block fc-workflow-add fc-workflow-connectible">\
+							<span class="fc-workflow-add-inner">\
+								<span class="fc-workflow-block-content">+</span>\
+							</span>\
+						</div>\
+						<div id="<%=id%>_branch_left" class="fc-workflow-branch fc-workflow-branch-left">\
+							<%=branches.left ? branches.left.render() : "" %>\
+						</div>\
+						<div id="<%=id%>_branch_right" class="fc-workflow-branch fc-workflow-branch-right">\
+							<%=branches.right ? branches.right.render() : "" %>\
+						</div>\
+						<div class="ui-helper-clearfix"></div>'
 		},
 
-		_init: function () {
-			$.fc.workflow.block.prototype._init.call(this);
+		afterRender: function () {
+			var self = this,
+				parent = self.parent,
+				branch = self.parentBranch;
 
-			this.element.find('.fc-workflow-block-content')
-				.addClass('ui-corner-all');
+			$('#' + this.id)
+				.find('.fc-workflow-add-inner')
+				.click(function () {
+					$.fc.dialog.prompt("New condition block", "Condition block name", "New condition block", function (blockName) {
+						if (!blockName) {
+							return;
+						}
 
-			this.element.click(function () {
-				$.fc.dialog.alert("New condition block", "Condition block creation will be here");
+						parent.addChild(branch,
+							new $.fc.workflow.add().addChild({
+								left: new $.fc.workflow.block({
+										text: blockName,
+										workflow: parent.options.workflow
+									}).addChild({
+										left: self,
+										right: new $.fc.workflow.add({ workflow: parent.options.workflow })
+									})
+							})
+						);
+
+						parent.render(branch);
+					});
+				});
+
+			$.each(this.branches, function (index, branch) {
+				branch.afterRender();
 			});
 		}
 	});
