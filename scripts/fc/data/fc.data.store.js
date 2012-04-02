@@ -77,7 +77,7 @@
 				return map.call(item, item, key);
 			}
 
-			result = {};
+			result = { _rawData: item };
 
 			$.each(map, function (index, mapping) {
 				result[mapping.name] = $.isFunction(mapping.mapping) ?

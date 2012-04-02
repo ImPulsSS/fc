@@ -7,6 +7,19 @@
 		__fc_scrollbarWidth = 0,
 		__fc_primitiveTypes = { 'undefined': true, 'boolean': true, 'number': true, 'string': true };
 
+	$.fc.attrFn = $.attrFn || {
+		val: true,
+		css: true,
+		html: true,
+		text: true,
+		data: true,
+		width: true,
+		height: true,
+		offset: true,
+		click: true,
+		bind: true
+	};
+
 	$.fc.getTextDimensions = function (text) {
 		var $ruler = $('#__get_dimensions_dummy_span');
 		if ($ruler.length === 0) {

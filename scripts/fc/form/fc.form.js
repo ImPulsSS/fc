@@ -7,6 +7,11 @@
 			method: "POST",
 			fieldSetClass: "fc-form-fieldset",
 
+			labelStyle: {
+				"display": "inline-block",
+				"min-width": 70
+			},
+
 			fields: []
 		},
 
@@ -48,7 +53,7 @@
 		},
 
 		_renderField: function (fieldOptions) {
-			fieldOptions = $.extend({ form: this }, fieldOptions);
+			fieldOptions = $.extend({ form: this, labelStyle: this.options.labelStyle }, fieldOptions);
 			switch (fieldOptions.type) {
 				case "select":
 					return new $.fc.form.field.selectbox(fieldOptions);
@@ -132,6 +137,12 @@
 
 		_serialize: function () {
 			return $(this.element[0]).serialize();
+		},
+
+		getField: function (fieldName) {
+			return this.element
+				.find(':input[name = "' + fieldName + '"]')
+				.data('fcFieldWidget');
 		},
 
 		submit: function () {

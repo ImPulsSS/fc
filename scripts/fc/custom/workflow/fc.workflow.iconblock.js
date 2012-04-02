@@ -2,12 +2,13 @@
 	$.fc.define("fc.workflow.iconblock", $.fc.workflow.block, {
 		options: {
 			icon: "",
-			iconDirection: "left",
-			template:  '<div id="<%=id%>" class="fc-workflow-iconblock fc-workflow-iconblock-<%=options.iconDirection%> fc-workflow-connectible <%=options.class%>">\
-				            <div class="ui-state-default ui-corner-all fc-workflow-block">\
+			iconDirection: "right",
+			template:  '<div id="<%=id%>" class="fc-workflow-block fc-workflow-iconblock fc-workflow-iconblock-<%=options.iconDirection%> <%=options.className%>">\
+				            <div class="ui-state-default ui-corner-all fc-workflow-block-inner">\
 								<span class="fc-workflow-block-content"><%=options.text%></span>\
-								<div class="fc-workflow-iconblock-icon ui-state-default "></div>\
+								<%=renderControls()%>\
 							</div>\
+							<div class="fc-workflow-iconblock-icon ui-state-default "></div>\
 						</div>\
 						<div id="<%=id%>_branch_left" class="fc-workflow-branch fc-workflow-branch-left">\
 							<%=branches.left ? branches.left.render() : "" %>\
@@ -16,6 +17,40 @@
 							<%=branches.right ? branches.right.render() : "" %>\
 						</div>\
 						<div class="ui-helper-clearfix"></div>'
+		},
+
+		bindEvents: function () {
+			var self = this;
+
+			this.element
+				.click(function () {
+					self.options.workflow
+						.widget()
+						.find(".ui-state-active")
+						.removeClass("ui-state-active fc-workflow-shadow");
+
+					self.element
+						.children(".ui-state-default")
+						.addClass("ui-state-active")
+						.filter(".fc-workflow-block-inner")
+						.addClass("fc-workflow-shadow");
+				})
+				.hover(function () {
+					self.element
+						.children(".ui-state-default")
+						.addClass('ui-state-hover')
+						.filter(".fc-workflow-block-inner")
+						.addClass("fc-workflow-shadow");
+				}, function () {
+					var element = self.element
+						.children(".ui-state-default");
+
+					element.removeClass("ui-state-hover");
+
+					if (!element.hasClass("ui-state-active")) {
+						element.removeClass("fc-workflow-shadow");
+					}
+				});
 		}
 	});
 })(jQuery);

@@ -5,4 +5,4 @@
 
 	.fc-form-field select { height: 23px; padding: 2px; border: 1px solid #DDDDDD; border-radius: 2px; -moz-border-radius: 2px; -webkit-border-radius: 2px; }
 	.fc-form-field input { width: 100%; height: 23px; padding: 2px; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; border: 1px solid #DDDDDD; border-radius: 2px; -moz-border-radius: 2px; -webkit-border-radius: 2px; }
-	.fc-form-field input[type="checkbox"], .fc-form-field input[type="radio"] { width: auto; }
+	.fc-form-field input[type="checkbox"], .fc-form-field input[type="radio"] { width: auto; height: auto; }

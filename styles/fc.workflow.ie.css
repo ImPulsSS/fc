@@ -4,3 +4,5 @@
 
 .fc-workflow-connection-left { top: -50px; }
 .fc-workflow-connection-right { top: -50px; }
+
+.fc-workflow-iconblock-top .fc-workflow-iconblock-icon { top: 0; }

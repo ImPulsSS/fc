@@ -1,20 +1,10 @@
 (function ($) {
-	var attrFn = $.attrFn || {
-		val: true,
-		css: true,
-		html: true,
-		text: true,
-		data: true,
-		width: true,
-		height: true,
-		offset: true,
-		click: true
-	};
-
 	$.fc.widget("fc.form.wrapped", $.fc.form, {
 		options: {
 			containerStyle: {},
-			buttonSetClass: ''
+			buttonSetClass: '',
+
+			buttons: []
 		},
 
 		_create: function () {
@@ -48,7 +38,7 @@
 					if (key === "click") {
 						return;
 					}
-					if (key in attrFn) {
+					if (key in $.fc.attrFn) {
 						button[key](value);
 					} else {
 						button.attr(key, value);
@@ -72,6 +62,44 @@
 			delete this.buttonPane;
 
 			$.fc.form.prototype._destroy.call(this);
+		},
+
+		_renderField: function (fieldOptions) {
+			switch (fieldOptions.type) {
+				case "plain":
+					return new $.fc.plain(fieldOptions, fieldOptions.html || fieldOptions.text);
+			}
+
+			return $.fc.form.prototype._renderField.call(this, fieldOptions);
+		},
+
+		load: function (values) {
+			if (typeof (values) === "undefined" || !values) {
+				values = {};
+			}
+
+			var field, fieldName, fieldValue;
+
+			this.element.find(':input').each(function () {
+				field = $(this).data('fcFieldWidget');
+				if (!field) {
+					return;
+				}
+
+				field.reset();
+			});
+
+			for (fieldName in values) {
+				fieldValue = values[fieldName];
+
+				field = this.getField(fieldName);
+
+				if (!field) {
+					continue;
+				}
+
+				field.value(values[fieldName]);
+			}
 		},
 
 		widget: function() {

@@ -209,12 +209,13 @@
 			this.columns = new $.fc.observableArray([]);
 			this.columns.bind('change', function (e, value) {
 				self.rowTemplate = $.map(value, function (column, index) {
-						return $.fc.stringBuilder.format('<td class="{0}-cell {0}-column-{1}" data-column="{1}"><div class="{0}-cell-inner"><%=typeof (row[{2}]) !== "undefined" ? row[{2}] : ""%></div></td>',
+						return $.fc.stringBuilder.format('<td class="{0}-cell {0}-column-{1}" data-column="{1}"><div class="{0}-cell-inner{3}"><%=typeof (row[{2}]) !== "undefined" ? row[{2}] : ""%></div></td>',
 								self.widgetFullName,
 								~~index + 1,
 								$.isNumeric(column.property) ?
 									column.property :
-									"'" + column.property + "'");
+									"'" + column.property + "'",
+								column.cellClassName ? " " + column.cellClassName : "");
 					})
 					.join('');
 
@@ -284,7 +285,7 @@
 					var col = $('<col>', {
 							width: columns[index].css && columns[index].css.width ?
 								columns[index].css.width :
-								$this.parent().width(),
+								$this.parent().width() || null,
 							"data-flex": !columns[index].css || !columns[index].css.width
 						})
 						.appendTo(self.colgroup);
@@ -350,7 +351,7 @@
 								minWidth: $.fc.getTextDimensions($this.text(), { }, $this.attr('class') + " ui-widget").width
 							})
 							.find('.ui-resizable-e')
-								.dblclick(function (e) {
+								.dblclick(function () {
 									var $this = $(this).parent(),
 										width = $this.resizable("option", "boundWidth");
 

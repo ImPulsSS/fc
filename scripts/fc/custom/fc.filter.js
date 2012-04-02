@@ -250,15 +250,6 @@
 			}
 		},
 
-		_renderField: function (fieldOptions) {
-			switch (fieldOptions.type) {
-				case "plain":
-					return new $.fc.plain(fieldOptions, fieldOptions.html || fieldOptions.text);
-			}
-
-			return $.fc.form.prototype._renderField.call(this, fieldOptions);
-		},
-
 		_serialize: function (preventEncodeNested) {
 			var field,
 				editableFieldsSerializeParam = this.options.editableFieldsSerializeParam,
@@ -353,12 +344,6 @@
 
 				field.value(values[fieldName]);
 			}
-		},
-
-		getField: function (fieldName) {
-			return this.element
-						.find(':input[name = "' + fieldName + '"]')
-						.data('fcFieldWidget');
 		},
 
 		toggleView: function (preventAnimation) {

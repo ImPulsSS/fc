@@ -7,8 +7,6 @@
 		},
 
 		_create: function () {
-			var self = this;
-
 			this.element
 				.addClass(this.widgetBaseClass);
 
@@ -20,26 +18,52 @@
 				.removeClass(this.widgetBaseClass);
 		},
 
+		addBlock: function (sender) {
+			var	self = this,
+				parent = sender.parent,
+				branch = sender.parentBranch;
+
+			$.fc.dialog.prompt("New condition block", "Condition block name", "New condition block", function (blockName) {
+				if (!blockName) {
+					return;
+				}
+
+				parent.addChild(branch,
+					new $.fc.workflow.add().addChild({
+						left: new $.fc.workflow.iconblock({
+							text: blockName,
+							workflow: self
+						}).addChild({
+							left: sender,
+							right: new $.fc.workflow.add({ workflow: self })
+						})
+					})
+				);
+
+				parent.render(branch);
+			});
+		},
+
 		load: function () {
 			this.root = new $.fc.workflow.iconblock({
 				text: 'Capturing: All new subscribers<br><a href="#">Specify new subscribers</a>',
-				"class": 'fc-workflow-root',
+				className: 'fc-workflow-root',
 				iconDirection: "bottom",
 				workflow: this
 			}).addChild({
 				left: new $.fc.workflow.add({ workflow: this }).addChild({
-					left: new $.fc.workflow.block({
+					left: new $.fc.workflow.iconblock({
 						text: 'Condition block #1<br><a href="#">edit</a>',
 						workflow: this
 					}).addChild({
 						left: new $.fc.workflow.add({ workflow: this }).addChild({
-							left: new $.fc.workflow.block({
+							left: new $.fc.workflow.iconblock({
 								text: 'Condition block #2<br><a href="#">edit</a>',
 								workflow: this
 							}).addChild({
 								left: new $.fc.workflow.add({ workflow: this }),
 								right: new $.fc.workflow.add({ workflow: this }).addChild({
-									left: new $.fc.workflow.block({
+									left: new $.fc.workflow.iconblock({
 										text: 'Condition block #4<br><a href="#">edit</a>',
 										workflow: this
 									}).addChild({
@@ -50,7 +74,7 @@
 							})
 						}),
 						right: new $.fc.workflow.add({ workflow: this }).addChild({
-							left: new $.fc.workflow.block({
+							left: new $.fc.workflow.iconblock({
 								text: 'Condition block #3<br><a href="#">edit</a>',
 								workflow: this
 							}).addChild({
@@ -67,7 +91,7 @@
 
 			this.top = new $.fc.workflow.iconblock({
 				text: 'Capturing: All new subscribers<br><a href="#">Specify new subscribers</a>',
-				"class": 'fc-workflow-root',
+				className: 'fc-workflow-root',
 				iconDirection: "top",
 				workflow: this
 			});
@@ -81,10 +105,11 @@
 		refreshConnections: function () {
 			var self = this,
 				topBlock = $('#' + self.top.id),
-				topOffset = topBlock.offset();
+				topOffset = topBlock.offset(),
+				isIe = $.browser.msie && $.browser.version < 8;
 
 			this.element
-				.find('.fc-workflow-connectible')
+				.find('.fc-workflow-block')
 				.not('.fc-workflow-root')
 				.each(function () {
 					var block = $(this),
@@ -94,10 +119,10 @@
 							"right",
 						connection = block.siblings('.fc-workflow-connection'),
 						blockOffset = block.offset(),
-						parentOffset = branch.siblings('.fc-workflow-connectible').offset();
+						parentOffset = branch.siblings('.fc-workflow-block').offset();
 
 					if (!connection.length) {
-						connection = $('<div></div>', { "class": "fc-workflow-connection fc-workflow-connection-" + branchName })
+						connection = $('<div></div>', { id: this.id + "_connection_" + branchName, "data-block": this.id, "class": "fc-workflow-connection fc-workflow-connection-" + branchName })
 							.insertBefore(block);
 					}
 
@@ -110,19 +135,19 @@
 							});
 					}
 
-					connection = $("#" + this.id + "_top");
+					connection = $("#" + this.id + "_connection_top");
 					if (!connection.length && !block.siblings('.fc-workflow-branch').children().length) {
 						if (!connection.length) {
-							connection = $('<div></div>', { id: this.id + "_top", "class": "fc-workflow-connection fc-workflow-connection-left" })
+							connection = $('<div></div>', { id: this.id + "_connection_top", "data-block": this.id, "class": "fc-workflow-connection fc-workflow-connection-left" })
 								.insertBefore(topBlock);
 						}
 					}
 
 					connection
 						.css({
-							height: topOffset.top - blockOffset.top,
-							left: blockOffset.left + block.width() / 2 - (block.outerWidth(true) - block.width()) + 1,
-							top: blockOffset.top - 6
+							height: topOffset.top - blockOffset.top - (isIe ? block.height() + topBlock.height() : 0),
+							left: blockOffset.left + block.width() / 2 - (block.outerWidth(true) - block.width()) + (isIe ? -1 : 1),
+							top: blockOffset.top - (isIe ? 36 : 6)
 						});
 				});
 		}
