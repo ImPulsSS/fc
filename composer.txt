@@ -3,8 +3,11 @@
 #########################################################
 
 # framework
-fc.ui.all.min.js
+fc.ui.dependencies.min.js -noclosure -nocompress
 	scripts\fc\utils\json.js
+	scripts\jquery\jquery.ba-hashchange.min.js
+
+fc.ui.all.min.js
 	scripts\fc\utils\fc.utils.js
 	scripts\fc\fc.core.js
 
@@ -40,7 +43,6 @@ fc.ui.all.min.js
 	scripts\fc\custom\fc.reportpanel.js
 	scripts\fc\custom\fc.filter.js
 
-	scripts\jquery\jquery.ba-hashchange.min.js
 	scripts\fc\utils\fc.history.js
 
 # cohorts
@@ -58,11 +60,13 @@ fc.liveview.min.js
 # workflow
 fc.workflow.min.js
 	scripts\fc\custom\workflow\fc.workflow.js
-	scripts\fc\custom\workflow\fc.workflow.connection.js
 	scripts\fc\custom\workflow\fc.workflow.block.js
 	scripts\fc\custom\workflow\fc.workflow.add.js
 	scripts\fc\custom\workflow\fc.workflow.splitter.js
-	scripts\fc\custom\workflow\fc.workflow.iconblock.js
+
+	scripts\fc\custom\workflow\leadsmanage\fc.workflow.leadsmanage.js
+	scripts\fc\custom\workflow\leadsmanage\fc.workflow.leadsmanage.block.js
+	scripts\fc\custom\workflow\leadsmanage\fc.workflow.leadsmanage.iconblock.js
 
 # rails
 #fc.rails.min.js
@@ -84,10 +88,11 @@ fc.ui.all.min.css
 	styles\fc.reportpanel.css
 	styles\fc.filter.css
 
-	styles\fc.cohorts.css
 	styles\fc.charts.css
-
+	styles\fc.cohorts.css
+	
 	styles\fc.workflow.css
+	styles\fc.workflow.leadsmanage.css
 
 fc.ui.ie.all.min.css
 	styles\fc.form.ie.css

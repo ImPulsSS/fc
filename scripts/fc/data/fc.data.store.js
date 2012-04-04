@@ -213,7 +213,7 @@
 			//ajax
 			$.ajax(options)
 				.done(function (data) {
-					options.done(self._prepareData(data, options));
+					options.done(self._prepareData(data, options), data);
 				})
 				.fail(function () {
 					options.done(null);

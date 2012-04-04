@@ -2,17 +2,20 @@
 	.fc-grid-table { border-collapse: collapse; table-layout: fixed; border: 0;  }
 	.fc-grid-table td, .fc-grid-table th { padding: 0; }
 
-		.fc-grid-header { padding: 0.5em 1em; overflow: hidden; white-space: nowrap; }
+		.fc-grid-header { height: 15px; padding: 0.5em 1em; overflow: hidden; white-space: nowrap; }
 		.fc-grid-sortable { padding-right: 2em; position: relative; cursor: pointer; }
 			.fc-grid-sortable .ui-icon { margin-top: -1px; position: absolute; top: 0.5em; right: 0.4em; }
 
-		.fc-grid-row { border: 1px solid #EDEDED; border-width: 0 0 1px 0 ; }
+		.fc-grid-row { border-bottom: 1px solid #EDEDED; }
 	        .fc-grid-cell { overflow: hidden;  }
 	            .fc-grid-cell-inner { padding: 0.5em 1em; text-overflow: ellipsis; text-align: left; overflow: hidden; white-space: nowrap; }
 
 			.fc-grid-row-even { background-color: #FAFAFA; }
 
 			.fc-grid-row-over { background-color: #EEEEEE; }
+
+		.fc-grid-table .ui-selecting { background: #FECA40; }
+		.fc-grid-table .ui-selected { background: #F39814; color: white; }
 
 		.fc-grid-footer { border: 0; }
 			.fc-grid-stat { float: right; margin-right: 5px; line-height: 34px; }

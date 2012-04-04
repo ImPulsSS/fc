@@ -102,7 +102,7 @@
 			_bind : function (type, handler) {
 				this.element
 					.bind((this.widgetEventPrefix + type).toLowerCase(), function () {
-						return handler.apply(this, Array.prototype.slice.apply(arguments).slice(1));
+						return handler.apply(this, [].slice.call(arguments, 1));
 					});
 			},
 			_trigger: function(type, event, data) {
@@ -113,7 +113,7 @@
 					type :
 					this.widgetEventPrefix + type).toLowerCase();
 				data = arguments.length > 3 ?
-						Array.prototype.slice.apply(arguments).slice(2) :
+						[].slice.call(arguments, 2) :
 						[ data || {} ];
 
 				if ( event.originalEvent ) {

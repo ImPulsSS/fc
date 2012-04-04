@@ -3,19 +3,95 @@
 		options: {
 			api: {
 
+			},
+
+			defaultBlockOptions: {
+				icon: "fc-workflow-icon-block",
+				controls: {
+					edit: {
+						name: "edit",
+						title: "Edit",
+
+						icon: "ui-icon-pencil",
+						click: function () {
+							alert($(this).data('block').id);
+						}
+					},
+					remove: {
+						name: "remove",
+						title: "Remove",
+						className: "fc-workflow-control-right",
+						icon: "ui-icon-close",
+						click: function () {
+							var self = $(this).data('block');
+							$.fc.dialog.confirm("Condition block removing", "Are you sure you want to delete this condition block?", function (ok) {
+								if (!ok) {
+									return;
+								}
+
+								self.parent.removeChild(self.parentBranch);
+							});
+						}
+					}
+				}
 			}
 		},
 
 		_create: function () {
+			var self = this;
+
 			this.element
 				.addClass(this.widgetBaseClass);
+		},
 
-			this.load();
+		_init: function () {
+			this.root = new $.fc.workflow.iconblock({
+				text: 'Capturing: All new subscribers<br><a href="#">Specify new subscribers</a>',
+				className: 'fc-workflow-root',
+				iconDirection: "bottom",
+				icon: "fc-workflow-icon-start",
+				workflow: this
+			});
+
+			this.top = new $.fc.workflow.iconblock({
+				text: 'Capturing: All new subscribers<br><a href="#">Specify new subscribers</a>',
+				className: 'fc-workflow-root',
+				iconDirection: "top",
+				icon: "fc-workflow-icon-complete",
+				workflow: this
+			});
 		},
 
 		_destroy: function () {
 			this.element
 				.removeClass(this.widgetBaseClass);
+		},
+
+		_render: function () {
+			this.element.empty();
+
+			this.element.append(this.root.render());
+			this.root.afterRender();
+
+			this.element.append(this.top.render());
+			this.top.afterRender();
+
+			this.refreshConnections();
+		},
+
+		_addBlock: function (text, parent, branch, nextBlock) {
+			var	self = this,
+				result = new $.fc.workflow.iconblock($.extend(true, {}, self.options.defaultBlockOptions, {
+						text: text,
+						workflow: self
+					})).addChild({
+						left: nextBlock,
+						right: null
+					});
+
+			parent.addChild(branch, result);
+
+			return result;
 		},
 
 		addBlock: function (sender) {
@@ -28,17 +104,7 @@
 					return;
 				}
 
-				parent.addChild(branch,
-					new $.fc.workflow.add().addChild({
-						left: new $.fc.workflow.iconblock({
-							text: blockName,
-							workflow: self
-						}).addChild({
-							left: sender,
-							right: new $.fc.workflow.add({ workflow: self })
-						})
-					})
-				);
+				self._addBlock("blockName", parent, branch, sender);
 
 				parent.render(branch);
 			});
@@ -49,24 +115,25 @@
 				text: 'Capturing: All new subscribers<br><a href="#">Specify new subscribers</a>',
 				className: 'fc-workflow-root',
 				iconDirection: "bottom",
+				icon: "fc-workflow-icon-start",
 				workflow: this
 			}).addChild({
 				left: new $.fc.workflow.add({ workflow: this }).addChild({
-					left: new $.fc.workflow.iconblock({
+					left: new $.fc.workflow.iconblock($.extend(true, {}, this.options.defaultBlockOptions, {
 						text: 'Condition block #1<br><a href="#">edit</a>',
 						workflow: this
-					}).addChild({
+					})).addChild({
 						left: new $.fc.workflow.add({ workflow: this }).addChild({
-							left: new $.fc.workflow.iconblock({
+							left: new $.fc.workflow.iconblock($.extend(true, {}, this.options.defaultBlockOptions, {
 								text: 'Condition block #2<br><a href="#">edit</a>',
 								workflow: this
-							}).addChild({
+							})).addChild({
 								left: new $.fc.workflow.add({ workflow: this }),
 								right: new $.fc.workflow.add({ workflow: this }).addChild({
-									left: new $.fc.workflow.iconblock({
+									left: new $.fc.workflow.iconblock($.extend(true, {}, this.options.defaultBlockOptions, {
 										text: 'Condition block #4<br><a href="#">edit</a>',
 										workflow: this
-									}).addChild({
+									})).addChild({
 										left: new $.fc.workflow.add({ workflow: this }),
 										right: new $.fc.workflow.add({ workflow: this })
 									})
@@ -74,10 +141,10 @@
 							})
 						}),
 						right: new $.fc.workflow.add({ workflow: this }).addChild({
-							left: new $.fc.workflow.iconblock({
+							left: new $.fc.workflow.iconblock($.extend(true, {}, this.options.defaultBlockOptions, {
 								text: 'Condition block #3<br><a href="#">edit</a>',
 								workflow: this
-							}).addChild({
+							})).addChild({
 								left: new $.fc.workflow.add({ workflow: this }),
 								right: new $.fc.workflow.add({ workflow: this })
 							})
@@ -93,6 +160,7 @@
 				text: 'Capturing: All new subscribers<br><a href="#">Specify new subscribers</a>',
 				className: 'fc-workflow-root',
 				iconDirection: "top",
+				icon: "fc-workflow-icon-complete",
 				workflow: this
 			});
 
@@ -143,13 +211,18 @@
 						}
 					}
 
-					connection
-						.css({
-							height: topOffset.top - blockOffset.top - (isIe ? block.height() + topBlock.height() : 0),
-							left: blockOffset.left + block.width() / 2 - (block.outerWidth(true) - block.width()) + (isIe ? -1 : 1),
-							top: blockOffset.top - (isIe ? 36 : 6)
-						});
+					connection.css({
+						height: topOffset.top - blockOffset.top - (isIe ? topBlock.height() : 0),
+						left: blockOffset.left + block.width() / 2 - (block.outerWidth(true) - block.width()) + (isIe ? -1 : 1),
+						top: blockOffset.top - self.element.offset().top + block.outerHeight() / 2 - (isIe ? 36 : 0)
+					});
 				});
+		},
+
+		serialize: function () {
+		},
+
+		deserialize: function (data) {
 		}
 	});
 })(jQuery);

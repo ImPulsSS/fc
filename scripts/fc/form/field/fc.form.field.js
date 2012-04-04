@@ -76,7 +76,7 @@
 
 				if (this.options.label) {
 					$("<label></label>", { "text": this.options.label})
-						.css(this.options.labelStyle)
+						.css(this.options.labelStyle || {})
 						.prependTo(this.wrapper);
 				}
 			}

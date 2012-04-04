@@ -6,16 +6,21 @@
 			columns: [],
 			source: null,
 
+			selectable: {
+				enabled: true,
+				multiple: false
+			},
+
 			showScrollBar: true,
 			showFooter: true,
 
 			statTemplate: '<div class="<%=widgetFullName%>-stat">Displaying <span class="<%=widgetFullName%>-offset"><%=source.offset() + 1%></span> - <span class="<%=widgetFullName%>-limit"><%=source.offset() + source.limit()%></span> of <span class="<%=widgetFullName%>-total"><%=source.total()%></span></div>',
 
-			headerTemplate: '<tr>\
-			                    <% for (var i = 0; i < columns.length; i++) { %>\
-			    	                <th data-column="<%=i%>" data-property="<%=columns[i].property%>" data-sortable="<%=columns[i].sortable%>" data-resizable="<%=columns[i].resizable%>"><div><%=columns[i].text%></div></th>\
-								<% } %>\
-				             </tr>',
+			headerTemplate: '<tr>' +
+			                    '<% for (var i = 0; i < columns.length; i++) { %>' +
+			    	                '<th data-column="<%=i%>" data-property="<%=columns[i].property%>" data-sortable="<%=columns[i].sortable%>" data-resizable="<%=columns[i].resizable%>"><div><%=columns[i].text%></div></th>' +
+								'<% } %>' +
+				             '</tr>',
 
 			renderHeaders: function () {
 				var headersWrappers = $(this).find('.fc-grid-header');
@@ -48,16 +53,20 @@
 
 			this.overlay = new $.fc.overlay({ parent: this.container });
 
+			this.selected = new $.fc.observableArray([]);
+
 			this._callMethod("_renderHeaders");
 
 			this._callMethod("_initData");
 
 			this._callMethod("_renderFooter");
 
+			this._callMethod("_renderBody");
+
 			this._callMethod("_render");
 		},
 
-		_destroy: function() {
+		_destroy: function () {
 			this.element
 				.removeClass(this.widgetBaseClass)
 				.find('tbody tr').removeClass(this.widgetFullName + "-row-odd " + this.widgetFullName + "-row-even").end()
@@ -66,7 +75,7 @@
 			this.headers
 				.children('div')
 				.each(function () {
-					$(this).parent().text($(this).text());
+					$(this).parent().html($(this).text());
 				});
 
 			if (this.stat) {
@@ -116,6 +125,7 @@
 			this.source._bind({
 				change: function () {
 					self._callMethod("_render");
+					self.selected.removeAll();
 				},
 				beforerefresh: function () {
 					self.overlay.resize().show();
@@ -131,12 +141,6 @@
 				self = this,
 				data = this.source.data() || [];
 
-	        this.element
-				.find('tbody').remove();
-
-			this.body = $('<tbody></tbody>')
-				.insertAfter(this.header);
-
 			if (!data.length) {
 				return;
 			}
@@ -146,32 +150,55 @@
 			});
 
 			this.body.html(tableRows.join(''));
+		},
 
-			this.body
-				.find('tr')
-				.hover(function () {
-					$(this).addClass(self.widgetFullName + "-row-over");
-				}, function () {
-					$(this).removeClass(self.widgetFullName + "-row-over");
-				})
-				.click(function (e) {
-					self.body.find(".ui-state-highlight")
-						.removeClass("ui-state-highlight");
+		_renderBody: function () {
+			var self = this;
 
-					$(this).addClass("ui-state-highlight");
+			this.element
+				.find('tbody').remove();
 
-					self._trigger("rowclick", e, self.source.data()[$(this).data('index')]);
+			this.body = $('<tbody></tbody>')
+				.insertAfter(this.header)
+				.delegate("tr", "mouseenter", function (e) { $(this).addClass(self.widgetFullName + "-row-over"); })
+				.delegate("tr", "mouseleave", function (e) { $(this).removeClass(self.widgetFullName + "-row-over"); })
+				.delegate("tr", "click", function (e) {
+					var record = self.source.data()[$(this).data('index')];
+
+					if (self.options.selectable.enabled && !self.options.selectable.multiple) {
+						self.body.find(".ui-selected")
+							.removeClass("ui-selected ui-state-highlight");
+
+						$(this).addClass("ui-selected ui-state-highlight");
+
+						self.selected
+							.replaceAll(record);
+
+						self._trigger("rowselected", e, { items: $(this) });
+					}
+
+					self._trigger("rowclick", e, record);
 				})
-				.dblclick(function (e) {
-					self._trigger("rowdblclick", e, self.source.data()[$(this).data('index')]);
-				})
-				.find('td')
-				.click(function (e) {
-					self._trigger("cellclick", e, self.source.data()[$(this).closest('tr').data('index')], self.columns()[$(this).data('column') - 1]);
-				})
-				.dblclick(function (e) {
-					self._trigger("celldblclick", e, self.source.data()[$(this).closest('tr').data('index')], self.columns()[$(this).data('column') - 1]);
+				.delegate("tr", "dblclick", function (e) { self._trigger("rowdblclick", e, self.source.data()[$(this).data('index')]); })
+				.delegate("td", "click", function (e) { self._trigger("cellclick", e, self.source.data()[$(this).closest('tr').data('index')], self.columns()[$(this).data('column') - 1]); })
+				.delegate("td", "dblclick", function (e) { self._trigger("celldblclick", e, self.source.data()[$(this).closest('tr').data('index')], self.columns()[$(this).data('column') - 1]); });
+
+			if (self.options.selectable.enabled && self.options.selectable.multiple) {
+				this.body.selectable({
+					filter: "tr",
+					cancel: ".ui-selected",
+					stop: function (e) {
+						var selected = self.body.find('.ui-selected');
+
+						self._trigger("rowselected", e, { items: selected });
+
+						self.selected
+							.replaceAll(selected.map(function () {
+									return self.source.data()[$(this).data('index')];
+								}).toArray());
+					}
 				});
+			}
 		},
 
 		_renderFooter: function () {
@@ -209,7 +236,9 @@
 			this.columns = new $.fc.observableArray([]);
 			this.columns.bind('change', function (e, value) {
 				self.rowTemplate = $.map(value, function (column, index) {
-						return $.fc.stringBuilder.format('<td class="{0}-cell {0}-column-{1}" data-column="{1}"><div class="{0}-cell-inner{3}"><%=typeof (row[{2}]) !== "undefined" ? row[{2}] : ""%></div></td>',
+						return $.fc.stringBuilder.format('<td class="{0}-cell {0}-column-{1}" data-column="{1}">' +
+										(column.cellTemplate || '<div class="{0}-cell-inner{3}"><%=typeof (row[{2}]) !== "undefined" ? row[{2}] : ""%></div>') +
+										'</td>',
 								self.widgetFullName,
 								~~index + 1,
 								$.isNumeric(column.property) ?
@@ -280,6 +309,7 @@
 				.disableSelection()
 				.each(function (index) {
 					$this = $(this)
+						.css($.extend({}, columns[index].css || {}, { width: null, height: null, minWidth: null, minHeight: null, maxWidth: null, maxHeight: null }))
 						.addClass(self.widgetFullName + "-column-" + (index + 1) + " ui-state-default");
 
 					var col = $('<col>', {

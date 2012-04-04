@@ -42,11 +42,11 @@
 				},
 
 				trigger: function (eventName) {
-					this._trigger(eventName || "change", [ _lastValue ]);
+					this._trigger(eventName || "change", _lastValue);
 				},
 
-				_trigger: function () {
-					_eventTarget.triggerHandler.apply(_eventTarget, arguments);
+				_trigger: function (event) {
+					_eventTarget.triggerHandler.apply(_eventTarget, [ event, [].slice.apply(arguments, [ 1 ]) ]);
 				}
 			});
 	};
@@ -110,7 +110,7 @@
 					items.splice(0, items.length);
 
 					this.trigger();
-					this._trigger("removeAll", allValues);
+					this._trigger("removeall", allValues);
 
 					return allValues;
 				}
@@ -147,7 +147,7 @@
 
 				this($.map(arguments, function (value) { return value; }));
 
-				this._trigger("replaceAll", allValues, this());
+				this._trigger("replaceall", allValues, this());
 
 				return allValues;
 			}

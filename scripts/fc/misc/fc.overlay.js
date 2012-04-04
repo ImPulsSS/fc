@@ -4,11 +4,11 @@
 			text: 'Loading...',
 			parent: document.body,
 			template:
-				'<div class="fc-overlay">\
-					<div class="ui-widget-overlay"></div>\
-					<div class="ui-widget-shadow ui-corner-all"></div>\
-					<div class="ui-widget ui-widget-content ui-corner-all"><%=options.text%></div>\
-				</div>'
+				'<div class="fc-overlay">' +
+					'<div class="ui-widget-overlay"></div>' +
+					'<div class="ui-widget-shadow ui-corner-all"></div>' +
+					'<div class="ui-widget ui-widget-content ui-corner-all"><%=options.text%></div>' +
+				'</div>'
 		},
 
 		_create: function () {

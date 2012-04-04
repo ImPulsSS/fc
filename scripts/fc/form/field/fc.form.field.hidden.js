@@ -34,7 +34,9 @@
 			} else {
 				this.element.val(arguments[0]);
 
-				this.textValue.html(arguments[0]);
+				if (typeof (this.textValue) !== "undefined") {
+					this.textValue.html(arguments[0]);
+				}
 
 				return arguments[0];
 			}

@@ -3,43 +3,43 @@
 		options: {
 			api: {
 				getData: "",
-				
+
 				getReports: "",
 				saveReport: "",
 				removeReport: "",
-				
+
 				getActions: ""
 			},
 			reportTemplateName: "<%=widget.options.actions[filters.activity1]%>/<%=widget.options.actions[filters.activity2]%> since <%=filters.fromDate%><%=filters.toDate ? ' till ' + filters.toDate : ''%>",
 			maxDifference: 12,
 			reportType: 1,
-			template: 
-				'<thead>\
-					<tr>\
-						<th colspan="2" class="fc-cohorts-header-1 fc-cohorts-activity1"><b><%=(options.actions[options.filter.activity1] || options.filter.activity1)%></b></th>\
-						<th colspan="13" class="fc-cohorts-header-1 fc-cohorts-activity2"><b><%=(options.actions[options.filter.activity2] || options.filter.activity2)%></b> by <%=options.filter.activity2Buckets%></th>\
-					</tr>\
-					<tr>\
-						<th class="fc-cohorts-title fc-cohorts-header-2">Time</th>\
-						<th class="fc-cohorts-total fc-cohorts-header-2">People</th>\
-						<% for (var i = 1; i <= options.maxDifference + 1; i++) { %>\
-							<th class="fc-cohorts-header-2 fc-cohorts-col-<%=i%>"><%=(i < 13 ? i : ">" + (i - 1))%></th>\
-						<% } %>\
-					</tr>\
-				</thead>\
-				<tbody>\
-					<% for (var i = 0; i < options.data.data.length; i++) { %>\
-					<tr>\
-						<th class="fc-cohorts-title fc-cohorts-header-2 fc-cohorts-row-<%=(i + 1)%>"><%=options.data.data[i].title%></th>\
-						<th class="fc-cohorts-total fc-cohorts-header-2 fc-cohorts-row-<%=(i + 1)%>"><%=$.fc.format(options.data.data[i].total)%></th>\
-						<% var cellValue; %>\
-						<% for (var j = 1; j <= options.maxDifference + 1; j++) { %>\
-							<% cellValue = _getCellValue(i, options.data.data[i].diffs[j]); %>\
-							<td class="fc-cohorts-value fc-cohorts-row-<%=(i + 1)%> fc-cohorts-col-<%=j%>"><div <%=_getCellStyle(cellValue, options.data.data[i].total)%>><%=_getFormattedValue(cellValue, options.data.data[i].total)%></div></td>\
-						<% } %>\
-					</tr>\
-					<% } %>\
-				</tbody>'
+			template:
+				'<thead>' +
+					'<tr>' +
+						'<th colspan="2" class="fc-cohorts-header-1 fc-cohorts-activity1"><b><%=(options.actions[options.filter.activity1] || options.filter.activity1)%></b></th>' +
+						'<th colspan="13" class="fc-cohorts-header-1 fc-cohorts-activity2"><b><%=(options.actions[options.filter.activity2] || options.filter.activity2)%></b> by <%=options.filter.activity2Buckets%></th>' +
+					'</tr>' +
+					'<tr>' +
+						'<th class="fc-cohorts-title fc-cohorts-header-2">Time</th>' +
+						'<th class="fc-cohorts-total fc-cohorts-header-2">People</th>' +
+						'<% for (var i = 1; i <= options.maxDifference + 1; i++) { %>' +
+							'<th class="fc-cohorts-header-2 fc-cohorts-col-<%=i%>"><%=(i < 13 ? i : ">" + (i - 1))%></th>' +
+						'<% } %>' +
+					'</tr>' +
+				'</thead>' +
+				'<tbody>' +
+					'<% for (var i = 0; i < options.data.data.length; i++) { %>' +
+					'<tr>' +
+						'<th class="fc-cohorts-title fc-cohorts-header-2 fc-cohorts-row-<%=(i + 1)%>"><%=options.data.data[i].title%></th>' +
+						'<th class="fc-cohorts-total fc-cohorts-header-2 fc-cohorts-row-<%=(i + 1)%>"><%=$.fc.format.usNumber(options.data.data[i].total)%></th>' +
+						'<% var cellValue; %>' +
+						'<% for (var j = 1; j <= options.maxDifference + 1; j++) { %>' +
+							'<% cellValue = _getCellValue(i, options.data.data[i].diffs[j]); %>' +
+							'<td class="fc-cohorts-value fc-cohorts-row-<%=(i + 1)%> fc-cohorts-col-<%=j%>"><div <%=_getCellStyle(cellValue, options.data.data[i].total)%>><%=_getFormattedValue(cellValue, options.data.data[i].total)%></div></td>' +
+						'<% } %>' +
+					'</tr>' +
+					'<% } %>' +
+				'</tbody>'
 		},
 
 		_create: function () {
@@ -249,11 +249,12 @@
 						}
 					],
 					value: this.options.reportType,
+					appendTo: this.toolbar,
 					change: function () {
 						self.options.reportType = ~~this.value();
 						self._callMethod("_render");
 					}
-				}, $("<select></select>").appendTo(this.toolbar));
+				});
 			} else {
 				this.toolbar.show();
 			}

@@ -1,68 +1,32 @@
 (function ($) {
 	$.fc.define("fc.workflow.block", {
 		options: {
-			template:  '<div id="<%=id%>" class="ui-state-default ui-corner-all fc-workflow-block <%=options.className%>">\
-							<span class="fc-workflow-block-content"><%=options.text%></span>\
-							<%=renderControls()%>\
-						</div>\
-						<div id="<%=id%>_branch_left" class="fc-workflow-branch fc-workflow-branch-left">\
-							<%=branches.left ? branches.left.render() : "" %>\
-						</div>\
-						<div id="<%=id%>_branch_right" class="fc-workflow-branch fc-workflow-branch-right">\
-							<%=branches.right ? branches.right.render() : "" %>\
-						</div>\
-						<div class="ui-helper-clearfix"></div>',
+			template:  '<div id="<%=id%>" class="ui-state-default ui-corner-all fc-workflow-block <%=options.className%>">' +
+							'<span class="fc-workflow-block-content"><%=options.text%></span>' +
+							'<%=renderControls()%>' +
+						'</div>' +
+						'<div id="<%=id%>_branch_left" class="fc-workflow-branch fc-workflow-branch-left">' +
+							'<%=branches.left ? branches.left.render() : "" %>' +
+						'</div>' +
+						'<div id="<%=id%>_branch_right" class="fc-workflow-branch fc-workflow-branch-right">' +
+							'<%=branches.right ? branches.right.render() : "" %>' +
+						'</div>' +
+						'<div class="ui-helper-clearfix"></div>',
 
 			controlTemplate: '<div class="fc-workflow-control <%=(obj.className || "fc-workflow-control-left")%>" data-control="<%=name%>"><div class="fc-workflow-control-inner ui-state-default ui-corner-all"><span class="ui-icon <%=icon%>"><%=title%></span></div></div>',
 
-			controls: {
-				edit: {
-					name: "edit",
-					title: "Edit",
-
-					icon: "ui-icon-pencil",
-					click: function () {
-						alert($(this).data('block').id);
-					}
-				},
-				remove: {
-					name: "remove",
-					title: "Remove",
-					className: "fc-workflow-control-right",
-					icon: "ui-icon-close",
-					click: function () {
-						var self = $(this).data('block');
-						$.fc.dialog.confirm("Condition block removing", "Are you sure you want to delete this condition block?", function (ok) {
-							if (!ok) {
-								return;
-							}
-
-							self.parent.removeChild(self.parentBranch);
-						});
-					}
-				},
-				swap: {
-					name: "swap",
-					title: "Swap branches",
-					className: "fc-workflow-control-bottom-right",
-					icon: "ui-icon-refresh",
-					click: function () {
-						var self = $(this).data('block');
-						$.fc.dialog.confirm("Condition block branches swapping", "Are you sure you want to swap branches?", function (ok) {
-							if (!ok) {
-								return;
-							}
-
-							self.swapBranches();
-						});
-					}
-				}
-			}
+			controls: {}
 		},
 
 		_create: function () {
 			this.id = $.fc.getId();
 			this.branches = {};
+
+			if (this.options.controls) {
+				this.options.controls = $.fc.toObject(this.options.controls, function (item, key) {
+					this[item.name || key] = item;
+				});
+			}
 		},
 
 		_destroy: function () {
@@ -204,6 +168,20 @@
 			});
 
 			return result.join('');
+		},
+
+		serialize: function () {
+			this._trigger("beforeserialize");
+
+			var result = {};
+
+			result.children = $.map(this.branches, function (child) {
+				return child.serialize();
+			});
+
+			this._trigger("serialize", result);
+
+			return result;
 		},
 
 		swapBranches: function () {
