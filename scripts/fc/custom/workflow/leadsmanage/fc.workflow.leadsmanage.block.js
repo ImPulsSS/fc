@@ -14,7 +14,7 @@
 			this.record = this.options.record;
 		},
 
-		serialize: function () {
+		_serialize: function () {
 			this._trigger("beforeserialize");
 
 			var result = $.extend(true, {

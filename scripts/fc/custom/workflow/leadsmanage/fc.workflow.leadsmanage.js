@@ -5,6 +5,17 @@
 		options: {
 			defaultBlockOptions: {
 				controls: {
+					edit: {
+						click: function () {
+							var self = $(this).data('block');
+
+							self.options.workflow.element.empty();
+
+							self.details
+								._render()
+								.appendTo(self.options.workflow.element);
+						}
+					},
 					swap: {
 						name: "swap",
 						title: "Swap branches",
@@ -32,7 +43,7 @@
 		},
 
 		_init: function () {
-			this.root = new $.fc.workflow.leadsmanage.iconblock({
+			this.root = new $.fc.workflow.iconblock({
 				text: 'Capturing: All new subscribers<br><a href="#">Specify new subscribers</a>',
 				className: "fc-workflow-root",
 				iconDirection: "bottom",
@@ -40,7 +51,7 @@
 				workflow: this
 			});
 
-			this.top = new $.fc.workflow.leadsmanage.iconblock({
+			this.top = new $.fc.workflow.iconblock({
 				text: 'Capturing: All new subscribers<br><a href="#">Specify new subscribers</a>',
 				className: "fc-workflow-root",
 				iconDirection: "top",
@@ -51,7 +62,7 @@
 
 		_addBlock: function (record, parent, branch, nextBlock) {
 			var	self = this,
-				result = new $.fc.workflow.leadsmanage.iconblock($.extend(true, {}, self.options.defaultBlockOptions, {
+				result = new $.fc.workflow.leadsmanage.conditionblock($.extend(true, {}, self.options.defaultBlockOptions, {
 						text: record.Name,
 						record: record,
 						workflow: self
@@ -85,7 +96,7 @@
 			});
 		},
 
-		serialize: function () {
+		_serialize: function () {
 			return $.extend(true, {
 				Uid: null,
 				ID: 0,
@@ -97,7 +108,7 @@
 			}, this.record);
 		},
 
-		deserialize: function (data) {
+		_deserialize: function (data) {
 			var self = this,
 				block = null,
 				children = {};
