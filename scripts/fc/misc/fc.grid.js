@@ -160,6 +160,7 @@
 
 			this.body = $('<tbody></tbody>')
 				.insertAfter(this.header)
+				.disableSelection()
 				.on("mouseenter." + this.widgetName, "tr:not(.ui-state-disabled)", function (e) { $(this).addClass(self.widgetFullName + "-row-over"); })
 				.on("mouseleave." + this.widgetName, "tr:not(.ui-state-disabled)", function (e) { $(this).removeClass(self.widgetFullName + "-row-over"); })
 				.on("click." + this.widgetName, "tr:not(.ui-state-disabled)", function (e) {
