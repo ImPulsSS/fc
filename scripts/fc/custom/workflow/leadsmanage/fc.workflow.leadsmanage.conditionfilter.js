@@ -33,6 +33,25 @@
 				icon: "fc-workflow-icon-else",
 				workflow: this
 			});
+
+			this.ifblock.addChild("left", new $.fc.workflow.add({ workflow: this }));
+			this.thenblock.addChild("left", new $.fc.workflow.add({ workflow: this }));
+			this.elseblock.addChild("left", new $.fc.workflow.add({ workflow: this }));
+		},
+
+		_render: function () {
+			this.element.empty();
+
+			this.element.append(this.ifblock.render());
+			this.ifblock.afterRender();
+
+			this.element.append(this.thenblock.render());
+			this.thenblock.afterRender();
+
+			this.element.append(this.elseblock.render());
+			this.elseblock.afterRender();
+
+			this.refreshConnections();
 		},
 
 		_addBlock: function (record, parent, branch, nextBlock) {
@@ -42,8 +61,7 @@
 						record: record,
 						workflow: self
 					})).addChild({
-						left: nextBlock || new $.fc.workflow.add({ workflow: self }),
-						right: new $.fc.workflow.add({ workflow: self })
+						left: nextBlock || new $.fc.workflow.add({ workflow: self })
 					});
 
 			parent.addChild(branch,
@@ -69,6 +87,16 @@
 
 				parent.render(branch);
 			});
+		},
+
+		refreshConnections: function () {
+			var ifblock = document.getElementById(this.ifblock.id),
+				thenblock = document.getElementById(this.thenblock.id),
+				elseblock = document.getElementById(this.elseblock.id);
+
+			this._base.refreshConnections.call(this, ifblock, thenblock);
+			this._base.refreshConnections.call(this, thenblock, elseblock);
+			this._base.refreshConnections.call(this, elseblock);
 		},
 
 		_serialize: function () {

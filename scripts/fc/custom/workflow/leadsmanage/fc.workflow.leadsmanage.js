@@ -9,11 +9,12 @@
 						click: function () {
 							var self = $(this).data('block');
 
-							self.options.workflow.element.empty();
+							self.options.workflow.hide();
 
 							self.details
-								._render()
-								.appendTo(self.options.workflow.element);
+								.deserialize(self.record)
+								.show()
+								._render();
 						}
 					},
 					swap: {
