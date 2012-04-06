@@ -1,5 +1,7 @@
 (function ($) {
 	$.fc.widget("fc.workflow", {
+		defaultElement: '<div>',
+
 		implement: { serializable: $.fc.serializable },
 
 		options: {
