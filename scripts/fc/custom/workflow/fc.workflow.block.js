@@ -1,5 +1,7 @@
 (function ($) {
 	$.fc.define("fc.workflow.block", {
+		implement: { serializable: $.fc.serializable },
+
 		options: {
 			template:  '<div id="<%=id%>" class="ui-state-default ui-corner-all fc-workflow-block <%=options.className%>">' +
 							'<span class="fc-workflow-block-content"><%=options.text%></span>' +
@@ -170,16 +172,12 @@
 			return result.join('');
 		},
 
-		serialize: function () {
-			this._trigger("beforeserialize");
-
+		_serialize: function () {
 			var result = {};
 
 			result.children = $.map(this.branches, function (child) {
 				return child.serialize();
 			});
-
-			this._trigger("serialize", result);
 
 			return result;
 		},

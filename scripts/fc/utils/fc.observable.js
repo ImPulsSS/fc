@@ -37,6 +37,10 @@
 					_eventTarget.bind.apply(_eventTarget, arguments);
 				},
 
+				change: function (callback) {
+					this.bind("change", callback);
+				},
+
 				unbind: function () {
 					_eventTarget.unbind.apply(_eventTarget, arguments);
 				},
@@ -46,7 +50,7 @@
 				},
 
 				_trigger: function (event) {
-					_eventTarget.triggerHandler.apply(_eventTarget, [ event, [].slice.apply(arguments, [ 1 ]) ]);
+					_eventTarget.triggerHandler.apply(_eventTarget, [ event, Array.prototype.slice.apply(arguments, [ 1 ]) ]);
 				}
 			});
 	};

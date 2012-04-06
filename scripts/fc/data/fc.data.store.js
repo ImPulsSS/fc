@@ -42,7 +42,7 @@
 			var root = field.split(".");
 
 			field = root.pop();
-			root = $.fc.data.getRoot(root);
+			root = $.fc.data.getRoot(obj, root);
 
 			return typeof (root) !== "undefined" && typeof (root) !== "null" ?
 					root[field] :

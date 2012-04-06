@@ -15,11 +15,14 @@ fc.ui.all.min.js
 	scripts\fc\utils\fc.format.js
 	scripts\fc\utils\fc.observable.js
 
+	scripts\fc\interfaces\fc.hidable.js
+	scripts\fc\interfaces\fc.collapsible.js
+	scripts\fc\interfaces\fc.serializable.js
+
 	scripts\fc\data\fc.data.cache.js
 	scripts\fc\data\fc.data.store.js
 	scripts\fc\data\fc.data.view.js
-
-	scripts\fc\base\fc.base.hidable.js
+	
 	scripts\fc\misc\fc.dialog.js
 	scripts\fc\misc\fc.overlay.js
 	scripts\fc\misc\fc.plain.js
@@ -61,12 +64,14 @@ fc.liveview.min.js
 fc.workflow.min.js
 	scripts\fc\custom\workflow\fc.workflow.js
 	scripts\fc\custom\workflow\fc.workflow.block.js
+	scripts\fc\custom\workflow\fc.workflow.iconblock.js
 	scripts\fc\custom\workflow\fc.workflow.add.js
 	scripts\fc\custom\workflow\fc.workflow.splitter.js
 
 	scripts\fc\custom\workflow\leadsmanage\fc.workflow.leadsmanage.js
+	scripts\fc\custom\workflow\leadsmanage\fc.workflow.leadsmanage.conditionblock.js
+	scripts\fc\custom\workflow\leadsmanage\fc.workflow.leadsmanage.conditionfilter.js
 	scripts\fc\custom\workflow\leadsmanage\fc.workflow.leadsmanage.block.js
-	scripts\fc\custom\workflow\leadsmanage\fc.workflow.leadsmanage.iconblock.js
 
 # rails
 #fc.rails.min.js

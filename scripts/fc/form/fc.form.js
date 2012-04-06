@@ -1,6 +1,8 @@
 (function ($) {
-	$.fc.widget("fc.form", $.fc.base.hidable, {
+	$.fc.widget("fc.form", {
 		defaultElement: '<form>',
+
+		implement: { serializable: $.fc.serializable },
 
 		options: {
 			type: "ajax",
@@ -32,7 +34,7 @@
 		},
 
 		_init: function () {
-			$.fc.base.hidable.prototype._init.call(this);
+			//$.fc.interfaces.hidable._init.call(this);
 
 			var self = this;
 
@@ -150,7 +152,7 @@
 				return;
 			}
 
-			var postData = this._serialize();
+			var postData = this.serialize();
 
 			this._trigger("beforesubmit", null, postData);
 

@@ -1,5 +1,8 @@
 (function ($) {
 	$.fc.widget("fc.form.wrapped", $.fc.form, {
+
+		implement: { hidable: $.fc.hidable },
+
 		options: {
 			containerStyle: {},
 			buttonSetClass: '',
@@ -8,7 +11,7 @@
 		},
 
 		_create: function () {
-			$.fc.form.prototype._create.call(this);
+			this._base._create.call(this);
 
 			this.element.wrap('<div></div>');
 			this.container = this.element
@@ -61,7 +64,7 @@
 			delete this.container;
 			delete this.buttonPane;
 
-			$.fc.form.prototype._destroy.call(this);
+			this._base._destroy.call(this);
 		},
 
 		_renderField: function (fieldOptions) {
@@ -70,7 +73,7 @@
 					return new $.fc.plain(fieldOptions, fieldOptions.html || fieldOptions.text);
 			}
 
-			return $.fc.form.prototype._renderField.call(this, fieldOptions);
+			return this._base._renderField.call(this, fieldOptions);
 		},
 
 		load: function (values) {

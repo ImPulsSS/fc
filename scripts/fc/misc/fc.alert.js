@@ -1,6 +1,8 @@
 (function ($) {
-	$.fc.widget("fc.alert", $.fc.base.hidable, {
+	$.fc.widget("fc.alert", {
 		defaultElement: '<div>',
+
+		implement: [ $.fc.hidable ],
 
 		options: {
 			text: null,

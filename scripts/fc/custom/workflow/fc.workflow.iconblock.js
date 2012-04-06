@@ -1,5 +1,5 @@
 (function ($) {
-	$.fc.define("fc.workflow.leadsmanage.iconblock", $.fc.workflow.leadsmanage.block, {
+	$.fc.define("fc.workflow.iconblock", $.fc.workflow.block, {
 		options: {
 			icon: "",
 			iconDirection: "left",

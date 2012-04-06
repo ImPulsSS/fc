@@ -1,5 +1,7 @@
 (function ($) {
 	$.fc.widget("fc.workflow", {
+		implement: { serializable: $.fc.serializable },
+
 		options: {
 			api: {
 
@@ -217,12 +219,6 @@
 						top: blockOffset.top - self.element.offset().top + block.outerHeight() / 2 - (isIe ? 36 : 0)
 					});
 				});
-		},
-
-		serialize: function () {
-		},
-
-		deserialize: function (data) {
 		}
 	});
 })(jQuery);

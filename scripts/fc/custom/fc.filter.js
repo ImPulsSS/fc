@@ -1,5 +1,7 @@
 (function ($) {
 	$.fc.widget("fc.filter", $.fc.form.wrapped, {
+		implement: { collapsible: $.fc.collapsible },
+
 		options: {
 			title: "Filters",
 
@@ -45,16 +47,6 @@
 			},
 			editableFieldsSerializeParam: "filter",
 
-			collapsed: false,
-			animations: {
-				expand: function () {
-					$(this).show();
-				},
-				collapse: function () {
-					$(this).hide();
-				}
-			},
-
 			fieldSetClass: 'fc-form-fieldset fc-filter-fieldset',
 			buttonSetClass: 'fc-filter-buttonset',
 
@@ -76,7 +68,7 @@
 		},
 
 		_create: function () {
-			$.fc.form.wrapped.prototype._create.call(this);
+			this._base._create.call(this);
 
 			var self = this;
 
@@ -98,30 +90,43 @@
 					"class": "fc-filter-title"
 				})
 				.click(function (e) {
-					self.toggleView.apply(self, arguments);
+					self.toggleView.call(self);
 					return false;
 				})
 				.appendTo(this.header);
 
 			this.toggle = $('<a></a>', {
 					"href": "#",
-					"html": '<span class="ui-icon ui-icon-triangle-1-n"/>',
+					"html": '<span class="ui-icon ui-icon-triangle-1-s"/>',
 					"class": "fc-filter-toggle"
 				})
 				.appendTo(this.header)
 				.click(function (e) {
-					self.toggleView.apply(self, arguments);
+					self.toggleView.call(self);
 					return false;
 				});
 
 			this.header.prependTo(this.container);
 
-			if (this.options.collapsed) {
-				this.options.collapsed = false;
-				this.toggleView(true);
+			this.overlay = this.options.overlay || new $.fc.overlay({ parent: this.container });
+		},
+
+		_implement: function () {
+			this._base._implement.apply(this, arguments);
+
+			var tool = this.toggle.find('.ui-icon');
+
+			if (this.isCollapsed()) {
+				tool.removeClass('ui-icon-triangle-1-s').addClass('ui-icon-triangle-1-n');
 			}
 
-			this.overlay = this.options.overlay || new $.fc.overlay({ parent: this.container });
+			this.isCollapsed.change(function (e, value) {
+				if (value) {
+					tool.removeClass('ui-icon-triangle-1-s').addClass('ui-icon-triangle-1-n');
+				} else {
+					tool.removeClass('ui-icon-triangle-1-n').addClass('ui-icon-triangle-1-s');
+				}
+			});
 		},
 
 		_createEditableField: function (rawValue, values) {
@@ -208,7 +213,7 @@
 		},
 
 		_render: function () {
-			$.fc.form.wrapped.prototype._render.call(this);
+			this._base._render.call(this);
 
 			var self = this;
 
@@ -305,7 +310,11 @@
 
 			delete this.body;
 
-			$.fc.form.wrapped.prototype._destroy.call(this);
+			this._base._destroy.call(this);
+		},
+
+		_collapsible: function () {
+			return this.body;
 		},
 
 		load: function (values) {
@@ -347,25 +356,7 @@
 		},
 
 		toggleView: function (preventAnimation) {
-			var tool = this.toggle.find('.ui-icon');
-
-			if (!!this.options.collapsed) {
-				this.options.collapsed = false;
-				if (!preventAnimation) {
-					this.options.animations.expand.call(this.body[0]);
-				} else {
-					this.body.show();
-				}
-				tool.removeClass('ui-icon-triangle-1-n').addClass('ui-icon-triangle-1-s');
-			} else {
-				this.options.collapsed = true;
-				if (!preventAnimation) {
-					this.options.animations.collapse.call(this.body[0]);
-				} else {
-					this.body.hide();
-				}
-				tool.removeClass('ui-icon-triangle-1-s').addClass('ui-icon-triangle-1-n');
-			}
+			this.isCollapsed(!this.isCollapsed());
 		},
 
 		valid: function () {

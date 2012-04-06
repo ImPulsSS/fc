@@ -31,7 +31,7 @@
 			});
 		},
 
-		serialize: function () {
+		_serialize: function () {
 			return this.branches.left ?
 					this.branches.left.serialize() :
 					null;

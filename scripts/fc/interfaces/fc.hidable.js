@@ -1,5 +1,5 @@
 (function ($) {
-	$.fc.widget("fc.base.hidable", {
+	$.fc.hidable = {
 		options: {
 			visible: true,
 
@@ -19,12 +19,24 @@
 			}
 		},
 
-		_init: function () {
+		_implement: function () {
+			var self = this;
+
+			this.isVisible = $.fc.observable(this.options.visible);
+
 			this.widget().hide();
 
-			if (this.options.visible) {
+			if (this.isVisible()) {
 				this.show();
 			}
+
+			this.isVisible.change(function (e, value) {
+				if (value) {
+					self.show();
+				} else {
+					self.hide();
+				}
+			});
 		},
 
 		hide: function () {
@@ -33,8 +45,10 @@
 			this._trigger('beforehide', null, this);
 
 			this.options.animations.hide.call(this.widget()[0], function () {
-				self._trigger('afterhide', null, self);
+				self._trigger('hide', null, self);
 			});
+
+			this.isVisible.set(false);
 		},
 
 		show: function () {
@@ -43,8 +57,10 @@
 			this._trigger('beforeshow', null, this);
 
 			this.options.animations.show.call(this.widget()[0], function () {
-				self._trigger('aftershow', null, self);
+				self._trigger('show', null, self);
 			});
+
+			this.isVisible.set(true);
 		}
-	});
+	};
 })(jQuery);
