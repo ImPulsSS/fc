@@ -1,4 +1,4 @@
-.fc-workflow { display: inline-block; position: relative; zoom: 1; }
+.fc-workflow { display: inline-block; min-width: 900px; position: relative; zoom: 1; }
 
 	.fc-workflow-root { width: 100% !important; margin: 30px 0 !important; }
 		.fc-workflow-root .fc-workflow-block { width: 100% !important; margin: 0 !important; }

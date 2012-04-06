@@ -22,6 +22,8 @@
 			this._deserialize.apply(this, arguments);
 
 			this._trigger("deserialize");
+
+			return this;
 		}
 	};
 })(jQuery);

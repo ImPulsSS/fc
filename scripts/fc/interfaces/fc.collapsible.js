@@ -51,6 +51,8 @@
 			});
 
 			this.isCollapsed.set(true);
+
+			return this;
 		},
 
 		expand: function () {
@@ -63,6 +65,8 @@
 			});
 
 			this.isCollapsed.set(false);
+
+			return this;
 		}
 	};
 })(jQuery);

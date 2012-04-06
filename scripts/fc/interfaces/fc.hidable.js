@@ -49,6 +49,8 @@
 			});
 
 			this.isVisible.set(false);
+
+			return this;
 		},
 
 		show: function () {
@@ -61,6 +63,8 @@
 			});
 
 			this.isVisible.set(true);
+
+			return this;
 		}
 	};
 })(jQuery);

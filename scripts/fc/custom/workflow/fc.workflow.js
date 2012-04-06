@@ -2,7 +2,7 @@
 	$.fc.widget("fc.workflow", {
 		defaultElement: '<div>',
 
-		implement: { serializable: $.fc.serializable },
+		implement: { hidable: $.fc.hidable, serializable: $.fc.serializable },
 
 		options: {
 			api: {
@@ -176,11 +176,12 @@
 
 		refreshConnections: function () {
 			var self = this,
-				topBlock = $('#' + self.top.id),
-				topOffset = topBlock.offset(),
+				element = $(arguments[0] || document.getElementById(this.root.id)),
+				topBlock = $(arguments[0] ? arguments[1] : document.getElementById(this.top.id)),
 				isIe = $.browser.msie && $.browser.version < 8;
 
-			this.element
+			element
+				.next('.fc-workflow-branch')
 				.find('.fc-workflow-block')
 				.not('.fc-workflow-root')
 				.each(function () {
@@ -207,6 +208,10 @@
 							});
 					}
 
+					if (!topBlock.length) {
+						return;
+					}
+
 					connection = $("#" + this.id + "_connection_top");
 					if (!connection.length && !block.siblings('.fc-workflow-branch').children().length) {
 						if (!connection.length) {
@@ -216,7 +221,7 @@
 					}
 
 					connection.css({
-						height: topOffset.top - blockOffset.top - (isIe ? topBlock.height() : 0),
+						height: topBlock.offset().top - blockOffset.top - (isIe ? topBlock.height() : 0),
 						left: blockOffset.left + block.width() / 2 - (block.outerWidth(true) - block.width()) + (isIe ? -1 : 1),
 						top: blockOffset.top - self.element.offset().top + block.outerHeight() / 2 - (isIe ? 36 : 0)
 					});
