@@ -23,7 +23,7 @@
 	$.fc.getTextDimensions = function (text) {
 		var $ruler = $('#__get_dimensions_dummy_span');
 		if ($ruler.length === 0) {
-			$ruler = $('<span></span>', {
+			$ruler = $('<div></div>', {
 					"id": "__get_dimensions_dummy_span",
 					"css": {
 						display: "inline-block",
@@ -38,14 +38,14 @@
 
 		$ruler.removeClass()
 			.addClass(arguments[2] || "")
-				.css($.extend({
-						"width": "",
-						"min-width": "",
-						"max-width": "",
-						"height": "",
-						"min-height": "",
-						"max-height": ""
-					}, arguments[1]))
+			.css($.extend({
+					"width": "",
+					"min-width": "",
+					"max-width": "",
+					"height": "",
+					"min-height": "",
+					"max-height": ""
+				}, arguments[1]))
 			.html(text);
 
 		return { width: $ruler.outerWidth(), height: $ruler.outerHeight() };

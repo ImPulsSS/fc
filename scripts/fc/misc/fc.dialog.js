@@ -7,7 +7,7 @@
 			heightOffset: 100,
 			inputHeight: 30,
 
-			dimensions: { "min-width": 300, "max-width": 600 },
+			dimensions: { "min-width": 300, "max-width": 600, padding: "0.5em 1em" },
 			css: { "padding-top": 10 }
 		},
 
@@ -21,8 +21,6 @@
 		},
 
 		alert: function (title, message, callback) {
-			var size = $.fc.getTextDimensions(message, $.fc.dialog.defaults.dimensions, "ui-widget ui-dialog-content");
-
 			$('<div></div>', {
 					html: message,
 					title: title,
@@ -32,8 +30,6 @@
 				.dialog({
 					modal: true,
 					resizable: false,
-					width: size.width + $.fc.dialog.defaults.widthOffset,
-					height: size.height + $.fc.dialog.defaults.heightOffset,
 					buttons: {
 						ok: function () {
 							$.fc.dialog._response.call(this, callback);
@@ -43,8 +39,6 @@
 		},
 
 		confirm: function (title, message, callback) {
-			var size = $.fc.getTextDimensions(message, $.fc.dialog.defaults.dimensions, "ui-widget ui-dialog-content");
-
 			$('<div></div>', {
 					html: message,
 					title: title,
@@ -54,8 +48,6 @@
 				.dialog({
 					modal: true,
 					resizable: false,
-					width: size.width + $.fc.dialog.defaults.widthOffset,
-					height: size.height + $.fc.dialog.defaults.heightOffset,
 					buttons: {
 						ok: function () {
 							$.fc.dialog._response.call(this, callback, true);
@@ -73,8 +65,6 @@
 				value = null;
 			}
 
-			var size = $.fc.getTextDimensions(message, $.fc.dialog.defaults.dimensions, "ui-widget ui-dialog-content");
-
 			$('<div></div>', {
 					html: message + '<div class="ui-widget fc-form-field"><input type="text"></div>',
 					title: title,
@@ -84,8 +74,6 @@
 				.dialog({
 					modal: true,
 					resizable: false,
-					width: size.width + $.fc.dialog.defaults.widthOffset,
-					height: size.height + $.fc.dialog.defaults.heightOffset + $.fc.dialog.defaults.inputHeight,
 					buttons: {
 						ok: function () {
 							var value = $(this).find('input').val();

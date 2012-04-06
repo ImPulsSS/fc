@@ -160,9 +160,9 @@
 
 			this.body = $('<tbody></tbody>')
 				.insertAfter(this.header)
-				.delegate("tr", "mouseenter", function (e) { $(this).addClass(self.widgetFullName + "-row-over"); })
-				.delegate("tr", "mouseleave", function (e) { $(this).removeClass(self.widgetFullName + "-row-over"); })
-				.delegate("tr", "click", function (e) {
+				.on("mouseenter." + this.widgetName, "tr:not(.ui-state-disabled)", function (e) { $(this).addClass(self.widgetFullName + "-row-over"); })
+				.on("mouseleave." + this.widgetName, "tr:not(.ui-state-disabled)", function (e) { $(this).removeClass(self.widgetFullName + "-row-over"); })
+				.on("click." + this.widgetName, "tr:not(.ui-state-disabled)", function (e) {
 					var record = self.source.data()[$(this).data('index')];
 
 					if (self.options.selectable.enabled && !self.options.selectable.multiple) {
@@ -179,14 +179,29 @@
 
 					self._trigger("rowclick", e, record);
 				})
-				.delegate("tr", "dblclick", function (e) { self._trigger("rowdblclick", e, self.source.data()[$(this).data('index')]); })
-				.delegate("td", "click", function (e) { self._trigger("cellclick", e, self.source.data()[$(this).closest('tr').data('index')], self.columns()[$(this).data('column') - 1]); })
-				.delegate("td", "dblclick", function (e) { self._trigger("celldblclick", e, self.source.data()[$(this).closest('tr').data('index')], self.columns()[$(this).data('column') - 1]); });
+				.on("dblclick." + this.widgetName, "tr:not(.ui-state-disabled)", function (e) { self._trigger("rowdblclick", e, self.source.data()[$(this).data('index')]); })
+				.on("click." + this.widgetName, "td", function (e) {
+					var td = $(this),
+						tr = td.closest('tr');
+					if (tr.hasClass('ui-state-disabled')) {
+						return;
+					}
+
+					self._trigger("cellclick", e, self.source.data()[tr.data('index')], self.columns()[td.data('column') - 1]);
+				})
+				.on("dblclick." + this.widgetName, "td", function (e) {
+					var td = $(this),
+						tr = td.closest('tr');
+					if (tr.hasClass('ui-state-disabled')) {
+						return;
+					}
+					self._trigger("celldblclick", e, self.source.data()[tr.data('index')], self.columns()[td.data('column') - 1]);
+				});
 
 			if (self.options.selectable.enabled && self.options.selectable.multiple) {
 				this.body.selectable({
 					filter: "tr",
-					cancel: ".ui-selected",
+					cancel: ".ui-selected,.ui-state-disabled",
 					stop: function (e) {
 						var selected = self.body.find('.ui-selected');
 
