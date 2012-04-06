@@ -37,7 +37,7 @@
 		},
 
 		_create: function () {
-			$.fc.workflow.prototype._create.call(this);
+			this._base._create.call(this);
 
 			this.record = this.options.record;
 		},

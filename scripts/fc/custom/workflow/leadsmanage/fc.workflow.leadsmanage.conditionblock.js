@@ -9,11 +9,11 @@
 		},
 
 		_create: function () {
-			$.fc.workflow.block.prototype._create.call(this);
+			this._base._create.call(this);
 
 			this.record = this.options.record;
 
-			this.details = new $.fc.workflow.leadsmanage.conditionfilter();
+			this.details = new $.fc.workflow.leadsmanage.conditionfilter({ appendTo: document.body });
 			this.details.deserialize(this.options.record);
 		},
 

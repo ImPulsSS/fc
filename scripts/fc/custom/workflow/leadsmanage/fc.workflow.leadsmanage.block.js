@@ -9,7 +9,7 @@
 		},
 
 		_create: function () {
-			$.fc.workflow.block.prototype._create.call(this);
+			this._base._create.call(this);
 
 			this.record = this.options.record;
 		},
