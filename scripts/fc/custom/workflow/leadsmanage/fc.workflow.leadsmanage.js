@@ -15,6 +15,8 @@
 								.deserialize(self.record)
 								.show()
 								._render();
+
+							$.trigger(document.body, "workflowchanged");
 						}
 					},
 					swap: {
