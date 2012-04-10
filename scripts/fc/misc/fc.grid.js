@@ -14,6 +14,8 @@
 			showScrollBar: true,
 			showFooter: true,
 
+			extractExistingTextOnly: true,
+
 			statTemplate: '<div class="<%=widgetFullName%>-stat">Displaying <span class="<%=widgetFullName%>-offset"><%=source.offset() + 1%></span> - <span class="<%=widgetFullName%>-limit"><%=source.offset() + source.limit()%></span> of <span class="<%=widgetFullName%>-total"><%=source.total()%></span></div>',
 
 			headerTemplate: '<tr>' +
@@ -32,11 +34,6 @@
 				headersWrappers
 					.last()
 					.addClass('ui-corner-tr');
-			},
-
-			render: function () {
-				$(this).find('.fc-grid-row:last .fc-grid-cell:first div')
-					.addClass('ui-corner-bl');
 			}
 		},
 
@@ -49,7 +46,8 @@
 
 			this.element
 				.css(this.options.css)
-				.addClass(this.widgetFullName + "-table");
+				.addClass(this.widgetFullName + "-table")
+				.find('caption').hide();
 
 			this.overlay = new $.fc.overlay({ parent: this.container });
 
@@ -78,9 +76,7 @@
 					$(this).parent().html($(this).text());
 				});
 
-			if (this.stat) {
-				this.stat.remove();
-			}
+			this.footer.remove();
 
 			delete this.headers;
 			delete this.header;
@@ -93,18 +89,19 @@
 
 		_initData: function () {
 			var self = this,
+				extractExistingTextOnly = this.options.extractExistingTextOnly,
 				columns = self.columns(),
 				data = [];
 
 			this.element
 				.find('tbody tr')
 				.each(function (index) {
-					data[index] = data[index] || [];
+					data[index] = data[index] || {};
 
 					$(this)
 						.find('td')
 						.each(function (column) {
-							data[index][columns[column].property] = $(this).text();
+							data[index][columns[column].property] = extractExistingTextOnly ? $(this).text() : $(this).html();
 						});
 				});
 
@@ -247,6 +244,7 @@
 		_renderHeaders: function () {
 			var $this,
 				self = this,
+				colgroup = $('<colgroup>'),
 				columns = [];
 
 			this.columns = new $.fc.observableArray([]);
@@ -334,7 +332,7 @@
 								$this.parent().width() || null,
 							"data-flex": !columns[index].css || !columns[index].css.width
 						})
-						.appendTo(self.colgroup);
+						.appendTo(colgroup);
 
 					if (columns[index].sortable) {
 						$this
@@ -405,6 +403,10 @@
 								});
 					}
 				});
+
+			this.colgroup.empty();
+			colgroup.find('col').detach().appendTo(this.colgroup);
+			colgroup.remove();
 		},
 
 		_renderRow: function (data) {

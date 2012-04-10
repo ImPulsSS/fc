@@ -40,14 +40,16 @@
 			},
 
 			localSort: function (data, sort) {
-				var result = data;
+				var direction,
+					result = data;
 
 				$.each(sort, function (index, sortingParam) {
+					direction = sortingParam.direction ? sortingParam.direction.toLowerCase() : "asc";
 					result = data.sort(function (first, second) {
-						if (sortingParam.direction === "desc") {
-							return first[sortingParam.property] < second[sortingParam.property];
+						if (direction === "desc") {
+							return first[sortingParam.property].toLowerCase() < second[sortingParam.property].toLowerCase();
 						} else {
-							return second[sortingParam.property] < first[sortingParam.property];
+							return second[sortingParam.property].toLowerCase() < first[sortingParam.property].toLowerCase();
 						}
 					});
 				});
@@ -109,10 +111,10 @@
 
 			this.store = (this.options.store !== null && this.options.store.widgetName === "fcDataStore") ?
 				this.options.store :
-				new $.fc.data.store($.isArray(this.options.store) ?
+				new $.fc.data.store(!this.options.store || $.isArray(this.options.store) ?
 					{
 						read: {
-							predefinedData: this.options.store
+							predefinedData: this.options.store || this.options.data
 						}
 					} :
 					this.options.store);
