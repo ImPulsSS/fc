@@ -16,7 +16,7 @@
 								.show()
 								._render();
 
-							$.trigger(document.body, "workflowchanged");
+							$(document.body).trigger("workflowchanged");
 						}
 					},
 					swap: {
