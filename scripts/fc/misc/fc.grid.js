@@ -70,6 +70,10 @@
 				.find('tbody tr').removeClass(this.widgetFullName + "-row-odd " + this.widgetFullName + "-row-even").end()
 				.unwrap();
 
+			this.body
+				.enableSelection()
+				.off("." + this.widgetName);
+
 			this.headers
 				.children('div')
 				.each(function () {
@@ -109,7 +113,7 @@
 				this.source = this.options.source;
 			} else {
 				var sourceOptions = {
-						data: $.isArray(this.options.source) ? data.push.apply(this.options.source) : data
+						data: $.isArray(this.options.source) ? data.concat(this.options.source) : data
 					};
 
 				this.source = new $.fc.data.view(

@@ -86,14 +86,14 @@
 
 		_resetValidation: function () {
 			this.element.removeClass('ui-state-error');
-			this.element.unbind('change.field');
+			this.element.unbind('change.' + this.widgetFullName);
 		},
 
 		_markInvalid: function () {
 			var self = this;
 
 			this.element.addClass('ui-state-error');
-			this.element.bind('change.field', function () {
+			this.element.bind('change.' + this.widgetFullName, function () {
 				self.valid();
 			});
 		},

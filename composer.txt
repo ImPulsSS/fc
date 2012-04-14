@@ -34,6 +34,7 @@ fc.ui.all.min.js
 	scripts\fc\form\field\fc.form.field.date.js
 	scripts\fc\form\field\fc.form.field.textarea.js
 	scripts\fc\form\field\fc.form.field.selectbox.js
+	scripts\fc\form\field\fc.form.field.multiple.js
 	scripts\fc\form\field\fc.form.field.hidden.js
 
 	scripts\fc\form\fc.form.js
@@ -84,6 +85,7 @@ fc.workflow.min.js
 fc.ui.all.min.css
 	styles\fc.overlay.css
 	styles\fc.form.css
+	styles\fc.form.field.multiple.css
 	styles\fc.alert.css
 
 	styles\fc.pager.css

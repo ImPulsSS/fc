@@ -74,9 +74,17 @@
 
 		return $.extend(true, observable, {
 			indexOf: function (item) {
-				var items = this();
+				var i,
+					items = this(),
+					dump = $.fc.dump(item);
 
-				return $.inArray(item, items);
+				for (i = 0; i < items.length; i++) {
+					if ($.fc.dump(items[i]) === dump) {
+						return i;
+					}
+				}
+
+				return -1;
 			},
 
 			remove: function (value) {

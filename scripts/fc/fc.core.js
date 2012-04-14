@@ -103,16 +103,18 @@
 
 				element = $(element || this.defaultElement);
 
-				if (options && element.length > 0) {
-					$.each(["appendTo", "prependTo", "insertAfter", "insertBefore"], function (index, manipulation) {
-						if (!options[manipulation]) {
-							return;
-						}
+				if (element.length > 0) {
+					if (typeof (options) !== "undefined" && options) {
+						$.each(["appendTo", "prependTo", "insertAfter", "insertBefore"], function (index, manipulation) {
+							if (!options[manipulation]) {
+								return;
+							}
 
-						element[manipulation].call(element, options[manipulation]);
+							element[manipulation].call(element, options[manipulation]);
 
-						return false;
-					});
+							return false;
+						});
+					}
 
 					this._createWidget(options, element[0]);
 				}
@@ -155,6 +157,12 @@
 				widgetEventPrefix: fullName,
 				widgetFullName: className,
 				widgetBaseClass: (basePrototype.widgetBaseClass || "ui-widget") + " " + className,
+				destroy: function() {
+					this._destroy();
+
+					$.Widget.prototype.destroy.call(this);
+				},
+				_destroy: function () {},
 				_bind : function (type, handler) {
 					this.element
 						.bind((this.widgetEventPrefix + type).toLowerCase(), function () {
@@ -226,6 +234,7 @@
 	$.fc.base.prototype = {
 		options: {},
 		_create: function () {},
+		_destroy: function () {},
 		_bind: function (type) {
 			if ($.isPlainObject(type)) {
 				var self = this;
@@ -276,6 +285,8 @@
 				this.options[type].remove(fn);
 			}
 		},
-		destroy: function() {}
+		destroy: function() {
+			this._destroy();
+		}
 	};
 })(jQuery);

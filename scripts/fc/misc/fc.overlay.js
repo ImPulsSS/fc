@@ -6,9 +6,14 @@
 			template:
 				'<div class="fc-overlay">' +
 					'<div class="ui-widget-overlay"></div>' +
-					'<div class="ui-widget-shadow ui-corner-all"></div>' +
 					'<div class="ui-widget ui-widget-content ui-corner-all"><%=options.text%></div>' +
 				'</div>'
+		},
+
+		_constructor: function (parent) {
+			this.options = $.extend(true, {}, this.options, $.isPlainObject(parent) ? parent : { parent: $(parent) });
+			this._create();
+			this._implement();
 		},
 
 		_create: function () {
@@ -21,7 +26,7 @@
 
 			this.resize();
 
-			this.options.parent.bind('resize.fc-overlay', function () {
+			this.options.parent.bind('resize.' + this.widgetFullName, function () {
 				self.resize(arguments);
 			});
 		},
@@ -35,7 +40,7 @@
 		},
 
 		_destroy: function () {
-			this.options.parent.unbind('.fc-overlay');
+			this.options.parent.unbind('.' + this.widgetFullName);
 
 			this.wrapper.remove();
 
@@ -45,10 +50,12 @@
 
 		show: function () {
 			this.wrapper.show();
+			return this;
 		},
 
 		hide: function () {
 			this.wrapper.hide();
+			return this;
 		},
 
 		resize: function () {

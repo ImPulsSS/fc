@@ -128,24 +128,26 @@
 		return !!str.match(/["\[\],:]/);
 	};
 
-	$.fc.dump = function (object) {
-		if (object === null || typeof(object) in __fc_primitiveTypes) {
-			return object;
+	$.fc.dump = function (o, l, i) {
+		if (o === null || typeof(o) in __fc_primitiveTypes) {
+			return o;
 		}
 
-		var level = arguments[1] || 0;
-		if (level > 5)
+		l = l || 0;
+
+		if (l > 5) {
 			return;
+		}
 
-		var dump = new $.fc.stringBuilder();
-		for (var field in object)
+		var dump = [];
+
+		for (i in o)
 		{
-			dump.append(field, ':', object[field], ';');
-
-			if (typeof object[field] === 'object') {
-				dump.append($.fc.dump(object[field], level + 1));
+			if (o.hasOwnProperty(i)) {
+				dump.push(i + ':' + $.fc.dump(o[i], l + 1));
 			}
 		}
-		return dump.toString("");
+
+		return dump.join(";");
 	};
 })(jQuery);

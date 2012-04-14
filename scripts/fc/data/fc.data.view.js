@@ -71,7 +71,7 @@
 
 			this.data = new $.fc.observableArray(this.options.data);
 			this.data.bind('change', function (e, value) {
-				self._trigger('change');
+				self._trigger('change', value);
 			});
 
 			this.page = new $.fc.observable(this.options.page);
@@ -118,6 +118,29 @@
 						}
 					} :
 					this.options.store);
+		},
+
+		_destroy: function () {
+			this.data.unbind();
+			this.page.unbind();
+			this.limit.unbind();
+			this.offset.unbind();
+			this.total.unbind();
+			this.totalPages.unbind();
+			this.sort.unbind();
+			this.filter.unbind();
+
+			delete this.data;
+			delete this.page;
+			delete this.limit;
+			delete this.offset;
+			delete this.total;
+			delete this.totalPages;
+			delete this.sort;
+			delete this.filter;
+
+			this.store.destroy();
+			delete this.store;
 		},
 
 		refresh: function () {
