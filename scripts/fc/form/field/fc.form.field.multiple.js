@@ -7,7 +7,8 @@
 			removeSelectedFromAvailable: true,
 
 			source: [],
-			autoRefresh: true,
+			displayField: 'text',
+			valueField: 'value',
 
 			template:
 				'<div class="ui-widget-content ui-corner-all">' +
@@ -52,10 +53,7 @@
 				this.overlay.destroy();
 			}
 
-			if (this.label) {
-				this.label.remove();
-				delete this.label;
-			}
+			this._base._destroy.call(this);
 
 			if (this.container) {
 				this.container.remove();
@@ -66,7 +64,6 @@
 			}
 
 			this.element
-				.unwrap()
 				.show();
 
 			delete this.selected;
@@ -94,9 +91,6 @@
 			if (this.options.source !== null && this.options.source.widgetName === "fcDataView") {
 				this.source = this.options.source;
 				this.externalSource = true;
-				if (this.options.autoRefresh) {
-					this.source.refresh();
-				}
 			} else {
 				var sourceOptions = {
 						localFilter: function (data, filter) {
@@ -440,6 +434,10 @@
 					return $.inArray(record.value, value) > -1;
 				}));
 			}
+		},
+
+		rawValue: function () {
+			return this.selected();
 		}
 	});
 })(jQuery);

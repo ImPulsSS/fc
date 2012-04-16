@@ -13,7 +13,7 @@
 		_create: function () {
 			this.element.addClass(this.widgetBaseClass);
 
-			this.overlay = new $.fc.overlay({ parent: this.element });
+			this.overlay = new $.fc.overlay(this.element);
 			
 			this.options.reportTemplates = new $.fc.data.store({
 					useLocalStorage: true,
@@ -56,7 +56,7 @@
 		},
 
 		_addFilterBlock: function () {
-			if (this.filters) {
+			if (this.filter) {
 				return;
 			}
 
@@ -208,7 +208,7 @@
 					.widget()
 					.prependTo(self.element);
 
-				if (!!data.length) {
+				if (data && data.length) {
 					self.templates.show();
 				}
 			});

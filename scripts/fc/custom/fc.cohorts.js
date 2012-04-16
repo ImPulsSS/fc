@@ -115,7 +115,7 @@
 				];
 			}
 
-			$.fc.reportpanel.prototype._create.apply(this, arguments);
+			this._base._create.apply(this, arguments);
 
 			this.overlay.resize().show();
 
@@ -126,7 +126,7 @@
 				root: "actions"
 			}, function (data) {
 				var result = {};
-				$.each(data, function () {
+				$.each(data || [], function () {
 					result[this.id] = this.title;
 				});
 				self.options.actions = result;
@@ -210,7 +210,7 @@
 		},
 
 		_render: function () {
-			if ($.fc.reportpanel.prototype._render.call(this) === false) {
+			if (this._base._render.call(this) === false) {
 				return;
 			}
 

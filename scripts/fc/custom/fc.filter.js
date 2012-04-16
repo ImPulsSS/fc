@@ -217,7 +217,7 @@
 
 			var self = this;
 
-			if (this.options.editable && this.options.editableFilters.length) {
+			if (this.options.editable && this.options.editableFilters) {
 				this.editableFields = $('<div></div>', { "class": "fc-form-fieldset fc-filter-editable-fields" })
 					.insertAfter(this.element)
 					.sortable();
@@ -228,22 +228,23 @@
 						type: "select",
 						placeholder: "+ Add filter",
 						css: { width: 227, "background-color": "#F7F7F7" },
-						options: $.extend({
-								map: function (item) {
-									if (typeof (item.setup) !== undefined && $.isArray(item.setup)) {
-										item.setup = $.fc.toObject(item.setup, function (value) {
-											this[value.name] = value;
-										});
+						source: {
+							data: $.isArray(this.options.editableFilters) ? this.options.editableFilters : null,
+							store: $.isPlainObject(this.options.editableFilters) ?
+								$.extend(true, {
+									map: function (item) {
+										if (typeof (item.setup) !== undefined && $.isArray(item.setup)) {
+											item.setup = $.fc.toObject(item.setup, function (value) {
+												this[value.name] = value;
+											});
+										}
+										return  $.isArray(item) ?
+											[ item ] :
+											item;
 									}
-									return  $.isArray(item) ?
-										[ item ] :
-										item;
-								}
-							},
-							$.isArray(this.options.editableFilters) ?
-								{ predefinedData: this.options.editableFilters } :
+								}, this.options.editableFilters) :
 								this.options.editableFilters
-						),
+						},
 						change: function () {
 							self._createEditableField(this.rawValue());
 							this.value("");

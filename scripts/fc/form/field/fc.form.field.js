@@ -64,6 +64,18 @@
 			});
 		},
 
+		_destroy: function () {
+			if (this.options.decorate) {
+				if (this.label) {
+					this.label.remove();
+					delete this.label;
+				}
+
+				this.element
+					.unwrap();
+			}
+		},
+
 		_init: function () {
 			this._callMethod("_render");
 		},

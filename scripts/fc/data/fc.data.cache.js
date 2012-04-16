@@ -24,4 +24,6 @@
 			return this.container[hash] = value;
 		}
 	});
+
+	$.fc.data.cache.current = new $.fc.data.cache();
 })(jQuery);

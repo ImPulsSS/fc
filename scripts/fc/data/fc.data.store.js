@@ -100,6 +100,7 @@
 	$.fc.define("fc.data.store", {
 		options: {
 			type: $.fc.data.store.types.json,
+			data: [],
 			read: {
 				predefinedData: null,
 				type: "GET",
@@ -117,8 +118,28 @@
 			}
 		},
 
+		_constructor: function (options) {
+			this.options = $.extend(true,
+				{},
+				this.options,
+				$.isPlainObject(options) ?
+					(!options.read && !options.write && !options.remove ?
+						{ read: options } :
+						options) :
+					{
+						data: $.map(arguments, function (value) {
+							return value;
+						}),
+						type: $.fc.data.store.types.array
+					}
+			);
+
+			this._create();
+			this._implement();
+		},
+
 		_create: function () {
-			this.cache = new $.fc.data.cache();
+			this.cache = this.options.cache || $.fc.data.cache.current;
 		},
 
 		_prepareData: function (data, options) {
@@ -160,15 +181,25 @@
 				}
 			}
 
-			if (typeof (options.root) === "string") {
-				options.root = options.root.split(".");
-			}
-
 			if (!$.isFunction(options.done)) {
 				return false;
 			}
 
+			if (!$.isFunction(options.fail)) {
+				options.fail = options.done;
+			}
+
 			// memory
+			if (this.options.type === $.fc.data.store.types.array) {
+				if (this.options.data) {
+					options.done(this._prepareData(this.options.data, options), this.options.data);
+				} else {
+					options.fail(null);
+				}
+
+				return true;
+			}
+
 			if ($.isArray(options.predefinedData)) {
 				options.done(this._prepareData(options.predefinedData, options), options.predefinedData);
 
@@ -204,7 +235,7 @@
 						options.done(self._prepareData(data, options), data);
 					})
 					.fail(function () {
-						options.done(null);
+						options.fail(null);
 					});
 
 				return true;
@@ -216,7 +247,7 @@
 					options.done(self._prepareData(data, options), data);
 				})
 				.fail(function () {
-					options.done(null);
+					options.fail(null);
 				});
 
 			return true;

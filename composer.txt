@@ -6,6 +6,7 @@
 fc.ui.dependencies.min.js -noclosure -nocompress
 	scripts\fc\utils\json.js
 	scripts\jquery\jquery.ba-hashchange.min.js
+	scripts\jquery\jquery.xml2json.min.js
 
 fc.ui.all.min.js
 	scripts\fc\utils\fc.utils.js
@@ -85,6 +86,7 @@ fc.workflow.min.js
 fc.ui.all.min.css
 	styles\fc.overlay.css
 	styles\fc.form.css
+	styles\fc.form.field.selectbox.css
 	styles\fc.form.field.multiple.css
 	styles\fc.alert.css
 

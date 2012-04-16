@@ -34,14 +34,7 @@
 		},
 
 		_init: function () {
-			//$.fc.interfaces.hidable._init.call(this);
-
-			var self = this;
-
-			$.fc.data.store.current.get(this.options.fields, function (data) {
-				self.options.fields = data;
-				self._callMethod("_render");
-			});
+			this._callMethod("_render");
 		},
 
 		_render: function () {

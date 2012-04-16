@@ -33,10 +33,8 @@
 				return filter;
 			},
 
-			localFilter: function (data) {
-				var result = data;
-
-				return result;
+			localFilter: function (data, filter) {
+				return data;
 			},
 
 			localSort: function (data, sort) {
@@ -69,7 +67,7 @@
 		_create: function () {
 			var self = this;
 
-			this.data = new $.fc.observableArray(this.options.data);
+			this.data = new $.fc.observableArray([]);
 			this.data.bind('change', function (e, value) {
 				self._trigger('change', value);
 			});
@@ -109,15 +107,9 @@
 				self.refresh();
 			});
 
-			this.store = (this.options.store !== null && this.options.store.widgetName === "fcDataStore") ?
-				this.options.store :
-				new $.fc.data.store(!this.options.store || $.isArray(this.options.store) ?
-					{
-						read: {
-							predefinedData: this.options.store || this.options.data
-						}
-					} :
-					this.options.store);
+			this.store = this.options.store && this.options.store.widgetName === "fcDataStore" ?
+				this.options.store:
+				new $.fc.data.store(this.options.store || this.options.data);
 		},
 
 		_destroy: function () {
@@ -143,6 +135,30 @@
 			delete this.store;
 		},
 
+		_done: function (data, rawData) {
+			this.total($.fc.data.getField(rawData, this.options.totalProperty) || data.length);
+
+			if (!this.options.remoteFilter) {
+				data = this.options.localFilter(data, this.filter());
+			}
+
+			if (!this.options.remoteSort) {
+				data = this.options.localSort(data, this.sort());
+			}
+
+			if (!this.options.remotePaging) {
+				data = this.options.localPaging(data, this.page(), this.offset(), this.limit());
+			}
+
+			this.data((data || []).slice(0));
+
+			this._trigger("refresh");
+		},
+
+		_fail: function () {
+			this._trigger("refresh");
+		},
+
 		refresh: function () {
 		    var self = this;
 
@@ -154,27 +170,8 @@
 						this.options.remotePaging ? this.options.encodePaging(this.page(), this.offset(), this.limit()) : {},
 						this.options.remoteSort ? this.options.encodeSorting(this.sort()) : {},
 						this.options.remoteFilter ? this.options.encodeFilters(this.filter()) : {}),
-				done: function (data, rawData) {
-					self.total($.fc.data.getField(rawData, self.options.totalProperty) || data.length);
-
-					if (!self.options.remoteFilter) {
-						data = self.options.localFilter(data, self.filter());
-					}
-
-					if (!self.options.remoteSort) {
-						data = self.options.localSort(data, self.sort());
-					}
-
-					if (!self.options.remotePaging) {
-						data = self.options.localPaging(data, self.page(), self.offset(), self.limit());
-					}
-
-					self.data((data || []).slice(0));
-					self._trigger("refresh");
-				},
-				fail: function () {
-					self._trigger("refresh");
-				}
+				done: function () { self._done.apply(self, arguments); },
+				fail: function () { self._fail.apply(self, arguments); }
 			});
 		}
 	});
