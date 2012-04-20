@@ -14,20 +14,21 @@
 				'<div class="ui-widget-content ui-corner-all">' +
 					'<table class="<%=widgetFullName%>-container">' +
 						'<tr>' +
-							'<td>' +
+							'<td style="width: 50%;">' +
 								'<div class="ui-widget-header ui-corner-all"><%=options.i18n.available%>' +
 								'<% if (options.searchable) {%><input type="text" placeholder="filter" class="<%=widgetFullName%>-search ui-corner-all"><span class="ui-icon ui-icon-search"></span><%}%></div>' +
-								'<ul class="<%=widgetFullName%>-from ui-state-default ui-corner-all" data-accept="selected" data-scope="available"></ul>' +
+								'<ul class="<%=widgetFullName%>-from ui-state-default ui-corner-all" tabindex="<%=options.tabIndex%>" data-accept="selected" data-scope="available"></ul>' +
 							'</td>' +
 							'<td class="<%=widgetFullName%>-controls">' +
-								'<button data-action="select-all" data-icon="ui-icon-seek-end"><%=options.i18n.selectAll%></button>' +
-								'<button data-action="select" data-icon="ui-icon-seek-next"><%=options.i18n.select%></button>' +
-								'<button data-action="remove" data-icon="ui-icon-seek-prev"><%=options.i18n.remove%></button>' +
-								'<button data-action="remove-all" data-icon="ui-icon-seek-start"><%=options.i18n.removeAll%></button>' +
+								'<button data-action="select-all" tabindex="<%=options.tabIndex + 1%>" data-icon="ui-icon-seek-end"><%=options.i18n.selectAll%></button>' +
+								'<button data-action="select" tabindex="<%=options.tabIndex + 1%>" data-icon="ui-icon-seek-next"><%=options.i18n.select%></button>' +
+								'<% if (options.removeSelectedFromAvailable) {%><button data-action="swap" tabindex="<%=options.tabIndex + 1%>" data-icon="ui-icon-transferthick-e-w"><%=options.i18n.swap%></button><% } %>' +
+								'<button data-action="remove" tabindex="<%=options.tabIndex + 1%>" data-icon="ui-icon-seek-prev"><%=options.i18n.remove%></button>' +
+								'<button data-action="remove-all" tabindex="<%=options.tabIndex + 1%>" data-icon="ui-icon-seek-start"><%=options.i18n.removeAll%></button>' +
 							'</td>' +
-							'<td>' +
+							'<td style="width: 50%;">' +
 								'<div class="ui-widget-header ui-corner-all"><%=options.i18n.selected%></div>' +
-								'<ul class="<%=widgetFullName%>-to ui-state-default ui-corner-all" data-accept="available" data-scope="selected"></ul>' +
+								'<ul class="<%=widgetFullName%>-to ui-state-default ui-corner-all" tabindex="<%=options.tabIndex%>" data-accept="available" data-scope="selected"></ul>' +
 							'</td>' +
 						'</tr>' +
 					'</table>' +
@@ -43,6 +44,7 @@
 				selected: "Selected",
 				selectAll: "Select All",
 				select: "Select",
+				swap: "Swap selected",
 				removeAll: "Remove All",
 				remove: "Remove"
 			}
@@ -81,10 +83,10 @@
 				data = this.element
 					.find('option')
 					.each(function () {
-						$(this).attr("value", this.value);
+						$(this).attr("value", this.value || this.innerHTML);
 					})
 					.map(function (index, option) {
-						return { text: option.innerHTML, value: option.value };
+						return { text: option.innerHTML, value: option.value || option.innerHTML };
 					})
 					.get();
 
@@ -115,6 +117,10 @@
 					return $.inArray(record.value, value) > -1;
 				}));
 
+			this.element.bind("change." + this.widgetFullName, function () {
+				self.value($(this).val());
+			});
+
 			this.selected.change(function (e, records) {
 				self.element.find('option').removeAttr("selected");
 
@@ -135,6 +141,9 @@
 				if (self.options.removeSelectedFromAvailable) {
 					self.available.trigger();
 				}
+
+				self.selectedList.removeData('current');
+				self.availableList.removeData('current');
 			});
 
 			this.available.change(function (e, records) {
@@ -151,6 +160,8 @@
 						.appendTo(self.availableList)
 						.data('record', record);
 				});
+
+				self.availableList.removeData('current');
 			});
 
 			this.selected.trigger();
@@ -230,9 +241,12 @@
 								self.remove(records);
 							}
 						});
+
+						list.focus(); // ie strange bug fix
 					}
 				})
 				.selectable({
+					distance: 10,
 					stop: function () {
 						makeDraggable(list.children(".ui-selected"));
 					}
@@ -262,7 +276,7 @@
 						$this.addClass('ui-selected').siblings('li').removeClass('ui-selected');
 					}
 
-					$this.parent().focus();
+					list.focus();
 					list.data('current', $this);
 
 					makeDraggable(this);
@@ -282,32 +296,43 @@
 						e.preventDefault();
 					}
 
-					if (e.shiftKey) {
-						var $this,
-							list = $(this),
-							current = list.data('current');
+					var $this,
+						current = list.data('current');
 
-						switch (e.keyCode) {
-							case 37:
-							case 38:
-								$this = current.prev();
-								break;
-							case 39:
-							case 40:
-								$this = current.next();
-								break;
-						}
+					switch (e.keyCode) {
+						case 37:
+							self.remove(self._getRecords(self.selectedList.children(".ui-selected")));
+							e.preventDefault();
+							return;
+						case 38:
+							$this = (typeof (current) === "undefined" || !current || !current.length) ?
+								list.children("li").last() :
+								current.prev();
+							break;
+						case 39:
+							self.select(self._getRecords(self.availableList.children(".ui-selected")));
+							e.preventDefault();
+							return;
+						case 40:
+							$this = (typeof (current) === "undefined" || !current || !current.length) ?
+								list.children("li").first() :
+								current.next();
+							break;
+					}
 
-						if (typeof ($this) !== "undefined" && $this && $this.length) {
+					if (typeof ($this) !== "undefined" && $this && $this.length) {
+						if (e.shiftKey) {
 							if ($this.hasClass("ui-selected")) {
 								current.toggleClass("ui-selected");
 							} else {
 								$this.toggleClass("ui-selected");
 							}
-
-							list.data('current', $this);
-							e.preventDefault();
+						} else {
+							$this.addClass("ui-selected").siblings('li').removeClass('ui-selected');
 						}
+
+						list.data('current', $this);
+						e.preventDefault();
 					}
 				})
 				.on("mouseenter." + this.widgetFullName, "li", function (e) {
@@ -323,19 +348,32 @@
 
 			this.controls
 				.on("click." + this.widgetFullName, function (e) {
+					var toSelect, toRemove;
 					switch ($(this).data('action')) {
 						case "select-all":
-							self.select(self._getRecords(self.availableList.children("li")));
+							toSelect = self._getRecords(self.availableList.children("li"));
 							break;
 						case "select":
-							self.select(self._getRecords(self.availableList.children(".ui-selected")));
+							toSelect = self._getRecords(self.availableList.children(".ui-selected"));
+							break;
+						case "swap":
+							toSelect = self._getRecords(self.availableList.children(".ui-selected"));
+							toRemove = self._getRecords(self.selectedList.children(".ui-selected"));
 							break;
 						case "remove-all":
-							self.remove(self._getRecords(self.selectedList.children("li")));
+							toRemove = self._getRecords(self.selectedList.children("li"));
 							break;
 						case "remove":
-							self.remove(self._getRecords(self.selectedList.children(".ui-selected")));
+							toRemove = self._getRecords(self.selectedList.children(".ui-selected"));
 							break;
+					}
+
+					if (toSelect) {
+						self.select(toSelect);
+					}
+
+					if (toRemove) {
+						self.remove(toRemove);
 					}
 				})
 				.each(function () {
@@ -418,10 +456,14 @@
 			this.selected.push.apply(this.selected, $.grep(records, function (record) {
 					return self.selected.indexOf(record) < 0;
 				}));
+
+			this.selectedList.focus();
 		},
 
 		remove: function (records) {
 			this.selected.removeAll(records);
+
+			this.availableList.focus();
 		},
 
 		value: function () {
@@ -430,7 +472,7 @@
 			this._base.value.apply(this, value);
 
 			if (arguments.length) {
-				this.select($.grep(this.available(), function (record) {
+				this.selected.replaceAll($.grep(this.available(), function (record) {
 					return $.inArray(record.value, value) > -1;
 				}));
 			}

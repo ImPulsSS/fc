@@ -5,7 +5,7 @@
 		implement: [ $.fc.hidable ],
 
 		options: {
-			text: null,
+			html: null,
 
 			closable: true,
 			showTime: -1,

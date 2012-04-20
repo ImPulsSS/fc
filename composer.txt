@@ -50,20 +50,90 @@ fc.ui.all.min.js
 
 	scripts\fc\utils\fc.history.js
 
+fc.ui.all.js -nocompress
+	scripts\fc\utils\fc.utils.js
+	scripts\fc\fc.core.js
+
+	scripts\fc\utils\fc.stringbuilder.js
+	scripts\fc\utils\fc.format.js
+	scripts\fc\utils\fc.observable.js
+
+	scripts\fc\interfaces\fc.hidable.js
+	scripts\fc\interfaces\fc.collapsible.js
+	scripts\fc\interfaces\fc.serializable.js
+
+	scripts\fc\data\fc.data.cache.js
+	scripts\fc\data\fc.data.store.js
+	scripts\fc\data\fc.data.view.js
+	
+	scripts\fc\misc\fc.dialog.js
+	scripts\fc\misc\fc.overlay.js
+	scripts\fc\misc\fc.plain.js
+	scripts\fc\misc\fc.alert.js
+
+	scripts\fc\form\field\fc.form.field.js
+	scripts\fc\form\field\fc.form.field.checkbox.js
+	scripts\fc\form\field\fc.form.field.radio.js
+	scripts\fc\form\field\fc.form.field.date.js
+	scripts\fc\form\field\fc.form.field.textarea.js
+	scripts\fc\form\field\fc.form.field.selectbox.js
+	scripts\fc\form\field\fc.form.field.multiple.js
+	scripts\fc\form\field\fc.form.field.hidden.js
+
+	scripts\fc\form\fc.form.js
+	scripts\fc\form\fc.form.wrapped.js
+
+	scripts\fc\misc\fc.pager.js
+	scripts\fc\misc\fc.grid.js
+	scripts\fc\misc\fc.spotlist.js
+
+	scripts\fc\custom\fc.reportpanel.js
+	scripts\fc\custom\fc.filter.js
+
+	scripts\fc\utils\fc.history.js
+
 # cohorts
 fc.cohorts.min.js
+	scripts\fc\custom\fc.cohorts.js
+	
+fc.cohorts.js -nocompress
 	scripts\fc\custom\fc.cohorts.js
 
 # charts
 fc.charts.min.js
 	scripts\fc\custom\fc.charts.js
+	
+fc.charts.js -nocompress
+	scripts\fc\custom\fc.charts.js
+
+# inlineeditable
+fc.inlineeditable.min.js
+	scripts\fc\custom\fc.inlineeditable.js
+	
+fc.inlineeditable.js -nocompress
+	scripts\fc\custom\fc.inlineeditable.js
 
 # liveview
 fc.liveview.min.js
 	scripts\fc\custom\fc.liveview.js
+	
+fc.liveview.js -nocompress
+	scripts\fc\custom\fc.liveview.js
 
 # workflow
 fc.workflow.min.js
+	scripts\fc\custom\workflow\fc.workflow.js
+	scripts\fc\custom\workflow\fc.workflow.block.js
+	scripts\fc\custom\workflow\fc.workflow.iconblock.js
+	scripts\fc\custom\workflow\fc.workflow.add.js
+	scripts\fc\custom\workflow\fc.workflow.splitter.js
+
+	scripts\fc\custom\workflow\leadsmanage\fc.workflow.leadsmanage.js
+	scripts\fc\custom\workflow\leadsmanage\fc.workflow.leadsmanage.conditionblock.js
+	scripts\fc\custom\workflow\leadsmanage\fc.workflow.leadsmanage.conditionfilter.js
+	scripts\fc\custom\workflow\leadsmanage\fc.workflow.leadsmanage.block.js
+	
+fc.workflow.js -nocompress
 	scripts\fc\custom\workflow\fc.workflow.js
 	scripts\fc\custom\workflow\fc.workflow.block.js
 	scripts\fc\custom\workflow\fc.workflow.iconblock.js
@@ -100,13 +170,16 @@ fc.ui.all.min.css
 	styles\fc.charts.css
 	styles\fc.cohorts.css
 	
-	styles\fc.workflow.css
-	styles\fc.workflow.leadsmanage.css
+	styles\fc.inlineeditable.css
+	
+	#styles\fc.workflow.css
+	#styles\fc.workflow.leadsmanage.css
 
 fc.ui.ie.all.min.css
 	styles\fc.form.ie.css
+	styles\fc.form.field.multiple.ie.css
 	styles\fc.filter.ie.css
 
 	styles\fc.cohorts.ie.css
 
-	styles\fc.workflow.ie.css
+	#styles\fc.workflow.ie.css

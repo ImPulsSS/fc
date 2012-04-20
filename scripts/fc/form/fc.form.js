@@ -131,7 +131,7 @@
 		},
 
 		_serialize: function () {
-			return $(this.element[0]).serialize();
+			return this.element.serialize();
 		},
 
 		getField: function (fieldName) {

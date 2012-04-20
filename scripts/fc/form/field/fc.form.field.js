@@ -29,6 +29,7 @@
 		options: {
 			decorate: true,
 			dataType: "string",
+			tabIndex: null,
 			placeholder: "",
 			labelStyle: {
 				"display": "inline-block",
@@ -42,8 +43,14 @@
 		_create: function () {
 			var self = this;
 
-			this.name = this.options.name || $.fc.getId();
+			this.name = this.options.name || this.element[0].name || $.fc.getId();
 			this.element[0].name = this.name;
+
+			if (this.options.tabIndex) {
+				this.element[0].tabIndex = this.options.tabIndex;
+			} else {
+				this.options.tabIndex = this.element[0].tabIndex;
+			}
 
 			this.element.data('fcFieldWidget', this);
 
@@ -93,7 +100,7 @@
 				}
 			}
 			
-			this.value(this.options.value || null);
+			this.value(this.options.value || this.element.val() || null);
 		},
 
 		_resetValidation: function () {

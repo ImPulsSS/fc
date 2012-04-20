@@ -6,6 +6,8 @@
 			columns: [],
 			source: null,
 
+			autoRefresh: true,
+
 			selectable: {
 				enabled: true,
 				multiple: false
@@ -111,6 +113,7 @@
 
 			if (this.options.source !== null && this.options.source.widgetName === "fcDataView") {
 				this.source = this.options.source;
+				this.options.autoRefresh = false;
 			} else {
 				var sourceOptions = {
 						data: $.isArray(this.options.source) ? data.concat(this.options.source) : data
@@ -143,6 +146,9 @@
 				data = this.source.data() || [];
 
 			if (!data.length) {
+				if (this.options.autoRefresh) {
+					this.source.refresh();
+				}
 				return;
 			}
 

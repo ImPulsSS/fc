@@ -1,13 +1,13 @@
-.fc-form-field-multiple { position: relative; }
+.fc-form-field-multiple { min-width: 400px; position: relative; }
 	.fc-form-field-multiple-container { width: 100%; border-collapse: collapse; }
 		.fc-form-field-multiple-container td { padding: 0.2em; vertical-align: middle; }
-			.fc-form-field-multiple-controls { width: 4em; position: relative; }
+		.fc-form-field-multiple-container .fc-form-field-multiple-controls { padding: 0.2em 0.5em; position: relative; }
 				.fc-form-field-multiple-controls button { display: block; margin: 5px auto; }
 			.fc-form-field-multiple-from, .fc-form-field-multiple-to { width: 100%; height: 14em; overflow: auto; margin: 0; padding: 0; list-style-type: none; background: #FFFFFF; box-sizing: border-box; border: 0 !important; }
 			.fc-form-field-multiple-from li, .fc-form-field-multiple-to li { margin: 0 0 1px 0; padding: 0.2em; }
 
 		.fc-form-field-multiple .ui-widget-header { height: 1.7em; padding: 0 0.2em; margin-bottom: 0.2em; line-height: 1.7em; position: relative; }
-		.fc-form-field-multiple .fc-form-field-multiple-search { width: 45%; height: 1.5em; position: absolute; right: 1.6em; top: 0.1em; color: #FFFFFF; background-color: #AAAAAA; background-color: rgba(100, 100, 100, 0.2); border: 0; }
+		.fc-form-field-multiple .fc-form-field-multiple-search { width: 45%; height: 1.5em; position: absolute; right: 1.6em; top: 0.1em; color: #FFFFFF; background-color: #DAA64F; background-color: rgba(100, 100, 100, 0.2); border: 0; }
 		.fc-form-field-multiple .ui-icon-search { position: absolute; right: 0.2em; top: 0.1em; cursor: pointer; }
 
 .fc-form-field-multiple .ui-selecting { background: #FECA40; }
