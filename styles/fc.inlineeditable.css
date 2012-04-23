@@ -1,3 +1,4 @@
+.fc-inlineeditable-wrapper { position: relative; }
 .fc-inlineeditable-wrapper>input, .fc-inlineeditable-wrapper>select { margin-right: 0.4em; }
 .fc-inlineeditable-wrapper>textarea, .fc-inlineeditable-wrapper.fc-form-field-multiple { display: block; margin-bottom: 0.2em; }
 .ui-dialog-content .fc-form-field-multiple>.ui-widget-content { border: 0; }

@@ -92,14 +92,11 @@
 			this.element
 				.find(':input')
 				.each(function () {
-					$this = $(this);
-					options = {
-						name: this.name,
-						required: $this.attr("required"),
-						pattern: $this.attr("pattern"),
-						placeholder: $this.attr("placeholder"),
-						decorate: false
-					};
+					if ($(this).data("fcFieldWidget")) {
+						return;
+					}
+
+					options = { decorate: false };
 					
 					switch (this.nodeName) {
 						case "select":

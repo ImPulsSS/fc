@@ -2,7 +2,7 @@
 	$.fc.widget("fc.alert", {
 		defaultElement: '<div>',
 
-		implement: [ $.fc.hidable ],
+		implement: { hidable: $.fc.hidable },
 
 		options: {
 			html: null,
@@ -17,6 +17,7 @@
 			var self = this;
 
 			this.element
+				.css(this.options.css || {})
 				.html(this.options.html);
 
 			this.widgetBaseClass = [

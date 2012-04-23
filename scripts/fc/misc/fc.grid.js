@@ -51,7 +51,7 @@
 				.addClass(this.widgetFullName + "-table")
 				.find('caption').hide();
 
-			this.overlay = new $.fc.overlay({ parent: this.container });
+			this.overlay = new $.fc.overlay(this.container);
 
 			this.selected = new $.fc.observableArray([]);
 

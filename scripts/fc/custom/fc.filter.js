@@ -108,7 +108,7 @@
 
 			this.header.prependTo(this.container);
 
-			this.overlay = this.options.overlay || new $.fc.overlay({ parent: this.container });
+			this.overlay = this.options.overlay || new $.fc.overlay(this.container);
 		},
 
 		_implement: function () {

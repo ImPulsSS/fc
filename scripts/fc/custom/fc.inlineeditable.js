@@ -11,24 +11,18 @@
 				return element[0].name;
 			},
 
-			submit: function (callback) {
-				callback();
-			},
-
-			cancel: function (callback) {
-				callback();
-			},
-
 			beforewrap: function (e, element) {
 				return element.data("fcFieldWidget") || !element.closest('.fc-form-field').length;
+			},
+
+			commit: function (element) {
+				return true;
 			}
 		},
 
 		_create: function () {
 			this.element.addClass(this.widgetBaseClass);
-		},
 
-		_init: function () {
 			var self = this;
 
 			this.element
@@ -55,8 +49,12 @@
 			   return "";
 		   }
 
+			if (element.is("input:checkbox,input:radio")) {
+			    return element[0].checked ? element.val() : "-";
+			}
+
 		   if (element.is("select")) {
-			   return element.find(':selected').slice(0, 5).map(function() {
+			   return element.find('option:selected').slice(0, 5).map(function() {
 					   return $(this).text();
 				   }).get().join(", ");
 		   }
@@ -91,7 +89,41 @@
 						text: "Edit",
 						"class": this.widgetFullName + "-control"
 					})
-					.insertAfter(value);
+					.insertAfter(value),
+				commit = function (parent, callback) {
+					if (self._trigger("beforesubmit", null, element, parent) === false) {
+						return false;
+					}
+
+					$.when(self.options.commit(element))
+						.done(function (result) {
+							currentValue = element.val();
+
+							wrapper.hide();
+
+							value.text(self._getTextValue(element)).show();
+							edit.show();
+
+							if ($.isFunction(callback)) {
+								callback();
+							}
+
+							self._trigger("submit", null, element, true, result);
+						})
+						.fail(function (result) {
+							self._trigger("submit", null, element, false, result);
+						});
+				},
+				reject = function () {
+					element.val(currentValue).trigger('change');
+
+					wrapper.hide();
+
+					value.show();
+					edit.show();
+
+					return self._trigger("cancel", null, element) !== false;
+				};
 
 			if (element.data('modal')) {
 				edit.click(function (e) {
@@ -99,7 +131,6 @@
 
 					wrapper
 						.children()
-						.show()
 						.wrap('<div></div>')
 						.parent()
 						.dialog({
@@ -110,27 +141,21 @@
 							buttons: {
 								"Ok": function () {
 									var dialog = $(this);
-									self.options.submit(function () {
-										currentValue = element.val();
 
-										value.text(self._getTextValue(element)).show();
-										edit.show();
-
+									commit(dialog, function () {
 										dialog.children().detach().appendTo(wrapper);
 										dialog.remove();
 									});
 								},
 								"Cancel": function () {
 									var dialog = $(this);
-									self.options.cancel(function () {
-										element.val(currentValue).trigger('change');
 
-										value.show();
-										edit.show();
+									if (reject() === false) {
+										return;
+									}
 
-										dialog.children().detach().appendTo(wrapper);
-										dialog.remove();
-									});
+									dialog.children().detach().appendTo(wrapper);
+									dialog.remove();
 								}
 							}
 						});
@@ -155,27 +180,13 @@
 				});
 
 				ok.click(function (e) {
-					self.options.submit(function () {
-						currentValue = element.val();
-
-						wrapper.hide();
-
-						value.text(self._getTextValue(element)).show();
-						edit.show();
-					});
+					commit(wrapper);
 
 					e.preventDefault();
 				});
 
 				cancel.click(function (e) {
-					self.options.cancel(function () {
-						element.val(currentValue).trigger('change');
-
-						wrapper.hide();
-
-						value.show();
-						edit.show();
-					});
+					reject(wrapper);
 
 					e.preventDefault();
 				});

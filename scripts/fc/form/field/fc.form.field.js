@@ -46,6 +46,10 @@
 			this.name = this.options.name || this.element[0].name || $.fc.getId();
 			this.element[0].name = this.name;
 
+			this.options.required = this.options.required || this.element.attr("required");
+			this.options.pattern = this.options.pattern || this.element.attr("pattern");
+			this.options.placeholder = this.options.placeholder || this.element.attr("placeholder");
+
 			if (this.options.tabIndex) {
 				this.element[0].tabIndex = this.options.tabIndex;
 			} else {
@@ -89,11 +93,13 @@
 
 		_render: function () {
 			if (this.options.decorate) {
-				this.element.wrap("<div></div>");
+				if (!this.wrapper) {
+					this.element.wrap("<div></div>");
 
-				this.wrapper = this.element.parent().addClass(this.widgetBaseClass);
+					this.wrapper = this.element.parent().addClass(this.widgetBaseClass);
+				}
 
-				if (this.options.label) {
+				if (this.options.label && !this.wrapper.find('label').length) {
 					$("<label></label>", { "text": this.options.label})
 						.css(this.options.labelStyle || {})
 						.prependTo(this.wrapper);

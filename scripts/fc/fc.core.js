@@ -158,6 +158,8 @@
 				widgetFullName: className,
 				widgetBaseClass: (basePrototype.widgetBaseClass || "ui-widget") + " " + className,
 				destroy: function() {
+					this._trigger("destroy");
+
 					this._destroy();
 
 					$.Widget.prototype.destroy.call(this);
