@@ -138,6 +138,16 @@
 							modal: self.options.dialog.modal,
 							width: self.options.dialog.width,
 							height: self.options.dialog.height,
+							close: function () {
+								var dialog = $(this);
+
+								if (reject() === false) {
+									return;
+								}
+
+								dialog.children().detach().appendTo(wrapper);
+								dialog.remove();
+							},
 							buttons: {
 								"Ok": function () {
 									var dialog = $(this);
