@@ -78,16 +78,20 @@
 
 		_render: function () {
 			if (this.options.decorate) {
-				this.element.wrap("<div></div>");
+				if (!this.wrapper) {
+					this.element.wrap("<div></div>");
 
-				this.wrapper = this.element.parent().addClass(this.widgetBaseClass);
+					this.wrapper = this.element.parent().addClass(this.widgetBaseClass);
+				}
 
-				this.overlay = new $.fc.overlay({
-					template: '<div class="fc-overlay ui-widget ui-widget-overlay"></div>',
-					parent: this.wrapper
-				});
+				if (!this.overlay) {
+					this.overlay = new $.fc.overlay({
+						template: '<div class="fc-overlay ui-widget ui-widget-overlay"></div>',
+						parent: this.wrapper
+					});
+				}
 
-				if (this.options.label) {
+				if (this.options.label && !this.wrapper.find('label').length) {
 					$("<label></label>", { "text": this.options.label})
 						.css(this.options.labelStyle || {})
 						.prependTo(this.wrapper);

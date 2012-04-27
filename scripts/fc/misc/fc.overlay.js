@@ -23,7 +23,7 @@
 				$(element) :
 				arguments.length === 1 && !$.isPlainObject(options) ?
 					$(options) :
-					options.parent ?
+					options.parent ? // backward compatibility
 						$(options.parent) :
 						$(this.defaultElement);
 
