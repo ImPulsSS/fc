@@ -5,6 +5,7 @@
 
 		options: {
 			containerStyle: {},
+			containerClass: null,
 			buttonSetClass: '',
 
 			buttons: []
@@ -16,6 +17,7 @@
 			this.element.wrap('<div></div>');
 			this.container = this.element
 				.parent()
+				.addClass(this.options.containerClass)
 				.css(this.options.containerStyle);
 
 			this._createButtons();
