@@ -52,6 +52,8 @@
 			switch (fieldOptions.type) {
 				case "select":
 					return new $.fc.form.field.selectbox(fieldOptions);
+				case "multiple":
+					return new $.fc.form.field.multiple(fieldOptions);
 				case "checkbox":
 					return new $.fc.form.field.checkbox(fieldOptions);
 				case "radio":

@@ -7,6 +7,7 @@
 			removeSelectedFromAvailable: true,
 
 			source: [],
+			autoRefresh: true,
 			displayField: 'text',
 			valueField: 'value',
 
@@ -189,6 +190,10 @@
 					}
 				}
 			});
+
+			if (this.options.autoRefresh) {
+				this.source.refresh();
+			}
 		},
 
 		_getRecords: function (items) {

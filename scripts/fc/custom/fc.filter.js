@@ -217,7 +217,7 @@
 
 			var self = this;
 
-			if (this.options.editable && this.options.editableFilters) {
+			if (this.options.editable && this.options.editableFilters.length) {
 				this.editableFields = $('<div></div>', { "class": "fc-form-fieldset fc-filter-editable-fields" })
 					.insertAfter(this.element)
 					.sortable();

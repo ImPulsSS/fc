@@ -7,7 +7,7 @@
 			.fc-form-field-multiple-from li, .fc-form-field-multiple-to li { margin: 0 0 1px 0; padding: 0.2em; }
 
 		.fc-form-field-multiple .ui-widget-header { height: 1.7em; padding: 0 0.2em; margin-bottom: 0.2em; line-height: 1.7em; position: relative; }
-		.fc-form-field-multiple .fc-form-field-multiple-search { width: 45%; height: 1.5em; position: absolute; right: 1.6em; top: 0.1em; color: #FFFFFF; background-color: #DAA64F; background-color: rgba(100, 100, 100, 0.2); border: 0; }
+		.fc-form-field-multiple .fc-form-field-multiple-search { width: 45%; height: 1.5em; position: absolute; right: 1.6em; top: 0.1em; color: #FFFFFF; background: #DAA64F; background: rgba(100, 100, 100, 0.2); border: 0; }
 		.fc-form-field-multiple .ui-icon-search { position: absolute; right: 0.2em; top: 0.1em; cursor: pointer; }
 
 .fc-form-field-multiple .ui-selecting { background: #FECA40; }

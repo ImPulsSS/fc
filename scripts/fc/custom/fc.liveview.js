@@ -30,11 +30,7 @@
 				})
 				.addClass(this.widgetBaseClass);
 
-			this.overlay = new $.fc.overlay(this.container);
-
 			this._addFilterBlock();
-
-			this.overlay.resize().show();
 		},
 
 		_addMap: function () {
@@ -74,7 +70,7 @@
 						$(this).slideUp(200);
 					}
 				},
-				fields: [[{
+				fields: [/*{
 						label: "Apikey",
 						name: "apikey",
 						type: "select",
@@ -104,36 +100,32 @@
 								self.overlay.hide();
 							}
 						}
+					}, */{
+						label: "Apikey",
+						name: "apikey",
+						type: "text",
+						required: true,
+						value: "22b29980-81b9-4b3b-a50f-0c6ea7bc522b"
 					}, {
 						label: "Action",
 						name: "action",
-						type: "select",
+						type: "multiple",
 						css: { "vertical-align": "top" },
-						options: {
-							url: self.options.api.getActions,
-							root: "actions",
-							map: [
-								{ name: "value", mapping: "name" },
-								{ name: "text", mapping: "title" }
-							]
-						},
-						required: true,
-						render: function () {
-							xhrCount++;
-						},
-						renderOptions: function () {
-							$(this)
-								.css("height", 100)
-								.attr('multiple', true);
-
-							if (--xhrCount > 0) {
-								self.overlay.resize();
-							} else {
-								self.overlay.hide();
+						source: {
+							store: {
+								read: {
+									url: self.options.api.getActions,
+									root: "actions",
+									map: [
+										{ name: "value", mapping: "name" },
+										{ name: "text", mapping: "title" }
+									]
+								}
 							}
-						}
+						},
+						required: true
 					}
-				]],
+				],
 
 				buttons: {
 					"Apply": function() {
