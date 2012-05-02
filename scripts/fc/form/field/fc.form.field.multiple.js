@@ -37,7 +37,7 @@
 
 			optionsTemplate:
 				'<%for (var i = 0; i < options.length; i++) {%>' +
-					'<option value="<%=options[i].value%>"><%=options[i].text%></option>' +
+					'<option value="<%=options[i][self.options.valueField]%>"><%=options[i][self.options.displayField]%></option>' +
 				'<%}%>',
 
 			i18n: {
@@ -81,13 +81,17 @@
 			$.fc.form.field.prototype._init.call(this);
 
 			var self = this,
+				value = this.options.value || this.element.val(),
 				data = this.element
 					.find('option')
 					.each(function () {
 						$(this).attr("value", this.value || this.innerHTML);
 					})
 					.map(function (index, option) {
-						return { text: option.innerHTML, value: option.value || option.innerHTML };
+						var row = {};
+						row[self.options.displayField] = option.innerHTML;
+						row[self.options.valueField] = option.value || option.innerHTML;
+						return row;
 					})
 					.get();
 
@@ -95,14 +99,16 @@
 				this.source = this.options.source;
 				this.externalSource = true;
 			} else {
+				data = $.isArray(this.options.source) ? $.merge(data, this.options.source) : data;
+
 				var sourceOptions = {
 						localFilter: function (data, filter) {
 							var pattern = new RegExp(filter, 'i');
 							return $.grep(data, function (record) {
-									return pattern.test(record.text);
+									return pattern.test(record[self.options.displayField]);
 								});
 						},
-						data: $.isArray(this.options.source) ? $.merge(data, this.options.source) : data
+						data: data
 					};
 
 				this.source = new $.fc.data.view(
@@ -112,10 +118,9 @@
 					);
 			}
 
-			this.available = new $.fc.observableArray(!this.externalSource ? sourceOptions.data : []);
-			var value = this.options.value || this.element.val();
+			this.available = new $.fc.observableArray(data);
 			this.selected = new $.fc.observableArray($.grep(this.available(), function (record) {
-					return $.inArray(record.value, value) > -1;
+					return $.inArray(record[self.options.valueField], value) > -1;
 				}));
 
 			this.element.bind("change." + this.widgetFullName, function () {
@@ -126,15 +131,21 @@
 				self.element.find('option').removeAttr("selected");
 
 				$.each(records, function (index, record) {
-					self.element
-						.find('option[value="' + record.value + '"]')
-						.attr('selected', true);
+					var option = self.element
+						.find('option[value="' + record[self.options.valueField] + '"]');
+
+					if (!option.length) {
+						option = $($.fc.tmpl(self.options.optionsTemplate, { self: self, options: [ record ] }));
+						self.element.append(option);
+					}
+
+					option.attr('selected', true);
 				});
 
 				self.selectedList.empty();
 
 				$.each(records, function (index, record) {
-					$('<li></li>', { text: record.text, "class": "ui-state-default ui-corner-all" })
+					$('<li></li>', { text: record[self.options.displayField], "class": "ui-state-default ui-corner-all" })
 						.appendTo(self.selectedList)
 						.data('record', record);
 				});
@@ -157,7 +168,7 @@
 				}
 
 				$.each(records, function (index, record) {
-					$('<li></li>', { text: record.text, "class": "ui-state-default ui-corner-all" })
+					$('<li></li>', { text: record[self.options.displayField], "class": "ui-state-default ui-corner-all" })
 						.appendTo(self.availableList)
 						.data('record', record);
 				});
@@ -173,7 +184,7 @@
 			this.source._bind({
 				change: function (records) {
 					self.element
-						.html($.fc.tmpl(self.options.optionsTemplate, { options: records }));
+						.html($.fc.tmpl(self.options.optionsTemplate, { self: self, options: records }));
 
 					self.selected.trigger();
 
@@ -478,7 +489,7 @@
 
 			if (arguments.length) {
 				this.selected.replaceAll($.grep(this.available(), function (record) {
-					return $.inArray(record.value, value) > -1;
+					return $.inArray(record[this.options.valueField], value) > -1;
 				}));
 			}
 		},

@@ -22,11 +22,11 @@
 				.find(this.options.items)
 				.addClass(this.options.itemClass);
 
-			(this.options.handle ?
+			this.handles = (this.options.handle ?
 				this.items.find(this.options.handle) :
 				this.items)
 					.bind("click.fcSpotlist", function (e) {
-						self.spot.call(self, e, this, $(this).closest(self.options.items).get(0));
+						return self.spot.call(self, e, this, $(this).closest(self.options.items).get(0));
 					});
 		},
 
@@ -43,7 +43,11 @@
 			this.selected
 				.removeClass(this.options.spotClass);
 
+			this.handles
+				.unbind(".fcSpotlist");
+
 			delete this.selected;
+			delete this.handles;
 			delete this.items;
 		},
 
@@ -53,7 +57,7 @@
 				handle: (this.options.handle ?
 					this.selected.find(this.options.handle) :
 					this.selected).get(0)
-			}
+			};
 		},
 
 		reset: function () {
@@ -119,7 +123,7 @@
 				this.selected.switchClass(this.options.shadowClass, this.options.spotClass, this.options.animationSpeed);
 			}
 
-			this._trigger("getspot", e, { item: item, handle: handle });
+			return this._trigger("getspot", e, { item: item, handle: handle });
 		}
 	});
 })(jQuery);
