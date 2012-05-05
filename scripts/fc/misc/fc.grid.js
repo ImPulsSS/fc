@@ -66,11 +66,13 @@
 
 			this._callMethod("_initData");
 
-			this._callMethod("_renderFooter");
-
 			this._callMethod("_renderBody");
 
-			this._callMethod("_render");
+			this._callMethod("_renderFooter");
+
+			if (this.options.autoRefresh) {
+				this.source.refresh();
+			}
 		},
 
 		_destroy: function () {
@@ -151,12 +153,6 @@
 			var tableRows = [],
 				self = this,
 				data = this.source.data() || [];
-
-			if (!data.length) {
-				if (this.options.autoRefresh) {
-					this.source.refresh();
-				}
-			}
 
 			$.each(data, function (index, row) {
 				tableRows.push(self._renderRow({ index: index, evenness: index % 2 ? "even" : "odd", row: row }));

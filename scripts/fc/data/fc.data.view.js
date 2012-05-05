@@ -174,6 +174,14 @@
 				done: function () { self._done.apply(self, arguments); },
 				fail: function () { self._fail.apply(self, arguments); }
 			});
+		},
+
+		reset: function () {
+			this.data([]);
+			this.page(this.options.page);
+			this.offset(this.options.offset);
+			this.limit(this.options.limit);
+			this.total(this.options.total);
 		}
 	});
 })(jQuery);
