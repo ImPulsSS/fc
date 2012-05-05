@@ -69,7 +69,7 @@
 
 			this.data = new $.fc.observableArray([]);
 			this.data.bind('change', function (e, value) {
-				self._trigger('change', value);
+				self._trigger('change', e, value);
 			});
 
 			this.page = new $.fc.observable(this.options.page);
@@ -136,8 +136,6 @@
 		},
 
 		_done: function (data, rawData) {
-			this.total($.fc.data.getField(rawData, this.options.totalProperty) || data.length);
-
 			if (!this.options.remoteFilter) {
 				data = this.options.localFilter(data, this.filter());
 			}
@@ -152,10 +150,13 @@
 
 			this.data((data || []).slice(0));
 
+			this.total($.fc.data.getField(rawData, this.options.totalProperty) || this.offset() + data.length);
+
 			this._trigger("refresh");
 		},
 
 		_fail: function () {
+			this.data([]);
 			this._trigger("refresh");
 		},
 

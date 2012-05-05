@@ -54,7 +54,7 @@
 
 		_render: function () {
 			if ($.fc.reportpanel.prototype._render.call(this) === false) {
-				return;
+				return false;
 			}
 
 			var self = this,
@@ -62,7 +62,7 @@
 
 			if (!$.isArray(series) || series.length === 0) {
 				this.header.text("No results found.");
-				return;
+				return false;
 			}
 
 			this.header.text($.fc.tmpl(self.options.reportTemplateName, { widget: self, filters: this.options.filter }));
@@ -156,6 +156,8 @@
 				yAxis: { title: { text: '' } },
 				series: series
 			});
+
+			return true;
 		}
 	});
 })(jQuery);

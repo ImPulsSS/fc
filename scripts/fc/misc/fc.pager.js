@@ -4,9 +4,10 @@
 
 		options: {
 			source: null,
+			endLess: true,
 			template: '<button data-action="start">First</button>\
 					   <button data-action="prev">Prev</button>\
-					   <span class="fc-pager-custom-page">Page: <input type="text" class="fc-pager-current"> of <span class="fc-pager-total">1</span></span>\
+					   <span class="fc-pager-custom-page">Page: <input type="text" class="fc-pager-current"><% if (!options.endLess) {%>of <span class="fc-pager-total">1</span><% } %></span>\
 					   <button data-action="next">Next</button>\
 					   <button data-action="end">Last</button>'
 		},
@@ -16,7 +17,7 @@
 
 			this.element
 				.addClass(this.widgetBaseClass)
-				.html(this.options.template);
+				.html($.fc.tmpl(this.options.template, this));
 
 			this.buttons = this.element
 				.buttonset()
@@ -84,7 +85,7 @@
 				this.buttons.filter('[data-action="start"], [data-action="prev"]').button("disable");
 			}
 
-			if (this.options.source.offset() + this.options.source.limit() >= this.options.source.total()) {
+			if (!this.options.source.data().length || (!this.options.endLess && (this.options.source.offset() + this.options.source.limit() >= this.options.source.total()))) {
 				this.buttons.filter('[data-action="end"], [data-action="next"]').button("disable");
 			}
 

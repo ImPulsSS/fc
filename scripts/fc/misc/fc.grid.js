@@ -4,6 +4,7 @@
 
 		options: {
 			columns: [],
+			css: {},
 			source: null,
 
 			autoRefresh: true,
@@ -36,6 +37,12 @@
 				headersWrappers
 					.last()
 					.addClass('ui-corner-tr');
+			},
+
+			getPager: function () {
+				return new $.fc.pager({
+						source: this.source
+					});
 			}
 		},
 
@@ -51,7 +58,7 @@
 				.addClass(this.widgetFullName + "-table")
 				.find('caption').hide();
 
-			this.overlay = new $.fc.overlay(this.container);
+			this.overlay = this.options.overlay || new $.fc.overlay(this.container);
 
 			this.selected = new $.fc.observableArray([]);
 
@@ -149,7 +156,6 @@
 				if (this.options.autoRefresh) {
 					this.source.refresh();
 				}
-				return;
 			}
 
 			$.each(data, function (index, row) {
@@ -242,9 +248,7 @@
 
 			this._renderStat();
 
-			this.pager = new $.fc.pager({
-				source: this.source
-			});
+			this.pager = this.options.getPager.call(this);
 
 			this.pager
 				.widget()

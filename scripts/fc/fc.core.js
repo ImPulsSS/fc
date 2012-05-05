@@ -180,7 +180,7 @@
 						this.widgetEventPrefix + type).toLowerCase();
 					data = arguments.length > 3 ?
 							Array.prototype.slice.call(arguments, 2) :
-							[ data || {} ];
+							[ typeof (data) !== "undefined" ? data : {} ];
 
 					if ( event.originalEvent ) {
 						for ( var i = $.event.props.length, prop; i; ) {
@@ -217,13 +217,13 @@
 						this._trigger(arguments[1]);
 					}
 
-					this[methodName](this);
+					var result = this[methodName](this);
 
 					this._trigger(arguments.length > 2 ?
 						arguments[2] :
 						arguments.length > 1 ?
 							arguments[1] :
-							methodName.replace(/^_/, ""));
+							methodName.replace(/^_/, ""), null, result);
 				}
 			},
 			prototype);
