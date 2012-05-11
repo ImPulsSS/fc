@@ -61,6 +61,10 @@
 				}
 
 				return data.slice(offset, Math.min(offset + limit, data.length));
+			},
+
+			getTotal: function (rawData) {
+				return $.fc.data.getField(rawData, this.options.totalProperty);
 			}
 		},
 
@@ -150,7 +154,7 @@
 
 			this.data((data || []).slice(0));
 
-			this.total($.fc.data.getField(rawData, this.options.totalProperty) || this.offset() + data.length);
+			this.total(this.options.getTotal.call(this, rawData) || this.offset() + data.length);
 
 			this._trigger("refresh");
 		},

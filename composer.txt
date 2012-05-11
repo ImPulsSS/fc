@@ -8,6 +8,7 @@ fc.ui.dependencies.min.js -noclosure -nocompress
 	scripts\jquery\jquery.ba-hashchange.min.js
 	scripts\jquery\jquery.xml2json.min.js
 	scripts\jquery\jquery.ajaxqueue.min.js
+	scripts\date.format.js
 
 fc.ui.all.min.js
 	scripts\fc\utils\fc.utils.js

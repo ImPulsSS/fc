@@ -72,6 +72,8 @@
 
 			if (this.options.autoRefresh) {
 				this.source.refresh();
+			} else {
+				this.data.trigger();
 			}
 		},
 
@@ -92,6 +94,9 @@
 				});
 
 			this.footer.remove();
+
+			delete this.data;
+			delete this.selected;
 
 			delete this.headers;
 			delete this.header;
@@ -135,9 +140,14 @@
 					);
 			}
 
+			this.data = new $.fc.observableArray(data);
+			this.data.change(function () {
+				self._callMethod("_render");
+			});
+
 			this.source._bind({
-				change: function () {
-					self._callMethod("_render");
+				change: function (e, records) {
+					self.data.replaceAll(records);
 					self.selected.removeAll();
 				},
 				beforerefresh: function () {
@@ -152,7 +162,7 @@
 		_render: function () {
 			var tableRows = [],
 				self = this,
-				data = this.source.data() || [];
+				data = this.data() || [];
 
 			$.each(data, function (index, row) {
 				tableRows.push(self._renderRow({ index: index, evenness: index % 2 ? "even" : "odd", row: row }));
@@ -189,7 +199,7 @@
 
 					self._trigger("rowclick", e, record);
 				})
-				.on("dblclick." + this.widgetName, "tr:not(.ui-state-disabled)", function (e) { self._trigger("rowdblclick", e, self.source.data()[$(this).data('index')]); })
+				.on("dblclick." + this.widgetName, "tr:not(.ui-state-disabled)", function (e) { self._trigger("rowdblclick", e, self.source.data()[$(this).data('index')] || self.data()[$(this).data('index')]); })
 				.on("click." + this.widgetName, "td", function (e) {
 					var td = $(this),
 						tr = td.closest('tr');
@@ -197,7 +207,7 @@
 						return;
 					}
 
-					self._trigger("cellclick", e, self.source.data()[tr.data('index')], self.columns()[td.data('column') - 1]);
+					self._trigger("cellclick", e, self.source.data()[tr.data('index')] || self.data()[tr.data('index')], self.columns()[td.data('column') - 1]);
 				})
 				.on("dblclick." + this.widgetName, "td", function (e) {
 					var td = $(this),
@@ -205,7 +215,7 @@
 					if (tr.hasClass('ui-state-disabled')) {
 						return;
 					}
-					self._trigger("celldblclick", e, self.source.data()[tr.data('index')], self.columns()[td.data('column') - 1]);
+					self._trigger("celldblclick", e, self.source.data()[tr.data('index')] || self.data()[tr.data('index')], self.columns()[td.data('column') - 1]);
 				});
 
 			if (self.options.selectable.enabled && self.options.selectable.multiple) {

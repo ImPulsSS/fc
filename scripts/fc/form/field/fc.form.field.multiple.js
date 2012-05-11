@@ -182,7 +182,7 @@
 			}
 
 			this.source._bind({
-				change: function (records) {
+				change: function (e, records) {
 					self.element
 						.html($.fc.tmpl(self.options.optionsTemplate, { self: self, options: records }));
 

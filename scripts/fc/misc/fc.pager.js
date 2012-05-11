@@ -85,7 +85,7 @@
 				this.buttons.filter('[data-action="start"], [data-action="prev"]').button("disable");
 			}
 
-			if (!this.options.source.data().length || (!this.options.endLessPager && (this.options.source.offset() + this.options.source.limit() >= this.options.source.total()))) {
+			if (!this.options.endLessPager && (this.options.source.offset() + this.options.source.limit() >= this.options.source.total())) {
 				this.buttons.filter('[data-action="end"], [data-action="next"]').button("disable");
 			}
 
