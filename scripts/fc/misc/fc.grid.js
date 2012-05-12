@@ -55,8 +55,7 @@
 
 			this.element
 				.css(this.options.css)
-				.addClass(this.widgetFullName + "-table")
-				.find('caption').hide();
+				.addClass(this.widgetFullName + "-table");
 
 			this.overlay = this.options.overlay || new $.fc.overlay(this.container);
 
@@ -454,8 +453,11 @@
 				};
 
 			this.stat = $($.fc.tmpl(this.options.statTemplate, this))
-				.hide()
 				.appendTo(this.footer);
+
+			if (!this.data()) {
+				this.stat.hide();
+			}
 
 			this.source.offset.bind("change", function () { statRefresh(); });
 			this.source.limit.bind("change", function () { statRefresh(); });

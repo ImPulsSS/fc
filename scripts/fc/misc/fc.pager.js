@@ -7,7 +7,7 @@
 			endLessPager: false,
 			template: '<button data-action="start">First</button>\
 					   <button data-action="prev">Prev</button>\
-					   <span class="fc-pager-custom-page">Page: <input type="text" class="fc-pager-current"><% if (!options.endLessPager) {%>of <span class="fc-pager-total">1</span><% } %></span>\
+					   <span class="fc-pager-custom-page">Page: <input type="text" class="fc-pager-current"><% if (!options.endLessPager) {%> of <span class="fc-pager-total">1</span><% } %></span>\
 					   <button data-action="next">Next</button>\
 					   <button data-action="end">Last</button>'
 		},
