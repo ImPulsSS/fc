@@ -48,23 +48,7 @@
 			editableFieldsSerializeParam: "filter",
 
 			fieldSetClass: 'fc-form-fieldset fc-filter-fieldset',
-			buttonSetClass: 'fc-filter-buttonset',
-
-			beforesubmit: function () {
-				$(this).data("fc-filter").overlay.resize().show();
-			},
-
-			submit: function (e, data) {
-				var self = $(this).data("fc-filter");
-
-				self.overlay.hide();
-
-				if (!data.success) {
-					return;
-				}
-
-				self._trigger("apply", null, { filters: data.request, data: data.response });
-			}
+			buttonSetClass: 'fc-filter-buttonset'
 		},
 
 		_create: function () {
@@ -109,6 +93,26 @@
 			this.header.prependTo(this.container);
 
 			this.overlay = this.options.overlay || new $.fc.overlay(this.container);
+		},
+
+		_init: function () {
+			this._base._init.call(this);
+
+			var self = this;
+
+			this._bind('beforesubmit', function () {
+				self.overlay.resize().show();
+			});
+
+			this._bind('submit', function (data) {
+				self.overlay.hide();
+
+				if (!data.success) {
+					return;
+				}
+
+				self._trigger("apply", null, { filters: data.request, data: data.response });
+			});
 		},
 
 		_implement: function () {
@@ -248,9 +252,9 @@
 						change: function () {
 							self._createEditableField(this.rawValue());
 							this.value("");
-						}
-					}, $("<select></select>")
-					.insertAfter(this.editableFields));
+						},
+						insertAfter: this.editableFields
+					});
 
 				this.options.editableFilters = selector.options.options;
 			}

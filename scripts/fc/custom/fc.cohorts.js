@@ -183,7 +183,7 @@
 				return ' style="background-color: #F0F0F0;"';
 			}
 
-			var percentage = Math.max(1 - ~~value * 3 / this.options.maxValue, 0);
+			var percentage = Math.max(1 - Number(value) * 3 / this.options.maxValue, 0);
 			if (percentage > 0.9) {
 				percentage -= 0.1
 			} else if (percentage > 0.8) {
@@ -202,7 +202,7 @@
 		},
 		
 		_getCellValue: function (hash, value) {		
-			this.cumulativeValues[hash] = ~~this.cumulativeValues[hash] + ~~value;
+			this.cumulativeValues[hash] = Number(this.cumulativeValues[hash]) + Number(value);
 			
 			return this.options.reportType > 1 ?
 					this.cumulativeValues[hash] :
@@ -251,7 +251,7 @@
 					value: this.options.reportType,
 					appendTo: this.toolbar,
 					change: function () {
-						self.options.reportType = ~~this.value();
+						self.options.reportType = Number(this.value());
 						self._callMethod("_render");
 					}
 				});

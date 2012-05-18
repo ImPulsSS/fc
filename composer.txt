@@ -101,6 +101,13 @@ fc.cohorts.min.js
 fc.cohorts.js -nocompress
 	scripts\fc\custom\fc.cohorts.js
 
+# funnel
+fc.funnel.min.js
+	scripts\fc\custom\fc.funnel.js
+	
+fc.funnel.js -nocompress
+	scripts\fc\custom\fc.funnel.js
+
 # charts
 fc.charts.min.js
 	scripts\fc\custom\fc.charts.js
@@ -171,6 +178,7 @@ fc.ui.all.min.css
 
 	styles\fc.charts.css
 	styles\fc.cohorts.css
+	styles\fc.funnel.css
 	
 	styles\fc.inlineeditable.css
 	
@@ -183,5 +191,6 @@ fc.ui.ie.all.min.css
 	styles\fc.filter.ie.css
 
 	styles\fc.cohorts.ie.css
+	styles\fc.funnel.ie.css
 
 	#styles\fc.workflow.ie.css

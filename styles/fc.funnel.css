@@ -1,0 +1,7 @@
+.fc-funnel {}
+	.fc-funnel-header { margin: 20px 0 15px 0; font-size: 18px; }
+
+	.fc-funnel-block { display: inline-block; width: 0; position: relative; border-left: 150px solid #F4A901; border-top: 100px solid transparent; border-bottom: 100px solid transparent; vertical-align: middle; }
+		.fc-funnel-block b { display: block; margin: -0.5em 0 0 -4.2em; padding: 0 2px; line-height: 1em; position: absolute; top: 50%; font-size: 18px; font-weight: bolder; color: #FFFFFF; background: #F4A901; border-radius: 2px; }
+	.fc-funnel-separator { display: inline-block; margin: 0 10px; font-size: 14px; font-weight: bolder; vertical-align: middle; }
+	.fc-funnel-final { display: inline-block; margin-left: 10px; padding: 0.5em; font-size: 18px; font-weight: bolder; color: #FFFFFF; background: #F4A901; border-radius: 50%; vertical-align: middle; }

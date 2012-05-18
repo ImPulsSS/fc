@@ -126,12 +126,14 @@
 					(!options.read && !options.write && !options.remove ?
 						{ read: options } :
 						options) :
-					{
-						data: $.map(arguments, function (value) {
-							return value;
-						}),
-						type: $.fc.data.store.types.array
-					}
+					arguments.length ?
+						{
+							data: $.map(arguments, function (value) {
+								return value;
+							}),
+							type: $.fc.data.store.types.array
+						} :
+						{}
 			);
 
 			this._create();

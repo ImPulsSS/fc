@@ -23,7 +23,7 @@
 
 			headerTemplate: '<tr>' +
 			                    '<% for (var i = 0; i < columns.length; i++) { %>' +
-			    	                '<th data-column="<%=i%>" data-property="<%=columns[i].property%>" data-sortable="<%=columns[i].sortable%>" data-resizable="<%=columns[i].resizable%>"><div><%=columns[i].text%></div></th>' +
+			    	                '<th data-column="<%=i + 1%>" data-property="<%=columns[i].property%>" data-sortable="<%=columns[i].sortable%>" data-resizable="<%=columns[i].resizable%>"><div><%=columns[i].text%></div></th>' +
 								'<% } %>' +
 				             '</tr>',
 
@@ -306,18 +306,22 @@
 					$this = $(this)
 						.wrapInner('<div></div>');
 
-					columns.push({
-						text: $this.text(),
-						property: typeof ($this.data('property')) !== "undefined" ?
-							$this.data('property') :
-							index,
-						resizable: typeof ($this.data('resizable')) !== "undefined" ?
-							$this.data('resizable') :
-							true,
-						sortable: typeof ($this.data('sortable')) !== "undefined" ?
-							$this.data('sortable') :
-							true
-					});
+					var column = {
+							text: $this.text(),
+							property: typeof ($this.data('property')) !== "undefined" ?
+								$this.data('property') :
+								index,
+							resizable: typeof ($this.data('resizable')) !== "undefined" ?
+								$this.data('resizable') :
+								true,
+							sortable: typeof ($this.data('sortable')) !== "undefined" ?
+								$this.data('sortable') :
+								true
+						};
+
+					self._trigger("beforecolumnadded", null, this, column);
+
+					columns.push(column);
 				});
 
 			$.each(this.options.columns, function (index, column) {
@@ -387,7 +391,7 @@
 										.removeClass('ui-icon-triangle-2-n-s ui-icon-triangle-1-n ui-icon-triangle-1-s')
 										.addClass(directionAsc ? 'ui-icon-triangle-1-s' : 'ui-icon-triangle-1-n');
 
-								self.sort.call(self, columns[index].property, directionAsc ? "DESC" : "ASC");
+								self.sort.call(self, columns[index], columns[index].property, directionAsc ? "DESC" : "ASC");
 							});
 					}
 
@@ -464,8 +468,14 @@
 			this.source.total.bind("change", function () { statRefresh(); });
 		},
 
-		sort: function (property, direction) {
-			this.source.sort([{ property: property, direction: direction }]);
+		sort: function (column, property, direction) {
+			var sortParams = [{ property: property, direction: direction }];
+
+			if (this._trigger("beforesort", null, column, property, direction) === false) {
+				return;
+			}
+
+			this.source.sort(sortParams);
 		},
 
 		widget: function () {

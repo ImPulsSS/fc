@@ -7,7 +7,8 @@
 				removeReport: ""
 			},
 
-			reportTemplateName: "new report template"
+			reportTemplateName: "new report template",
+			filterClassName: "fc.filter"
 		},
 
 		_create: function () {
@@ -33,7 +34,9 @@
 						url: this.options.api.removeReport
 					}
 				});
+		},
 
+		_init: function () {
 			this._addHeader();
 
 			this._addBody();
@@ -62,7 +65,7 @@
 
 			var self = this;
 
-			this.filter = new $.fc.filter($.extend(true, {
+			this.filter = new ($.fc.data.getField($, this.options.filterClassName))($.extend(true, {
 					title: "Settings",
 					collapsed: false,
 					action: self.options.api.getData,
