@@ -98,6 +98,21 @@
 			return result;
 		},
 
+		load: function (values) {
+			this._base.load.call(this, values);
+
+			if (this.activities) {
+				this.activities.empty();
+
+				if (values.activities) {
+					var activities = values.activities.split(",");
+					for (var i = 0; i < activities.length; i++) {
+						this._addActivity(activities[i]);
+					}
+				}
+			}
+		},
+
 		valid: function () {
 			var field, result = this._base.valid.call(this);
 
@@ -130,7 +145,7 @@
 				removeReport: ""
 			},
 
-			reportTemplateName: "тест",
+			reportTemplateName: "<% var activities = filters.activities.split(','); for (var i = 0; i < activities.length; i++) { %><%=i > 0 ? ', ' : ''%><%=widget.options.actions[Number(activities[i])]%><% } %> since <%=filters.fromDate%><%=filters.toDate ? ' till ' + filters.toDate : ''%>",
 			filterClassName: "fc.funnel.filter",
 
 			negativeConversion: true,
@@ -139,7 +154,10 @@
 						'<% for (var i = 0; i < options.data.funnel.length; i++) { %>' +
 							'<% current = options.data.funnel[i + (i < options.data.funnel.length - 1 ? 1 : 0)].value / options.data.funnel[0].value; %>' +
 							'<% value = $.fc.format.usNumber(options.data.funnel[i].value); %>' +
-							'<div class="fc-funnel-block" style="height: <%=Math.floor(current * zoom)%>px; line-height: <%=Math.floor(current * zoom)%>px; border-top-width: <%=((prev - current) * zoom / 2).toFixed(1)%>px; border-bottom-width: <%=((prev - current) * zoom / 2).toFixed(1)%>px;"><b style="left: -<%=0.3 * String(value).length%>em;"><%=value%></b></div>' +
+							'<div class="fc-funnel-block" style="height: <%=Math.floor(current * zoom)%>px; line-height: <%=Math.floor(current * zoom)%>px; border-top-width: <%=((prev - current) * zoom / 2).toFixed(1)%>px; border-bottom-width: <%=((prev - current) * zoom / 2).toFixed(1)%>px;">' +
+								'<b style="left: -<%=(0.3 * String(value).length).toFixed(1)%>em;"><%=value%></b>' +
+								'<div class="fc-funnel-block-title" style="top: <%=((current - 1) * zoom / 2 - 10).toFixed(1)%>px;"><%=options.actions[Number(options.data.funnel[i].activity)]%></div>' +
+							'</div>' +
 							'<% if (i < options.data.funnel.length - 1) { %>' +
 								'<div class="fc-funnel-separator"><%=((options.data.funnel[i + 1].value / options.data.funnel[i].value - (options.negativeConversion ? 1 : 0)) * 100).toFixed(1)%>%</div>' +
 							'<% } %>' +
@@ -215,6 +233,160 @@
 		_init: function () {
 			this._base._init.call(this);
 
+			this.bodyWrapper = this.body
+				.wrap('<div></div>')
+				.parent()
+				.addClass(this.widgetFullName + "-body-wrapper");
+
+			this.dataview = new $.fc.data.view({
+				remotePaging: true,
+				remoteFilter: true,
+				remoteSort: false,
+				limit: 20,
+				store: {
+					read: {
+						url: this.options.api.getData,
+						root: "segments"
+					}
+				}
+			});
+
+			var self = this,
+				segmentView = $('<div></div>').addClass(this.widgetFullName + "-segmentview").insertAfter(this.bodyWrapper);
+
+			this.grid = new $.fc.grid({
+					source: this.dataview,
+					overlay: this.overlay,
+					statTemplate: '<div class="<%=widgetFullName%>-stat">Displaying <span class="<%=widgetFullName%>-offset"><%=source.offset() + 1%></span> - <span class="<%=widgetFullName%>-limit"><%=source.offset() + source.limit()%></span></div>',
+					getPager: function () {
+						return new $.fc.pager({
+								source: this.source,
+								endLessPager: true
+							});
+					},
+					beforerender: function () {
+						if (!self.options.data) {
+							return;
+						}
+
+						var i, columns = [{
+									text: "Property",
+									property: "property",
+									sortable: false,
+									css: { width: 150 }
+							}];
+
+						for (i = 0; i < self.options.data.funnel.length; i++) {
+							columns.push({
+								text: self.options.actions[self.options.data.funnel[i].activity],
+								property: "values."+ i,
+								sortable: false,
+								css: { width: 215 }
+							});
+						}
+
+						self.grid.columns(columns);
+					},
+					appendTo: segmentView
+				});
+
+			this.grid.widget().hide();
+
+			this.gridWrapper = this.grid
+				.widget()
+				.wrap('<div></div>')
+				.parent()
+				.addClass(this.widgetFullName + "-grid-wrapper");
+
+			this.dataview.bind("change", function (e, data) {
+				if (typeof (data) !== "undefined" && data && data.length) {
+					self.grid.widget().show();
+				} else {
+					self.grid.widget().hide();
+				}
+			});
+
+			var segmentFilter = new $.fc.form.field.selectbox({
+				label: "Property",
+				labelStyle: null,
+				placeholder: "Select property",
+				options: [
+					["score","score"],
+					["createdate","createdate"],
+					["cyear","cyear"],
+					["cmonth","cmonth"],
+					["cday","cday"],
+					["updatedate","updatedate"],
+					["uyear","uyear"],
+					["umonth","umonth"],
+					["uday","uday"],
+					["fname","fname"],
+					["lname","lname"],
+					["email","email"],
+					["phone1","phone1"],
+					["uid","uid"],
+					["ip","ip"],
+					["emaildomain","emaildomain"],
+					["gender","gender"],
+					["birthdate","birthdate"],
+					["zip","zip"],
+					["city","city"],
+					["country","country"],
+					["areacode","areacode"],
+					["phone2","phone2"],
+					["tr1","tr1"],
+					["tr2","tr2"],
+					["tr3","tr3"],
+					["tr4","tr4"],
+					["tr5","tr5"],
+					["cid","cid"],
+					["sid","sid"],
+					["lid","lid"],
+					["siteid","siteid"],
+					["sourcedomain","sourcedomain"],
+					["code","code"],
+					["actionpath","actionpath"],
+					["lm1","lm1"],
+					["lm2","lm2"],
+					["lm3","lm3"],
+					["lm4","lm4"],
+					["lm5","lm5"],
+					["host","host"],
+					["browser","browser"],
+					["osname","osname"],
+					["jobcategory","jobcategory"],
+					["landing","landing"],
+					["emailsMasterList","emailsMasterList"],
+					["productsprice","productsprice"],
+					["__ahcost","__ahcost"],
+					["productid","productid"]
+				],
+				prependTo: segmentView,
+				change: function () {
+					var filter = self.filter.serialize();
+					filter["segment"] = this.value();
+
+					self.dataview.filter(filter);
+				}
+			});
+
+			$('<div></div>', { text: "Segment view", "class": this.widgetFullName + "-header" }).prependTo(segmentView);
+
+			this.filter._bind('beforesubmit', function () {
+				self.dataview.reset();
+				self.overlay.resize();
+				segmentFilter.value('');
+				segmentView.hide();
+			});
+
+			this._bind('render.segmentview', function (renderSuccessful) {
+				if (!renderSuccessful) {
+					segmentView.hide();
+				} else {
+					segmentView.show();
+				}
+			});
+
 			this.overlay.resize();
 		},
 
@@ -233,7 +405,69 @@
 					" between " + this.options.filter.fromDate + " and " + this.options.filter.toDate :
 					" after " + this.options.filter.fromDate));
 
-			this.body.html($.fc.tmpl(this.options.template, this));
+			this.body
+				.css({ width: 215 * this.options.data.funnel.length + 5 })
+				.html($.fc.tmpl(this.options.template, this));
+
+			var innerWidth = this.body.innerWidth(),
+				outerWidth = this.bodyWrapper.innerWidth();
+
+			this.grid.widget().width(innerWidth);
+
+			var self = this,
+				slider = this.element.find(this.widgetFullName + "-slider"),
+				handleHelper = slider.find('.ui-handle-helper-parent');
+
+			if (innerWidth > outerWidth) {
+				if (!slider.length) {
+					slider = $('<div></div>', { "class": this.widgetFullName + "-slider"  })
+						.insertBefore(this.bodyWrapper)
+						.add($('<div></div>', { "class": this.widgetFullName + "-slider"  })
+							.insertAfter(self.gridWrapper));
+
+					slider.slider({
+							orientation: "horizontal",
+							value: 0,
+							min: 0,
+							step: 1,
+							slide: function (event, ui) {
+								self.bodyWrapper.scrollLeft(ui.value);
+								self.gridWrapper.scrollLeft(ui.value);
+
+								slider.not(this).slider("option", "value", ui.value);
+							}
+						})
+						.wrap($('<div></div>', { "class": this.widgetFullName + "-slider-wrapper" }));
+
+					handleHelper = slider
+						.find( ".ui-slider-handle" )
+						.mousedown(function() {
+							slider.width(handleHelper.width());
+						})
+						.mouseup(function() {
+							slider.width("100%");
+						})
+						.wrap('<div class="ui-slider-handle-wrapper"></div>')
+						.parent();
+				}
+
+				var handleWidth = outerWidth * outerWidth / innerWidth;
+
+				slider
+					.slider("option", "max", innerWidth - outerWidth)
+					.slider("option", "value", 0)
+					.show()
+					.find('.ui-slider-handle').css({
+						width: handleWidth,
+						marginLeft: - handleWidth / 2
+					});
+
+				handleHelper.width( "" ).width(outerWidth - handleWidth);
+			} else {
+				if (slider.length) {
+					slider.hide();
+				}
+			}
 
 			return true;
 		}

@@ -21,11 +21,11 @@
 
 			statTemplate: '<div class="<%=widgetFullName%>-stat">Displaying <span class="<%=widgetFullName%>-offset"><%=source.offset() + 1%></span> - <span class="<%=widgetFullName%>-limit"><%=source.offset() + source.limit()%></span> of <span class="<%=widgetFullName%>-total"><%=source.total()%></span></div>',
 
-			headerTemplate: '<tr>' +
+			headerTemplate:	'<tr>' +
 			                    '<% for (var i = 0; i < columns.length; i++) { %>' +
-			    	                '<th data-column="<%=i + 1%>" data-property="<%=columns[i].property%>" data-sortable="<%=columns[i].sortable%>" data-resizable="<%=columns[i].resizable%>"><div><%=columns[i].text%></div></th>' +
+									'<th data-column="<%=i + 1%>" data-property="<%=columns[i].property%>" data-sortable="<%=columns[i].sortable%>" data-resizable="<%=columns[i].resizable%>"><div><%=columns[i].text%></div></th>' +
 								'<% } %>' +
-				             '</tr>',
+							'</tr>',
 
 			renderHeaders: function () {
 				var headersWrappers = $(this).find('.fc-grid-header');
@@ -61,9 +61,11 @@
 
 			this.selected = new $.fc.observableArray([]);
 
-			this._callMethod("_renderHeaders");
+			this._callMethod("_initColumns");
 
 			this._callMethod("_initData");
+
+			this._callMethod("_renderHeaders");
 
 			this._callMethod("_renderBody");
 
@@ -104,6 +106,70 @@
 			delete this.stat;
 			delete this.footer;
 			delete this.container;
+		},
+
+		_initColumns: function () {
+			var $this,
+				self = this,
+				columns = [];
+
+			this.columns = new $.fc.observableArray([]);
+			this.columns.bind('change', function (e, value) {
+				self.rowTemplate = $.map(value, function (column, index) {
+						return $.fc.stringBuilder.format(	'<td class="{0}-cell {0}-column-{1}" data-column="{1}">' +
+																(column.cellTemplate || '<div class="{0}-cell-inner{3}"><%=$.fc.data.getField(row, {2})%></div>') +
+															'</td>',
+								self.widgetFullName,
+								Number(index) + 1,
+								$.isNumeric(column.property) ?
+									column.property :
+									"'" + column.property + "'",
+								column.cellClassName ? " " + column.cellClassName : "");
+					})
+					.join('');
+
+				self.rowTemplate = $.fc.stringBuilder.format('<tr class="{0}-row {0}-row-<%=evenness%>" data-index="<%=index%>">{1}</tr>',
+										self.widgetFullName,
+										self.rowTemplate);
+
+				self._callMethod("_renderHeaders");
+
+				self.footer.attr('colspan', value.length);
+			});
+
+			this.element
+				.children('thead')
+				.find('td, th')
+				.each(function (index) {
+					var $this = $(this),
+						column = {
+							text: $this.text(),
+							property: typeof ($this.data('property')) !== "undefined" ?
+								$this.data('property') :
+								index,
+							resizable: typeof ($this.data('resizable')) !== "undefined" ?
+								$this.data('resizable') :
+								true,
+							sortable: typeof ($this.data('sortable')) !== "undefined" ?
+								$this.data('sortable') :
+								true
+						};
+
+					self._trigger("beforecolumnadded", null, this, column);
+
+					columns.push(column);
+				});
+
+			$.each(this.options.columns, function (index, column) {
+				columns.push($.extend({
+						text: "column " + columns.length,
+						property: columns.length,
+						resizable: true,
+						sortable: true
+					}, column));
+			});
+
+			this.columns(columns);
 		},
 
 		_initData: function () {
@@ -162,6 +228,8 @@
 			var tableRows = [],
 				self = this,
 				data = this.data() || [];
+
+			self._trigger("beforerender", null, data);
 
 			$.each(data, function (index, row) {
 				tableRows.push(self._renderRow({ index: index, evenness: index % 2 ? "even" : "odd", row: row }));
@@ -243,11 +311,12 @@
 			this.footer = this.element
 				.find('tfoot tr td');
 
+			var cols = this.columns().length;
+
 			if (!this.footer.length) {
-				this.footer = $('<tfoot><tr><td></td></tr></tfoot>')
+				this.footer = $('<tfoot><tr><td colspan=' + cols + '></td></tr></tfoot>')
 					.appendTo(this.element)
 					.find('td')
-					.attr("colspan", this.columns().length)
 					.addClass(this.widgetFullName + "-footer ui-state-default");
 			}
 
@@ -263,26 +332,8 @@
 		_renderHeaders: function () {
 			var $this,
 				self = this,
-				colgroup = $('<colgroup>'),
-				columns = [];
-
-			this.columns = new $.fc.observableArray([]);
-			this.columns.bind('change', function (e, value) {
-				self.rowTemplate = $.map(value, function (column, index) {
-						return $.fc.stringBuilder.format('<td class="{0}-cell {0}-column-{1}" data-column="{1}">' +
-										(column.cellTemplate || '<div class="{0}-cell-inner{3}"><%=typeof (row[{2}]) !== "undefined" ? row[{2}] : ""%></div>') +
-										'</td>',
-								self.widgetFullName,
-								~~index + 1,
-								$.isNumeric(column.property) ?
-									column.property :
-									"'" + column.property + "'",
-								column.cellClassName ? " " + column.cellClassName : "");
-					})
-					.join('');
-
-				self.rowTemplate = $.fc.stringBuilder.format('<tr class="{0}-row {0}-row-<%=evenness%>" data-index="<%=index%>">{1}</tr>', self.widgetFullName, self.rowTemplate);
-			});
+				columns = this.columns(),
+				colgroup = $('<colgroup>');
 
 			this.header = this.element
 				.find('thead');
@@ -292,50 +343,7 @@
 					.prependTo(this.element);
 			}
 
-			this.colgroup = this.element
-				.find('colgroup');
-
-			if (!this.colgroup.length) {
-				this.colgroup = $('<colgroup></colgroup>')
-					.prependTo(this.element);
-			}
-
-			this.header
-				.find('td, th')
-				.each(function (index) {
-					$this = $(this)
-						.wrapInner('<div></div>');
-
-					var column = {
-							text: $this.text(),
-							property: typeof ($this.data('property')) !== "undefined" ?
-								$this.data('property') :
-								index,
-							resizable: typeof ($this.data('resizable')) !== "undefined" ?
-								$this.data('resizable') :
-								true,
-							sortable: typeof ($this.data('sortable')) !== "undefined" ?
-								$this.data('sortable') :
-								true
-						};
-
-					self._trigger("beforecolumnadded", null, this, column);
-
-					columns.push(column);
-				});
-
-			$.each(this.options.columns, function (index, column) {
-				columns.push($.extend({
-						text: "column " + columns.length,
-						property: columns.length,
-						resizable: true,
-						sortable: true
-					}, column));
-			});
-
 			self.header.html($.fc.tmpl(self.options.headerTemplate, { columns: columns }));
-
-			this.columns(columns);
 
 			this.headers = this.header
 				.find('td, th');
@@ -426,6 +434,14 @@
 								});
 					}
 				});
+
+			this.colgroup = this.element
+				.find('colgroup');
+
+			if (!this.colgroup.length) {
+				this.colgroup = $('<colgroup></colgroup>')
+					.prependTo(this.element);
+			}
 
 			this.colgroup.empty();
 			colgroup.find('col').detach().appendTo(this.colgroup);

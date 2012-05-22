@@ -45,6 +45,7 @@
 			} else {
 				var sourceOptions = {
 						remotePaging: false,
+						limit: 999,
 						data: $.isArray(this.options.source) ? $.merge(data, this.options.source) : data
 					};
 

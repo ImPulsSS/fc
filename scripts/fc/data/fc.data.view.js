@@ -72,6 +72,9 @@
 			var self = this;
 
 			this.data = new $.fc.observableArray([]);
+			this.data.bind('beforechange', function (e, value) {
+				self._trigger('beforechange', e, value);
+			});
 			this.data.bind('change', function (e, value) {
 				self._trigger('change', e, value);
 			});

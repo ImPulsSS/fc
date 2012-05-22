@@ -34,9 +34,7 @@
 						url: this.options.api.removeReport
 					}
 				});
-		},
 
-		_init: function () {
 			this._addHeader();
 
 			this._addBody();
@@ -72,10 +70,10 @@
 					overlay: self.overlay,
 					animations: {
 						expand: function () {
-							$(this).slideDown(200);
+							$(this).slideDown(200, function () { self.overlay.resize(); });
 						},
 						collapse: function () {
-							$(this).slideUp(200);
+							$(this).slideUp(200, function () { self.overlay.resize(); });
 						}
 					},
 					buttons: {
@@ -172,11 +170,11 @@
 							},
 
 							expand: function () {
-								$(this).slideDown(200);
+								$(this).slideDown(200, function () { self.overlay.resize(); });
 							},
 
 							collapse: function () {
-								$(this).slideUp(200);
+								$(this).slideUp(200, function () { self.overlay.resize(); });
 							}
 						},
 						fields: [{
@@ -204,6 +202,9 @@
 									}
 								});
 							}
+						},
+						render: function () {
+							self.overlay.resize();
 						}
 					});
 

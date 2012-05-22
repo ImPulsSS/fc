@@ -1,7 +1,19 @@
-.fc-funnel {}
+.fc-funnel { }
 	.fc-funnel-header { margin: 20px 0 15px 0; font-size: 18px; }
 
-	.fc-funnel-block { display: inline-block; width: 0; position: relative; border-left: 150px solid #F4A901; border-top: 100px solid transparent; border-bottom: 100px solid transparent; vertical-align: middle; }
-		.fc-funnel-block b { display: block; margin: -0.5em 0 0 -4.2em; padding: 0 2px; line-height: 1em; position: absolute; top: 50%; font-size: 18px; font-weight: bolder; color: #FFFFFF; background: #F4A901; border-radius: 2px; }
-	.fc-funnel-separator { display: inline-block; margin: 0 10px; font-size: 14px; font-weight: bolder; vertical-align: middle; }
-	.fc-funnel-final { display: inline-block; margin-left: 10px; padding: 0.5em; font-size: 18px; font-weight: bolder; color: #FFFFFF; background: #F4A901; border-radius: 50%; vertical-align: middle; }
+	.fc-funnel-body-wrapper { overflow: hidden; position: relative; }
+		.fc-funnel-body { padding: 15px 0 0 150px; }
+			.fc-funnel-block { display: inline-block; width: 0; position: relative; border-left: 150px solid #F4A901; border-top: 100px solid transparent; border-bottom: 100px solid transparent; vertical-align: middle; }
+				.fc-funnel-block b { display: block; margin: -0.5em 0 0 -4.2em; padding: 0 2px; line-height: 1em; position: absolute; top: 50%; font-size: 18px; font-weight: bolder; color: #FFFFFF; background: #F4A901; border-radius: 2px; }
+				.fc-funnel-block-title { display: block; width: 150px; height: 1.2em; line-height: 1.2em; position: absolute; white-space: nowrap; left: -150px; text-align: center; font-size: 11px; text-overflow: ellipsis; overflow: hidden; }
+			.fc-funnel-separator { display: inline-block; width: 65px; text-align: center; font-size: 14px; font-weight: bolder; vertical-align: middle; }
+			.fc-funnel-final { display: inline-block; margin-left: 10px; padding: 0.5em; font-size: 18px; font-weight: bolder; color: #FFFFFF; background: #F4A901; border-radius: 50%; vertical-align: middle; }
+
+		.fc-funnel-segmentview { margin-top: 20px; }
+			.fc-funnel-grid-wrapper { overflow: hidden; position: relative; }
+
+
+.fc-funnel-slider-wrapper { position: relative; background: #DCDCDC; border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px; }
+.fc-funnel-slider { height: 7px !important; margin: 0 auto; position: relative; background: none !important; border: none !important; cursor: pointer; }
+	.fc-funnel-slider .ui-slider-handle { display: block; height: 5px !important; position: absolute; top: 0px !important; z-index: 2; background: #FFFFFF !important; border: 1px solid #D3D3D3; border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px; cursor: pointer; }
+	.fc-funnel-slider .ui-slider-handle-wrapper { position: relative; width: 100%; height: 100%; margin: 0 auto; }
