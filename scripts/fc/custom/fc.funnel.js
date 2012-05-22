@@ -415,42 +415,42 @@
 			this.grid.widget().width(innerWidth);
 
 			var self = this,
-				slider = this.element.find(this.widgetFullName + "-slider"),
+				slider = this.element.find("." + this.widgetFullName + "-slider"),
 				handleHelper = slider.find('.ui-handle-helper-parent');
 
+			if (!slider.length) {
+				slider = $('<div></div>', { "class": this.widgetFullName + "-slider"  })
+					.insertBefore(this.bodyWrapper)
+					.add($('<div></div>', { "class": this.widgetFullName + "-slider"  })
+						.insertAfter(self.gridWrapper));
+
+				slider.slider({
+						orientation: "horizontal",
+						value: 0,
+						min: 0,
+						step: 1,
+						slide: function (event, ui) {
+							self.bodyWrapper.scrollLeft(ui.value);
+							self.gridWrapper.scrollLeft(ui.value);
+
+							slider.not(this).slider("option", "value", ui.value);
+						}
+					})
+					.wrap($('<div></div>', { "class": this.widgetFullName + "-slider-wrapper" }));
+
+				handleHelper = slider
+					.find( ".ui-slider-handle" )
+					.mousedown(function() {
+						slider.width(handleHelper.width());
+					})
+					.mouseup(function() {
+						slider.width("100%");
+					})
+					.wrap('<div class="ui-slider-handle-wrapper"></div>')
+					.parent();
+			}
+
 			if (innerWidth > outerWidth) {
-				if (!slider.length) {
-					slider = $('<div></div>', { "class": this.widgetFullName + "-slider"  })
-						.insertBefore(this.bodyWrapper)
-						.add($('<div></div>', { "class": this.widgetFullName + "-slider"  })
-							.insertAfter(self.gridWrapper));
-
-					slider.slider({
-							orientation: "horizontal",
-							value: 0,
-							min: 0,
-							step: 1,
-							slide: function (event, ui) {
-								self.bodyWrapper.scrollLeft(ui.value);
-								self.gridWrapper.scrollLeft(ui.value);
-
-								slider.not(this).slider("option", "value", ui.value);
-							}
-						})
-						.wrap($('<div></div>', { "class": this.widgetFullName + "-slider-wrapper" }));
-
-					handleHelper = slider
-						.find( ".ui-slider-handle" )
-						.mousedown(function() {
-							slider.width(handleHelper.width());
-						})
-						.mouseup(function() {
-							slider.width("100%");
-						})
-						.wrap('<div class="ui-slider-handle-wrapper"></div>')
-						.parent();
-				}
-
 				var handleWidth = outerWidth * outerWidth / innerWidth;
 
 				slider
@@ -464,9 +464,7 @@
 
 				handleHelper.width( "" ).width(outerWidth - handleWidth);
 			} else {
-				if (slider.length) {
-					slider.hide();
-				}
+				slider.hide();
 			}
 
 			return true;
