@@ -28,7 +28,7 @@
 							'</tr>',
 
 			renderHeaders: function () {
-				var headersWrappers = $(this).find('.fc-grid-header');
+			/*	var headersWrappers = $(this).find('.fc-grid-header');
 
 				headersWrappers
 					.first()
@@ -36,7 +36,7 @@
 
 				headersWrappers
 					.last()
-					.addClass('ui-corner-tr');
+					.addClass('ui-corner-tr');*/
 			},
 
 			getPager: function () {
@@ -134,7 +134,9 @@
 
 				self._callMethod("_renderHeaders");
 
-				self.footer.attr('colspan', value.length);
+				if (self.footer) {
+					self.footer.attr('colspan', value.length);
+				}
 			});
 
 			this.element

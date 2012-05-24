@@ -44,10 +44,21 @@
 				$.each(sort, function (index, sortingParam) {
 					direction = sortingParam.direction ? sortingParam.direction.toLowerCase() : "asc";
 					result = data.sort(function (first, second) {
+						var firstValue = first[sortingParam.property],
+							secondValue = second[sortingParam.property];
+
+						if (typeof (firstValue) === "string") {
+							firstValue = firstValue.toLowerCase();
+						}
+
+						if (typeof (secondValue) === "string") {
+							secondValue = secondValue.toLowerCase();
+						}
+
 						if (direction === "desc") {
-							return first[sortingParam.property].toLowerCase() < second[sortingParam.property].toLowerCase();
+							return firstValue < secondValue;
 						} else {
-							return second[sortingParam.property].toLowerCase() < first[sortingParam.property].toLowerCase();
+							return secondValue < firstValue;
 						}
 					});
 				});
@@ -155,7 +166,7 @@
 				data = this.options.localPaging(data, this.page(), this.offset(), this.limit());
 			}
 
-			this.data((data || []).slice(0));
+			this.data([].slice.call((data || [])));
 
 			this.total(this.options.getTotal.call(this, rawData) || this.offset() + data.length);
 
@@ -184,11 +195,15 @@
 		},
 
 		reset: function () {
-			this.data([]);
 			this.page(this.options.page);
 			this.offset(this.options.offset);
 			this.limit(this.options.limit);
 			this.total(this.options.total);
+
+			this.filter.set(this.options.filter);
+			this.sort.set(this.options.sort);
+
+			this.data([]);
 		}
 	});
 })(jQuery);

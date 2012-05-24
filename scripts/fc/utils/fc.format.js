@@ -32,7 +32,7 @@
 		},
 
 		jsonDate: function (value) {
-			value = Number(value.replace(/\/Date\(([\-\d]+)\)\//, "$1"));
+			value = Number(value.replace(/\/Date\(([\-\d]+)\+?\d*\)\//, "$1"));
 			return value > 0 ? $.fc.format.date(value) : "-";
 		}
 	};

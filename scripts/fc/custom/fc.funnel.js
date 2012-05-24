@@ -148,7 +148,7 @@
 			reportTemplateName: "<% var activities = filters.activities.split(','); for (var i = 0; i < activities.length; i++) { %><%=i > 0 ? ', ' : ''%><%=widget.options.actions[Number(activities[i])]%><% } %> since <%=filters.fromDate%><%=filters.toDate ? ' till ' + filters.toDate : ''%>",
 			filterClassName: "fc.funnel.filter",
 
-			negativeConversion: true,
+			negativeConversion: false,
 
 			template: 	'<% var zoom = Math.min(4, (options.data.funnel.length > 1 ? options.data.funnel[0].value / options.data.funnel[1].value : 1)) * 100, prev = 1, current = 1, next = 1, value; %>' +
 						'<% for (var i = 0; i < options.data.funnel.length; i++) { %>' +
@@ -159,7 +159,7 @@
 								'<div class="fc-funnel-block-title" style="top: <%=((current - 1) * zoom / 2 - 10).toFixed(1)%>px;"><%=options.actions[Number(options.data.funnel[i].activity)]%></div>' +
 							'</div>' +
 							'<% if (i < options.data.funnel.length - 1) { %>' +
-								'<div class="fc-funnel-separator"><%=((options.data.funnel[i + 1].value / options.data.funnel[i].value - (options.negativeConversion ? 1 : 0)) * 100).toFixed(1)%>%</div>' +
+								'<div class="fc-funnel-separator"><%=(((options.data.funnel[i].value === 0 ? 0.9999 : options.data.funnel[i + 1].value / options.data.funnel[i].value) - (options.negativeConversion ? 1 : 0)) * 100).toFixed(1)%>%</div>' +
 							'<% } %>' +
 							'<% prev = current; %>' +
 						'<% } %>' +
@@ -366,7 +366,12 @@
 					var filter = self.filter.serialize();
 					filter["segment"] = this.value();
 
-					self.dataview.filter(filter);
+					if (filter["segment"]) {
+						self.dataview.filter(filter);
+					} else {
+						self.dataview.reset();
+						self.grid.widget().hide();
+					}
 				}
 			});
 
@@ -416,7 +421,7 @@
 
 			var self = this,
 				slider = this.element.find("." + this.widgetFullName + "-slider"),
-				handleHelper = slider.find('.ui-handle-helper-parent');
+				handleWrapper = slider.find('.ui-slider-handle-wrapper');
 
 			if (!slider.length) {
 				slider = $('<div></div>', { "class": this.widgetFullName + "-slider"  })
@@ -438,10 +443,10 @@
 					})
 					.wrap($('<div></div>', { "class": this.widgetFullName + "-slider-wrapper" }));
 
-				handleHelper = slider
+				handleWrapper = slider
 					.find( ".ui-slider-handle" )
 					.mousedown(function() {
-						slider.width(handleHelper.width());
+						slider.width(handleWrapper.width());
 					})
 					.mouseup(function() {
 						slider.width("100%");
@@ -462,7 +467,7 @@
 						marginLeft: - handleWidth / 2
 					});
 
-				handleHelper.width( "" ).width(outerWidth - handleWidth);
+				handleWrapper.width( "" ).width(outerWidth - handleWidth);
 			} else {
 				slider.hide();
 			}

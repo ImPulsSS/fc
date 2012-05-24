@@ -12,10 +12,9 @@
 			if (arguments.length === 0) {
 				return this.element.is(":checked") ? this.element.val() : null;
 			} else {
-				this.element.val(arguments[0]);
-				if (arguments[0]) {
-					this.element.attr("checked", true);
-				}
+				this.element.val(typeof (arguments[0]) in { "string": true, "int": true } ? arguments[0] : true);
+				this.element.attr("checked", !!arguments[0]);
+
 				return arguments[0];
 			}
 		}
