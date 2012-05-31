@@ -2,7 +2,7 @@
 	$.fc = $.fc || {};
 
 	$.fc.format = {
-		dateTimeFormat: "d/m/yyyy h:MM:ss TT",
+		dateTimeFormat: "m/d/yyyy h:MM:ss TT",
 
 		"boolean": function (value) {
 			return typeof (value) !== "undefined" && value ?
@@ -31,9 +31,9 @@
 			return value.format(format || $.fc.format.dateTimeFormat);
 		},
 
-		jsonDate: function (value) {
-			value = Number(value.replace(/\/Date\(([\-\d]+)\+?\d*\)\//, "$1"));
-			return value > 0 ? $.fc.format.date(value) : "-";
+		jsonDate: function (value, format) {
+			value = Number(value.replace(/\/Date\((-?\d+)[\+\-]?\d*\)\//, "$1"));
+			return value > 0 ? $.fc.format.date(value, format) : "-";
 		}
 	};
 })(jQuery);

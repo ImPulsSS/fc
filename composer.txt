@@ -30,6 +30,7 @@ fc.ui.all.min.js
 	scripts\fc\misc\fc.overlay.js
 	scripts\fc\misc\fc.plain.js
 	scripts\fc\misc\fc.alert.js
+	scripts\fc\misc\fc.tooltip.js
 
 	scripts\fc\form\field\fc.form.field.js
 	scripts\fc\form\field\fc.form.field.checkbox.js
@@ -72,6 +73,7 @@ fc.ui.all.js -nocompress
 	scripts\fc\misc\fc.overlay.js
 	scripts\fc\misc\fc.plain.js
 	scripts\fc\misc\fc.alert.js
+	scripts\fc\misc\fc.tooltip.js
 
 	scripts\fc\form\field\fc.form.field.js
 	scripts\fc\form\field\fc.form.field.checkbox.js
@@ -172,6 +174,7 @@ fc.ui.all.min.css
 	styles\fc.pager.css
 	styles\fc.grid.css
 	styles\fc.spotlist.css
+	styles\fc.tooltip.css
 
 	styles\fc.reportpanel.css
 	styles\fc.filter.css

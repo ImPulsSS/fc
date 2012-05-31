@@ -4,7 +4,9 @@
 			api: {
 				getUsers: "",
 				getActions: "",
-				getData: ""
+				getData: "",
+
+				leadDetails: ""
 			},
 
 			channel: "",
@@ -15,7 +17,7 @@
 			template: '<h3><a href="#section2"><%=index%>. User <%=row.leadid%> did <%=row.action%> at <%=new Date()%></a></h3>' +
 					   '<div><p>' +
 					        '<%=formatedParams%>' +
-					        '<p><a href="http://v1.leadsmanage.com/Leads/5_0_menu=3.aspx#[{%22field%22:%22_id%22,%22comparison%22:%22eq%22,%22value%22:%22<%=row.leadid%>%22,%22type%22:%22guid%22}]" target="_blank">View user</a></p>' +
+					        '<p><a href="<%=options.api.leadDetails%><%=row.leadid%>" target="_blank">View user</a></p>' +
 					   '</p></div>'
 		},
 
@@ -169,6 +171,7 @@
 
 			this.element
 				.prepend($.fc.tmpl(this.options.template, {
+					options: this.options,
 					index: this.index++,
 					row: data,
 					formatedParams: $.map(data, function (item, key) {

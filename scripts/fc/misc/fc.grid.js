@@ -7,6 +7,9 @@
 			css: {},
 			source: null,
 
+			caption: null,
+			captionClass: "",
+
 			autoRefresh: true,
 
 			selectable: {
@@ -67,6 +70,8 @@
 
 			this._callMethod("_renderHeaders");
 
+			this._callMethod("_renderCaption");
+
 			this._callMethod("_renderBody");
 
 			this._callMethod("_renderFooter");
@@ -98,9 +103,11 @@
 
 			delete this.data;
 			delete this.selected;
+			delete this.caption;
 
 			delete this.headers;
 			delete this.header;
+			delete this.captionElement;
 			delete this.body;
 			delete this.pager;
 			delete this.stat;
@@ -303,6 +310,22 @@
 					}
 				});
 			}
+		},
+
+		_renderCaption: function () {
+			var self = this;
+
+			this.captionElement = this.element.find('caption');
+
+			if (!this.captionElement.length) {
+				this.captionElement = $('<caption></caption>', { "class": self.widgetFullName + "-caption " + self.options.captionClass, html: this.options.caption })
+					.prependTo(this.element);
+			}
+
+			this.caption = new $.fc.observable(this.captionElement.html());
+			this.caption.change(function (e, data) {
+				self.captionElement.html(data);
+			});
 		},
 
 		_renderFooter: function () {

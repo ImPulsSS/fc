@@ -91,9 +91,9 @@
 					return;
 				}
 
-				field.reset();
+				field.reset().value($.fc.data.getField(values, field.name));
 			});
-
+/*
 			for (fieldName in values) {
 				fieldValue = values[fieldName];
 
@@ -104,7 +104,7 @@
 				}
 
 				field.value(values[fieldName]);
-			}
+			}*/
 		},
 
 		widget: function() {

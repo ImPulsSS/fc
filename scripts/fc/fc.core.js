@@ -1,17 +1,25 @@
 (function ($) {
 	$.fc = $.fc || {};
 
-	$.fc.namespace = function (name) {
+	$.fc.namespace = function (root, name) {
+		if (typeof (name) === "undefined") {
+			name = root;
+			root = $.fc;
+		}
+
 		if (typeof (name) === "string") {
 			name = name.split(".");
 		}
 
-		if (name[0] === "fc") {
+		if (root == $.fc && name[0] === "$") {
+			name.shift();
+		}
+
+		if (root == $.fc && name[0] === "fc") {
 			name.shift();
 		}
 
 		var i,
-			root = $.fc,
 			namespaceLength = name.length;
 
 		for (i = 0; i < namespaceLength; i++) {
